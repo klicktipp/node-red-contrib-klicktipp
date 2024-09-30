@@ -1,0 +1,37 @@
+{
+  "name": "node-red-klicktipp",
+  "version": "1.0.0",
+  "description": "KlickTipp API integration node for Node-RED",
+  "keywords": [
+    "node-red",
+    "klicktipp",
+    "integration",
+    "api"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "main": "klicktipp.js",
+  "scripts": {
+    "format": "prettier 'utils/**/*.js' 'klicktipp.js' '.prettierrc.js' --write"
+  },
+  "node-red": {
+    "nodes": {
+      "klicktipp": "klicktipp.js"
+    }
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "qs": "^6.13.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}

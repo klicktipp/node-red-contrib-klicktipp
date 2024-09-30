@@ -1,0 +1,776 @@
+<!--1. Config node -->
+<script type="text/x-red" data-template-name="klicktipp-config">
+    <div class="form-row">
+        <label for="node-config-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-config-input-name" placeholder="Enter a name for this config">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-username"><i class="fa fa-user"></i> <span>Username</span></label>
+        <input type="text" id="node-config-input-username" placeholder="Enter your KlickTipp username">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-password"><i class="fa fa-key"></i> <span>Password</span></label>
+        <input type="password" id="node-config-input-password" placeholder="Enter your KlickTipp password">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-config', {
+		category: 'config',
+		defaults: {
+			name: { value: "" }
+		},
+		credentials: {
+			username: { type: "text" },
+			password: { type: "password" }
+		},
+		label: function () {
+			return this.name || "KlickTipp Config";
+		}
+	});
+</script>
+
+<!--2. Login node -->
+<script type="text/x-red" data-template-name="klicktipp login">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i><span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i><span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp login', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Login";
+		}
+	});
+</script>
+
+<!--3. Logout node -->
+<script type="text/x-red" data-template-name="klicktipp logout">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp logout', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Logout";
+		}
+	});
+</script>
+
+<!--4. Subscription process index node -->
+<script type="text/x-red" data-template-name="klicktipp subscription process index">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscription process index', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscription Process Index";
+		}
+	});
+</script>
+
+<!--5. Subscription process get node -->
+<script type="text/x-red" data-template-name="klicktipp subscription process get">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscription process get', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscription Process Get";
+		}
+	});
+</script>
+
+<script type="text/x-red" data-template-name="klicktipp subscription process redirect">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<!--6. Subscription process redirect node -->
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscription process redirect', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscription Process Redirect";
+		}
+	});
+</script>
+
+<!--7. Tag index node -->
+<script type="text/x-red" data-template-name="klicktipp tag index">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag index', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Index";
+		}
+	});
+</script>
+
+<!--8. Tag get node -->
+<script type="text/x-red" data-template-name="klicktipp tag get">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag get', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Get";
+		}
+	});
+</script>
+
+<!--9. Tag create node -->
+<script type="text/x-red" data-template-name="klicktipp tag create">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag create', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Create";
+		}
+	});
+</script>
+
+<!--10. Tag update node -->
+<script type="text/x-red" data-template-name="klicktipp tag update">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag update', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Update";
+		}
+	});
+</script>
+
+<!--11. Tag delete node -->
+<script type="text/x-red" data-template-name="klicktipp tag delete">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag delete', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Delete";
+		}
+	});
+</script>
+
+<!--11. Field index node -->
+<script type="text/x-red" data-template-name="klicktipp field index">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp field index', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Field Index";
+		}
+	});
+</script>
+
+<!--12. Subscribe node -->
+<script type="text/x-red" data-template-name="klicktipp subscribe">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscribe', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscribe";
+		}
+	});
+</script>
+
+<!--13. Unsubscribe node -->
+<script type="text/x-red" data-template-name="klicktipp unsubscribe">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp unsubscribe', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Unsubscribe";
+		}
+	});
+</script>
+
+<!--14. Tag email node -->
+<script type="text/x-red" data-template-name="klicktipp tag email">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag email', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Email";
+		}
+	});
+</script>
+
+<!--15. Untag email node -->
+<script type="text/x-red" data-template-name="klicktipp untag email">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp untag email', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Untag Email";
+		}
+	});
+</script>
+
+<!--16. Resend autoresponder node -->
+<script type="text/x-red" data-template-name="klicktipp resend autoresponder">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp resend autoresponder', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Resend Autoresponder";
+		}
+	});
+</script>
+
+<!--17. Subscriber index node -->
+<script type="text/x-red" data-template-name="klicktipp subscriber index">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscriber index', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscriber Index";
+		}
+	});
+</script>
+
+<!--18. Subscriber index node -->
+<script type="text/x-red" data-template-name="klicktipp subscriber get">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscriber get', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscriber Get";
+		}
+	});
+</script>
+
+<!--19. Subscriber search node -->
+<script type="text/x-red" data-template-name="klicktipp subscriber search">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscriber search', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscriber Search";
+		}
+	});
+</script>
+
+<!--20. Subscriber tagged node -->
+<script type="text/x-red" data-template-name="klicktipp subscriber tagged">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscriber tagged', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscriber Tagged";
+		}
+	});
+</script>
+
+<!--21. Subscriber update node -->
+<script type="text/x-red" data-template-name="klicktipp subscriber update">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscriber update', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscriber Update";
+		}
+	});
+</script>
+
+<!--22. Subscriber delete node -->
+<script type="text/x-red" data-template-name="klicktipp subscriber delete">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscriber delete', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscriber Delete";
+		}
+	});
+</script>
+
+<!--23. Signin node -->
+<script type="text/x-red" data-template-name="klicktipp signin">
+    <div class="form-row">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
+        <input type="text" id="node-input-apikey" placeholder="Enter your API key">
+    </div>
+    <div class="form-row">
+        <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+        <input type="text" id="node-input-email" placeholder="Enter email address">
+    </div>
+    <div class="form-row">
+        <label for="node-input-smsnumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+        <input type="text" id="node-input-smsnumber" placeholder="Enter SMS number (optional)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fields"><i class="fa fa-list"></i> <span>Fields</span></label>
+        <input type="text" id="node-input-fields" placeholder="Enter additional fields (optional)">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp signin', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			apikey: { value: "" },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Signin";
+		}
+	});
+</script>
+
+<!--24. Signout node -->
+<script type="text/x-red" data-template-name="klicktipp signout">
+    <div class="form-row">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
+        <input type="text" id="node-input-apikey" placeholder="Enter your API key">
+    </div>
+    <div class="form-row">
+        <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+        <input type="text" id="node-input-email" placeholder="Enter email address">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp signout', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			apikey: { value: "" },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Signout";
+		}
+	});
+</script>
+
+<!--25. Signoff node -->
+<script type="text/x-red" data-template-name="klicktipp signoff">
+    <div class="form-row">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
+        <input type="text" id="node-input-apikey" placeholder="Enter your API key">
+    </div>
+    <div class="form-row">
+        <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+        <input type="text" id="node-input-email" placeholder="Enter email address">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp signoff', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			apikey: { value: "" },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Signoff";
+		}
+	});
+</script>
