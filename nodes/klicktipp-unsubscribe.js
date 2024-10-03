@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippUnsubscribeNode - A Node-RED node to unsubscribe an email.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -35,18 +35,18 @@ module.exports = function(RED) {
 	function KlickTippUnsubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			const email = msg?.payload?.email || '';
-			
+
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			if (!email) {
 				return handleError(node, msg, 'Missing email');
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/unsubscribe',
@@ -54,7 +54,7 @@ module.exports = function(RED) {
 					qs.stringify({ email }),
 					getSessionHeaders(msg),
 				);
-				
+
 				// Handle the response
 				handleResponse(
 					node,
@@ -69,7 +69,7 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to unsubscribe', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}

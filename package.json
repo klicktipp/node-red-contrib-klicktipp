@@ -20,7 +20,7 @@
   },
   "main": "klicktipp.js",
   "scripts": {
-    "format": "prettier 'utils/**/*.js' 'klicktipp.js' '.prettierrc.js' --write"
+    "format": "prettier 'utils/**/*.js' 'nodes/**/*.js' '.prettierrc.js' --write"
   },
   "engines": {
     "node": ">=14",

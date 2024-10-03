@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
-	
+
 	/**
 	 * KlickTippSubscriberDeleteNode - A Node-RED node to delete a subscriber.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -33,19 +33,19 @@ module.exports = function(RED) {
 	function KlickTippSubscriberDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const subscriberId = msg?.payload?.subscriberId || '';
-			
+
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					`/subscriber/${encodeURIComponent(subscriberId)}`,
@@ -53,7 +53,7 @@ module.exports = function(RED) {
 					{},
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -67,10 +67,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to delete subscriber', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp subscriber delete', KlickTippSubscriberDeleteNode);
 };

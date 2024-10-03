@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSignoutNode - A Node-RED node to untag an email using an API key.
 	 * This node untags a user by their email using the provided API key.
@@ -30,22 +30,22 @@ module.exports = function(RED) {
 	function KlickTippSignoutNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			const { apiKey, email = '' } = msg.payload;
-			
+
 			if (!apiKey || !email) {
 				handleError(node, msg, 'Missing API key or email');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/signout',
 					'POST',
 					qs.stringify({ apikey: apiKey, email }),
 				);
-				
+
 				// Handle the response using the handleResponse utility
 				handleResponse(node, msg, response, 'Untag successful', 'Failed to untag email', () => {
 					msg.payload = { success: true };
@@ -53,10 +53,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to untag email', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp signout', KlickTippSignoutNode);
 };

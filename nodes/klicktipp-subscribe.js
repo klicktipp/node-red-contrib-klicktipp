@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
@@ -8,7 +8,7 @@ module.exports = function(RED) {
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const prepareSubscriptionData = require('../utils/prepareCreateSubscriberData');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSubscribeNode - A Node-RED node to subscribe an email.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -40,22 +40,22 @@ module.exports = function(RED) {
 	function KlickTippSubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const { email = '', smsNumber = '', listId = 0, tagId = 0, fields = {} } = msg.payload;
-			
+
 			if (!email) {
 				handleError(node, msg, 'Missing email or SMS number');
 				return node.send(msg);
 			}
-			
+
 			// Prepare data object and filter fields
 			const data = prepareSubscriptionData(email, smsNumber, listId, tagId, fields);
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber',
@@ -63,7 +63,7 @@ module.exports = function(RED) {
 					qs.stringify(data),
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -77,10 +77,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to subscribe', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp subscribe', KlickTippSubscribeNode);
 };

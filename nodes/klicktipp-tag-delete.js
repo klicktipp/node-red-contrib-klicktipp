@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
-	
+
 	/**
 	 * KlickTippTagDeleteNode - A Node-RED node to delete a manual tag.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -34,19 +34,19 @@ module.exports = function(RED) {
 	function KlickTippTagDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const tagId = msg?.payload?.tagId || '';
-			
+
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					`/tag/${encodeURIComponent(tagId)}`,
@@ -54,17 +54,17 @@ module.exports = function(RED) {
 					{},
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(node, msg, response, 'Tag deleted', 'Failed to delete tag', () => {
 					msg.payload = { success: true };
 				});
 			} catch (error) {
 				handleError(node, msg, 'Failed to delete tag', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp tag delete', KlickTippTagDeleteNode);
 };

@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippTagUpdateNode - A Node-RED node to update a manual tag.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -37,42 +37,42 @@ module.exports = function(RED) {
 	function KlickTippTagUpdateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			const { tagId, name, text } = msg.payload;
-			
+
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			if (!tagId || (name === '' && text === '')) {
 				handleError(node, msg, 'Missing tag ID or nothing to update');
 				return node.send(msg);
 			}
-			
+
 			try {
-				const data = {
-					...(name && { name }),
-					...(text && { text }),
+				const updatedTagData = {
+					...(name && { name }), // Only include 'name' if it has a value
+					...(text && { text })  // Only include 'text' if it has a value
 				};
-				
+
 				const response = await makeRequest(
 					`/tag/${encodeURIComponent(tagId)}`,
 					'PUT',
-					qs.stringify(data),
+					qs.stringify(updatedTagData),
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(node, msg, response, 'Tag updated', 'Failed to update tag', () => {
 					msg.payload = { success: true };
 				});
 			} catch (error) {
 				handleError(node, msg, 'Failed to update tag', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp tag update', KlickTippTagUpdateNode);
 };

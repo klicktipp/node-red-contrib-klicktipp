@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippResendAutoresponderNode - A Node-RED node to resend an autoresponder to an email address.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -36,18 +36,18 @@ module.exports = function(RED) {
 	function KlickTippResendAutoresponderNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const { email = '', autoresponder = '' } = msg?.payload;
-			
+
 			if (!email || !autoresponder) {
 				return handleError(node, msg, 'Missing email or autoresponder ID', 'Invalid input');
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/resend',
@@ -55,7 +55,7 @@ module.exports = function(RED) {
 					qs.stringify({ email, autoresponder }),
 					getSessionHeaders(msg),
 				);
-				
+
 				// Handle the response
 				handleResponse(
 					node,
@@ -70,10 +70,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to resend autoresponder', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp resend autoresponder', KlickTippResendAutoresponderNode);
 };

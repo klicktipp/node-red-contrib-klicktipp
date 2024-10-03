@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const prepareApiKeySubscriptionData = require('../utils/prepareApiKeySubscriptionData');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSigninNode - A Node-RED node to subscribe an email using an API key.
 	 * This node subscribes a user by their email or SMS number using the provided API key.
@@ -33,20 +33,20 @@ module.exports = function(RED) {
 	function KlickTippSigninNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			const { apiKey, email = '', smsNumber = '', fields = {} } = msg.payload;
-			
+
 			if (!apiKey || (!email && !smsNumber)) {
 				handleError(node, msg, 'Missing API key or email/SMS number');
 				return node.send(msg);
 			}
-			
+
 			const data = prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields);
-			
+
 			try {
 				const response = await makeRequest('/subscriber/signin', 'POST', qs.stringify(data));
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -60,10 +60,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to subscribe', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp signin', KlickTippSigninNode);
 };

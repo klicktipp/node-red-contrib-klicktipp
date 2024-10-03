@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippTagCreateNode - A Node-RED node to create a new manual tag.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -36,46 +36,45 @@ module.exports = function(RED) {
 	function KlickTippTagCreateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const { name = '', text = '' } = msg?.payload;
-			
+
 			if (!name) {
 				handleError(node, msg, 'Missing tag name');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const data = {
 					name,
 				};
-				
+
 				if (text) {
 					data.text = text;
 				}
-				
+
 				const response = await makeRequest(
 					'/tag',
 					'POST',
 					qs.stringify(data),
 					getSessionHeaders(msg),
 				);
-				
-				// Handle the response using handleResponse
+
 				handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
 					msg.payload = response.data;
 				});
 			} catch (error) {
 				handleError(node, msg, 'Failed to create tag', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp tag create', KlickTippTagCreateNode);
 };

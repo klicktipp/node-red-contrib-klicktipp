@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSubscriberSearchNode - A Node-RED node to search for a subscriber by email and return the subscriber ID.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -34,19 +34,19 @@ module.exports = function(RED) {
 	function KlickTippSubscriberSearchNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			const email = msg?.payload?.email || '';
-			
+
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			if (!email) {
 				handleError(node, msg, 'Missing email');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/search',
@@ -54,7 +54,7 @@ module.exports = function(RED) {
 					qs.stringify({ email }),
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -68,10 +68,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to search for subscriber', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp subscriber search', KlickTippSubscriberSearchNode);
 };

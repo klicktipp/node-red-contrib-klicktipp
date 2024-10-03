@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSubscriberTaggedNode - A Node-RED node to retrieve all active subscribers tagged with a specific tag ID.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -34,19 +34,19 @@ module.exports = function(RED) {
 	function KlickTippSubscriberTaggedNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const tagId = msg?.payload?.tagId || '';
-			
+
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/tagged',
@@ -54,7 +54,7 @@ module.exports = function(RED) {
 					qs.stringify({ tagid: tagId }),
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -68,10 +68,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to retrieve tagged subscribers', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp subscriber tagged', KlickTippSubscriberTaggedNode);
 };

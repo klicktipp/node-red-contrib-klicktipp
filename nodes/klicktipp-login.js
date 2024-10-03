@@ -1,10 +1,10 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
-	
+
 	/**
 	 * KlickTippLoginNode - A Node-RED node for logging in to the KlickTipp API
 	 *
@@ -32,35 +32,35 @@ module.exports = function(RED) {
 		const node = this;
 		//Get the config node
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		node.on('input', async function (msg) {
 			const { username, password } = klicktippConfig || {};
-			
+
 			if (!username || !password) {
 				handleError(node, msg, 'Missing email or password');
 				msg.payload = { success: false };
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest('/account/login', 'POST', { username, password });
-				
+
 				handleResponse(node, msg, response, 'Logged in', 'Login failed', (response) => {
 					msg.klicktipp = {
 						sessionId: response.data.sessid,
 						sessionName: response.data.session_name,
 					};
-					
+
 					msg.payload = { success: true };
 				});
 			} catch (error) {
 				handleError(node, msg, 'Login failed', error.message);
 				msg.payload = { success: false };
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp login', KlickTippLoginNode);
 };

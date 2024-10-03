@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
-	
+
 	/**
 	 * KlickTippLogoutNode - A Node-RED node for logging out from the KlickTipp API.
 	 *
@@ -34,25 +34,25 @@ module.exports = function(RED) {
 	function KlickTippLogoutNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest('/account/logout', 'POST', {}, getSessionHeaders(msg));
-				
+
 				handleResponse(node, msg, response, 'Logged out', 'Logout failed', () => {
 					msg.payload = { success: true };
 				});
 			} catch (error) {
 				handleError(node, msg, 'Logout failed', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp logout', KlickTippLogoutNode);
 };

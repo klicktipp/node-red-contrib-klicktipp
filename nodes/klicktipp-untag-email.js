@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippUntagEmailNode - A Node-RED node to untag an email.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -36,18 +36,18 @@ module.exports = function(RED) {
 	function KlickTippUntagEmailNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const { email = '', tagId = '' } = msg?.payload;
-			
+
 			if (!email || !tagId) {
 				return handleError(node, msg, 'Missing email or tag ID', 'Invalid input: email or tagId');
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/untag',
@@ -55,7 +55,7 @@ module.exports = function(RED) {
 					qs.stringify({ email, tagid: tagId }),
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -69,10 +69,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to untag email', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp untag email', KlickTippUntagEmailNode);
 };

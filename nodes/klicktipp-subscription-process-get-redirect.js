@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSubscriptionProcessRedirectNode - A Node-RED node to get the redirection URL for a given
 	 * subscription process and email. This node requires valid session credentials (sessionId and sessionName)
@@ -37,32 +37,32 @@ module.exports = function(RED) {
 	function KlickTippSubscriptionProcessRedirectNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const { email = '', listId = '' } = msg?.payload;
-			
+
 			if (!listId || !email) {
 				handleError(node, msg, 'Missing list ID or email');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const data = {
 					listid: listId,
 					email: email,
 				};
-				
+
 				const response = await makeRequest(
 					'/list/redirect',
 					'POST',
 					qs.stringify(data),
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -76,11 +76,11 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to fetch redirection URL', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType(
 		'klicktipp subscription process redirect',
 		KlickTippSubscriptionProcessRedirectNode,

@@ -1,12 +1,12 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
-	
+
 	/**
 	 * KlickTippTagGetNode - A Node-RED node to get the definition of a specific tag.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -34,19 +34,19 @@ module.exports = function(RED) {
 	function KlickTippTagGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			const tagId = msg?.payload?.tagId || '';
-			
+
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					`/tag/${encodeURIComponent(tagId)}`,
@@ -54,7 +54,7 @@ module.exports = function(RED) {
 					{},
 					getSessionHeaders(msg),
 				);
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -68,10 +68,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to fetch tag definition', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp tag get', KlickTippTagGetNode);
 };

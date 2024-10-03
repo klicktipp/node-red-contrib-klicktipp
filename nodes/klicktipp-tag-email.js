@@ -1,13 +1,13 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const validateSession = require('../utils/validateSession');
 	const getSessionHeaders = require('../utils/getSessionHeaders');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippTagEmailNode - A Node-RED node to tag an email with one or more tags.
 	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
@@ -36,23 +36,23 @@ module.exports = function(RED) {
 	function KlickTippTagEmailNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-			
+
 			let { email = '', tagIds = [] } = msg?.payload;
-			
+
 			if (!email || !Array.isArray(tagIds)) {
 				return handleError(node, msg, 'Missing email or tag IDs', 'Invalid input: email or tagIds');
 			}
-			
+
 			// Ensure tagIds is an array, even if a single tagId is provided
 			if (typeof tagIds === 'number') {
 				tagIds = [tagIds];
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/tag',
@@ -63,7 +63,7 @@ module.exports = function(RED) {
 					}),
 					getSessionHeaders(msg),
 				);
-				
+
 				// Handle the response
 				handleResponse(
 					node,
@@ -78,10 +78,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to tag email', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp tag email', KlickTippTagEmailNode);
 };

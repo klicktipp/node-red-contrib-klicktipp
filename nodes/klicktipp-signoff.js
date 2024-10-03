@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function(RED) {
+module.exports = function (RED) {
 	const handleResponse = require('../utils/handleResponse');
 	const handleError = require('../utils/handleError');
 	const makeRequest = require('../utils/makeRequest');
 	const qs = require('qs');
-	
+
 	/**
 	 * KlickTippSignoffNode - A Node-RED node to unsubscribe an email using an API key.
 	 *
@@ -29,22 +29,22 @@ module.exports = function(RED) {
 	function KlickTippSignoffNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		node.on('input', async function (msg) {
 			const { apiKey, email = '' } = msg.payload;
-			
+
 			if (!apiKey || !email) {
 				handleError(node, msg, 'Missing API key or email');
 				return node.send(msg);
 			}
-			
+
 			try {
 				const response = await makeRequest(
 					'/subscriber/signoff',
 					'POST',
 					qs.stringify({ apikey: apiKey, email }),
 				);
-				
+
 				// Handle the response using the handleResponse utility
 				handleResponse(
 					node,
@@ -59,10 +59,10 @@ module.exports = function(RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to unsubscribe email', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}
-	
+
 	RED.nodes.registerType('klicktipp signoff', KlickTippSignoffNode);
 };
