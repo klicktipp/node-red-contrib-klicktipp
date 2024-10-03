@@ -31,7 +31,7 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the unsubscription was successful.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
@@ -54,6 +54,8 @@
         <code>msg.payload.success = false</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
+
+
 
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp signoff', {

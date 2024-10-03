@@ -47,7 +47,8 @@
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - Will contain an <code>error</code> field with a string describing the error that occurred (e.g., "Missing API key or email/SMS number").</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+                <li><code>msg.error</code> - An error message describing what went wrong.</li>
             </ul>
         </dd>
     </dl>
@@ -61,7 +62,7 @@
         This node subscribes a user to KlickTipp using their API key, email, or SMS number. Either the <code>email</code> or <code>smsnumber</code> must be provided
         in <code>msg.payload</code>. The API key is also required for authentication. Optionally, you can provide <code>fields</code> to attach additional
         information to the subscriber. If the operation is successful, the output message will contain the response data with the redirection URL. On failure,
-        an error message will be returned in <code>msg.error</code>.
+        an error message will be returned in <code>msg.error</code> and <code>msg.payload</code> will contain <code>{ success: false }</code>.
     </p>
 </script>
 

@@ -40,8 +40,8 @@
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> will be <code>null</code>.</li>
-                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+                <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
             </ul>
         </dd>
     </dl>
@@ -54,7 +54,8 @@
     <p>
         This node fetches the definition of a specific tag from the KlickTipp API using the <code>tagId</code> provided in <code>msg.payload</code>.
         Session information (<code>sessionId</code> and <code>sessionName</code>) must be provided in <code>msg.klicktipp</code> for a successful API call.
-        On success, the fetched tag definition is returned in <code>msg.payload</code>. On failure, <code>msg.payload</code> will be <code>null</code> and an error message will be provided in <code>msg.error</code>.
+        On success, the fetched tag definition is returned in <code>msg.payload</code>. On failure, <code>msg.payload</code> will
+        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

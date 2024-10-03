@@ -34,14 +34,14 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - A boolean value indicating the tag deletion was successful (<code>true</code>).</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - A boolean value indicating the tag deletion was failed (<code>false</code>).</li>
-                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+                <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
             </ul>
         </dd>
     </dl>
@@ -54,8 +54,8 @@
     <p>
         This node deletes a manual tag from the KlickTipp system. It requires a valid session (<code>sessionId</code> and
         <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the <code>tagId</code> in <code>msg.payload</code>.
-        On success, it returns <code>msg.payload.success</code> as <code>true</code>. On failure, <code>msg.payload</code> will
-        be <code>null</code> and the error message will be stored in <code>msg.error</code>.
+        On success, it returns <code>msg.payload</code> as <code>{ success: true }</code>. On failure, <code>msg.payload</code> will
+        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

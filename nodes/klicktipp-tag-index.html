@@ -27,14 +27,14 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code>An array of all manual tags associated with the logged-in user.</li>
+                <li><code>msg.payload</code> - An array of all manual tags associated with the logged-in user.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> will be <code>null</code>.</li>
-                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+                <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
             </ul>
         </dd>
     </dl>
@@ -44,7 +44,12 @@
         <li><strong>Red (ring)</strong> - Failed to fetch the tags due to an error (e.g., API request failed or session invalid).</li>
     </ul>
     <h3>Details</h3>
-    <p>This node fetches all manual tags from the KlickTipp API. It requires session information (both <code>sessionId</code> and <code>sessionName</code>) to be passed in <code>msg.klicktipp</code> from a prior login. On success, it returns an array of manual tags in <code>msg.klicktipp.tagsList</code>.</p>
+    <p>
+    	This node fetches all manual tags from the KlickTipp API. It requires session information (both <code>sessionId</code>
+    	and <code>sessionName</code>) to be passed in <code>msg.klicktipp</code> from a prior login.
+    	On success, it returns an array of manual tags in <code>msg.klicktipp.tagsList</code>. On failure, <code>msg.payload</code> will
+        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+    </p>
 </script>
 
 <script type="text/javascript">

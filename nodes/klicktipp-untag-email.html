@@ -35,13 +35,13 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the email was successfully untagged.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: false</code>.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
                 <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing email or tag ID" or API error message).</li>
             </ul>
         </dd>
@@ -55,9 +55,9 @@
     <p>
         This node removes a tag from a subscriber in KlickTipp using their email and the tag ID. The email and tag ID must be provided in
         <code>msg.payload.email</code> and <code>msg.payload.tagId</code>, respectively. Valid session information (sessionId and sessionName)
-        must also be provided in <code>msg.klicktipp</code>. If the operation is successful, the output message will contain
-        <code>msg.payload.success = true</code>. On failure, <code>msg.payload.success</code> will be <code>false</code> and an error message
-        will be returned in <code>msg.error</code>.
+        must also be provided in <code>msg.klicktipp</code>. If the operation is successful, <code>msg.payload</code> will contain code>{ success: true }</code>.
+        On failure, <code>msg.payload</code> will
+        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

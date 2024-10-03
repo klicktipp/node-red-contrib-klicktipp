@@ -31,15 +31,15 @@
     </dl>
     <h3>Outputs</h3>
     <dl class="message-properties">
-        <dt>msg.payload<span class="property-type">object</span></dt>
         <dd>
             On success:
             <ul>
-                <li>An object representing the subscription process.</li>
+                <li><code>msg.payload</code> - An object representing the subscription process.</li>
             </ul>
             On failure:
             <ul>
-                <li><code>msg.error</code>: An error message indicating why the request failed.</li>
+            	<li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+                <li><code>msg.error</code> - An error message indicating why the request failed.</li>
             </ul>
         </dd>
     </dl>
@@ -49,7 +49,12 @@
         <li><strong>Red (ring)</strong> - Failed to fetch subscription processes due to an error.</li>
     </ul>
     <h3>Details</h3>
-    <p>This node fetches a list of all subscription processes (lists) available to the logged-in user via the KlickTipp API. Session information must be passed in <code>msg.klicktipp</code>, containing both <code>sessionId</code> and <code>sessionName</code>. Upon success, the output will contain an associative array, where the keys represent list IDs and the values are the corresponding subscription process names. If the request fails, the error message will be added to <code>msg.error</code>.</p>
+    <p>
+		This node fetches a list of all subscription processes (lists) available to the logged-in user via the KlickTipp API.
+		Session information must be passed in <code>msg.klicktipp</code>, containing both <code>sessionId</code> and <code>sessionName</code>.
+		Upon success, the output will contain an associative array, where the keys represent list IDs and the values are the corresponding subscription process names.
+		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+    </p>
 </script>
 
 <script type="text/javascript">

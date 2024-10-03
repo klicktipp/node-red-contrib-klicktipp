@@ -41,8 +41,8 @@
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> will be <code>null</code>.</li>
-                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+                <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
             </ul>
         </dd>
     </dl>
@@ -57,7 +57,7 @@
         <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the tag name is required in
         <code>msg.payload.name</code>. Optionally, a description can be added using <code>msg.payload.text</code>.
         On success, it returns the ID of the newly created tag in <code>msg.payload</code>. On failure, <code>msg.payload</code>
-        will be <code>null</code>, and the error message will be stored in <code>msg.error</code>.
+        will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

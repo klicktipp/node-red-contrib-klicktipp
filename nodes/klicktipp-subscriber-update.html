@@ -37,13 +37,13 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the subscriber was successfully updated.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - Will be <code>null</code>.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
                 <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing subscriber ID" or API error message).</li>
             </ul>
         </dd>
@@ -59,8 +59,8 @@
         <code>msg.payload.subscriberId</code>. You can update various subscriber details, such as their fields, email, or SMS number.
         If no data is provided, the node will not perform the update. Valid session information, including <code>sessionId</code>
         and <code>sessionName</code>, must be provided in <code>msg.klicktipp</code>. If the operation is successful, the output message
-        will contain <code>msg.payload.success = true</code>. On failure, <code>msg.payload</code> will be <code>null</code>, and an error
-        message will be returned in <code>msg.error</code>.
+        will contain <code>msg.payload.success = true</code>. On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>,
+        and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

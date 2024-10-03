@@ -34,13 +34,13 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the subscriber was successfully deleted.</li>
+                li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: false</code>.</li>
+                li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
                 <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing subscriber ID" or API error message).</li>
             </ul>
         </dd>

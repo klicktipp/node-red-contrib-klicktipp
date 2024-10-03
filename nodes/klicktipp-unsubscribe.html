@@ -34,13 +34,13 @@
         <dt>On success:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the unsubscription was successful.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
             </ul>
         </dd>
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - An object containing <code>success: false</code>.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
                 <li><code>msg.error</code> - A string describing the error that occurred.</li>
             </ul>
         </dd>
@@ -55,8 +55,8 @@
         This node unsubscribes a user from a KlickTipp list by making a POST request to the KlickTipp API.
         The email to unsubscribe must be provided in <code>msg.payload.email</code>. Valid session information (sessionId and sessionName)
         from a prior login request must also be provided in <code>msg.klicktipp</code>. If the operation is successful,
-        the output message will contain <code>msg.payload.success = true</code>. On failure, <code>msg.payload.success</code> will be <code>false</code>
-        and the <code>msg.error</code> will describe the reason.
+        the output message will contain <code>msg.payload.success = true</code>. On failure, <code>msg.payload</code> will
+        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

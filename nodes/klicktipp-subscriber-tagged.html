@@ -42,7 +42,7 @@
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> will be <code>null</code>.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
                 <li><code>msg.error</code> - An error message describing the reason for failure (e.g., missing tag ID, API error).</li>
             </ul>
         </dd>
@@ -60,6 +60,7 @@
         <code>msg.payload.tagId</code>. Additionally, session information must be passed in <code>msg.klicktipp</code> containing
         <code>sessionId</code> and <code>sessionName</code> from a previous successful login.
         The node will send a POST request to the <code>/subscriber/tagged</code> endpoint and return the list of subscribers.
+        On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 

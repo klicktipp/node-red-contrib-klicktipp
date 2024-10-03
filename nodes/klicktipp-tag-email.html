@@ -41,7 +41,7 @@
         <dt>On failure:</dt>
         <dd>
             <ul>
-                <li><code>msg.payload</code> - Will be <code>null</code>.</li>
+                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
                 <li><code>msg.error</code> - A string describing the error that occurred (e.g., "No valid tag IDs provided" or API error message).</li>
             </ul>
         </dd>
@@ -55,9 +55,9 @@
     <p>
         This node tags a subscriber in KlickTipp using their email and a list of tag IDs. The email and tag IDs must be provided in
         <code>msg.payload.email</code> and <code>msg.payload.tagIds</code>, respectively. If only a single tag ID is provided, it will be converted
-        into an array. If no valid tag IDs are provided, the operation will fail, and an error message will be returned in <code>msg.error</code>.
-        Valid session information (sessionId and sessionName) must also be provided in <code>msg.klicktipp</code>. If the operation is successful,
-        the output message will contain the response data from the KlickTipp API in <code>msg.payload</code>.
+        into an array. Valid session information (sessionId and sessionName) must also be provided in <code>msg.klicktipp</code>. If the operation is successful,
+        the output message will contain the response data from the KlickTipp API in <code>msg.payload</code>. On failure, <code>msg.payload</code> will
+        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
     </p>
 </script>
 
