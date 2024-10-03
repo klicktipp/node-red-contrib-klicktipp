@@ -38,7 +38,6 @@ module.exports = function (RED) {
 
 			if (!username || !password) {
 				handleError(node, msg, 'Missing email or password');
-				msg.payload = { success: false };
 				return node.send(msg);
 			}
 
@@ -55,7 +54,6 @@ module.exports = function (RED) {
 				});
 			} catch (error) {
 				handleError(node, msg, 'Login failed', error.message);
-				msg.payload = { success: false };
 			}
 
 			node.send(msg);
