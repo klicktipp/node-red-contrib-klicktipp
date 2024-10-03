@@ -18,7 +18,6 @@
     "type": "git",
     "url": "https://github.com/klicktipp/node-red-contrib-klicktipp"
   },
-  "main": "klicktipp.js",
   "scripts": {
     "format": "prettier 'utils/**/*.js' 'nodes/**/*.js' '.prettierrc.js' --write"
   },
