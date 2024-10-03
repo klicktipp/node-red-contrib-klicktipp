@@ -3,9 +3,10 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/validateSession');
 const handleError = require('./utils/handleError');
 const handleResponse = require('./utils/handleResponse');
-const prepareSubscriptionData = require('./utils/prepareSubscriptionData');
+const prepareSubscriptionData = require('./utils/prepareCreateSubscriberData');
 const getSessionHeaders = require('./utils/getSessionHeaders');
 const prepareApiKeySubscriptionData = require('./utils/prepareApiKeySubscriptionData');
+const prepareUpdateSubscriberData = require('./utils/prepareUpdateSubscriberData');
 
 module.exports = function (RED) {
 	'use strict';
@@ -222,21 +223,18 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const listId = msg?.payload?.listId || '';
-
-			// Validate session
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
 
-			// Validate listId
+			const listId = msg?.payload?.listId || '';
+
 			if (!listId) {
 				handleError(node, msg, 'Missing list ID');
 				return node.send(msg);
 			}
 
 			try {
-				// Make the API request to get the specific subscription process by its list ID
 				const response = await makeRequest(
 					`/list/${encodeURIComponent(listId)}`,
 					'GET',
@@ -244,7 +242,6 @@ module.exports = function (RED) {
 					getSessionHeaders(msg),
 				);
 
-				// Use handleResponse for success and failure handling
 				handleResponse(
 					node,
 					msg,
@@ -296,16 +293,12 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			// Extract listId and email from msg.payload
-			const listId = msg?.payload?.listId || '';
-			const email = msg?.payload?.email || '';
-
-			// Validate session
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
 
-			// Validate listId and email
+			const { email = '', listId = '' } = msg?.payload;
+
 			if (!listId || !email) {
 				handleError(node, msg, 'Missing list ID or email');
 				return node.send(msg);
@@ -317,13 +310,10 @@ module.exports = function (RED) {
 					email: email,
 				};
 
-				const serializedData = qs.stringify(data);
-
-				// Make the API request
 				const response = await makeRequest(
 					'/list/redirect',
 					'POST',
-					serializedData,
+					qs.stringify(data),
 					getSessionHeaders(msg),
 				);
 
@@ -377,7 +367,6 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			// Validate session
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
@@ -439,6 +428,7 @@ module.exports = function (RED) {
 			}
 
 			const tagId = msg?.payload?.tagId || '';
+
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');
 				return node.send(msg);
@@ -506,8 +496,7 @@ module.exports = function (RED) {
 				return node.send(msg);
 			}
 
-			const name = msg?.payload?.name || '';
-			const text = msg?.payload?.text || '';
+			const { name = '', text = '' } = msg?.payload;
 
 			if (!name) {
 				handleError(node, msg, 'Missing tag name');
@@ -517,13 +506,18 @@ module.exports = function (RED) {
 			try {
 				const data = {
 					name,
-					...(text && { text }),
 				};
 
-				const serializedData = qs.stringify(data);
+				if (text) {
+					data.text = text;
+				}
 
-				// Make the API request to create a new tag
-				const response = await makeRequest('/tag', 'POST', serializedData, getSessionHeaders(msg));
+				const response = await makeRequest(
+					'/tag',
+					'POST',
+					qs.stringify(data),
+					getSessionHeaders(msg),
+				);
 
 				// Handle the response using handleResponse
 				handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
@@ -570,11 +564,8 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const tagId = msg?.payload?.tagId || '';
-			const name = msg?.payload?.name || '';
-			const text = msg?.payload?.text || '';
+			const { tagId, name, text } = msg.payload;
 
-			// Validate session
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
@@ -590,12 +581,10 @@ module.exports = function (RED) {
 					...(text && { text }),
 				};
 
-				const serializedData = qs.stringify(data);
-
 				const response = await makeRequest(
 					`/tag/${encodeURIComponent(tagId)}`,
 					'PUT',
-					serializedData,
+					qs.stringify(data),
 					getSessionHeaders(msg),
 				);
 
@@ -641,11 +630,11 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const tagId = msg?.payload?.tagId || '';
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const tagId = msg?.payload?.tagId || '';
 
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');
@@ -759,11 +748,11 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const { email = '', smsNumber = '', listId = 0, tagId = 0, fields = {} } = msg.payload;
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const { email = '', smsNumber = '', listId = 0, tagId = 0, fields = {} } = msg.payload;
 
 			if (!email) {
 				handleError(node, msg, 'Missing email or SMS number');
@@ -787,7 +776,7 @@ module.exports = function (RED) {
 					response,
 					'Subscribed successfully',
 					'Failed to subscribe',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);
@@ -899,12 +888,12 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const email = msg?.payload?.email || '';
-			let tagIds = msg?.payload?.tagIds || [];
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			let { email = '', tagIds = [] } = msg?.payload;
+
 			if (!email || !Array.isArray(tagIds)) {
 				return handleError(node, msg, 'Missing email or tag IDs', 'Invalid input: email or tagIds');
 			}
@@ -932,7 +921,7 @@ module.exports = function (RED) {
 					response,
 					'Email tagged successfully',
 					'Failed to tag email',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);
@@ -975,13 +964,12 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const email = msg?.payload?.email || '';
-			const tagId = msg?.payload?.tagId || '';
-
-			// Validate session and input data
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const { email = '', tagId = '' } = msg?.payload;
+
 			if (!email || !tagId) {
 				return handleError(node, msg, 'Missing email or tag ID', 'Invalid input: email or tagId');
 			}
@@ -1044,12 +1032,12 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const email = msg?.payload?.email || '';
-			const autoresponder = msg?.payload?.autoresponder || '';
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const { email = '', autoresponder = '' } = msg?.payload;
+
 			if (!email || !autoresponder) {
 				return handleError(node, msg, 'Missing email or autoresponder ID', 'Invalid input');
 			}
@@ -1122,7 +1110,7 @@ module.exports = function (RED) {
 					response,
 					'Fetched subscribers successfully',
 					'Failed to fetch subscribers',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);
@@ -1164,11 +1152,11 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const subscriberId = msg?.payload?.subscriberId || '';
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const subscriberId = msg?.payload?.subscriberId || '';
 
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');
@@ -1190,7 +1178,7 @@ module.exports = function (RED) {
 					response,
 					'Fetched subscriber information',
 					'Failed to fetch subscriber information',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);
@@ -1299,11 +1287,11 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const tagId = msg?.payload?.tagId || '';
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const tagId = msg?.payload?.tagId || '';
 
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');
@@ -1311,25 +1299,20 @@ module.exports = function (RED) {
 			}
 
 			try {
-				const data = { tagid: tagId };
-				const serializedData = qs.stringify(data);
-
-				// Make the API request to retrieve subscribers tagged with the given tag
 				const response = await makeRequest(
 					'/subscriber/tagged',
 					'POST',
-					serializedData,
+					qs.stringify({ tagid: tagId }),
 					getSessionHeaders(msg),
 				);
 
-				// Handle the response using handleResponse utility
 				handleResponse(
 					node,
 					msg,
 					response,
 					'Subscribers tagged retrieved',
 					'Failed to retrieve tagged subscribers',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);
@@ -1374,6 +1357,10 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
+			if (!validateSession(msg, node)) {
+				return node.send(msg);
+			}
+
 			const {
 				subscriberId = '',
 				fields = {},
@@ -1381,22 +1368,14 @@ module.exports = function (RED) {
 				newSmsNumber = '',
 			} = msg?.payload || {};
 
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');
 				return node.send(msg);
 			}
 
-			try {
-				const data = {
-					...(Object.keys(fields).length > 0 && { fields }),
-					...(newEmail && { newemail: newEmail }),
-					...(newSmsNumber && { newsmsnumber: newSmsNumber }),
-				};
+			const data = prepareUpdateSubscriberData(newEmail, newSmsNumber, fields);
 
+			try {
 				const response = await makeRequest(
 					`/subscriber/${encodeURIComponent(subscriberId)}`,
 					'PUT',
@@ -1452,11 +1431,11 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const subscriberId = msg?.payload?.subscriberId || '';
-
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
+
+			const subscriberId = msg?.payload?.subscriberId || '';
 
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');
@@ -1526,19 +1505,18 @@ module.exports = function (RED) {
 				return node.send(msg);
 			}
 
-			try {
-				const data = prepareApiKeySubscriptionData({ apiKey, email, smsNumber, fields });
+			const data = prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields);
 
+			try {
 				const response = await makeRequest('/subscriber/signin', 'POST', qs.stringify(data));
 
-				// Handle response using handleResponse utility
 				handleResponse(
 					node,
 					msg,
 					response,
 					'Subscription successful',
 					'Failed to subscribe',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);

@@ -1,18 +1,25 @@
 const validContactFieldList = require('../constants/validContactFieldList');
 
-function prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields) {
+function prepareCreateSubscriberData(email, smsNumber = '', listId = 0, tagId = 0, fields = {}) {
 	// Filter fields to include only valid keys
 	const filteredFields = Object.fromEntries(
 		Object.entries(fields).filter(([key]) => validContactFieldList.includes(key)),
 	);
 
 	const data = {
-		apikey: apiKey,
-		email,
+		email: email,
 	};
 
 	if (smsNumber) {
 		data.smsnumber = smsNumber;
+	}
+
+	if (listId) {
+		data.listid = listId;
+	}
+
+	if (tagId) {
+		data.tagid = tagId;
 	}
 
 	if (filteredFields) {
@@ -22,4 +29,4 @@ function prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields) {
 	return data;
 }
 
-module.exports = prepareApiKeySubscriptionData;
+module.exports = prepareCreateSubscriberData;
