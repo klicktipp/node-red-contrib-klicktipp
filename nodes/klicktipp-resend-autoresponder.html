@@ -1,0 +1,79 @@
+<script type="text/x-red" data-template-name="klicktipp resend autoresponder">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp resend autoresponder">
+    <p>Resends an autoresponder to a subscriber (identified by their email) in KlickTipp. This node requires valid session information to perform the action.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>email</code> - (Required) The email address of the subscriber to resend the autoresponder to.</li>
+                <li><code>autoresponder</code> - (Required) The ID of the autoresponder to be resent.</li>
+            </ul>
+        </dd>
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>On success:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the autoresponder was successfully resent.</li>
+            </ul>
+        </dd>
+        <dt>On failure:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - An object containing <code>success: false</code>.</li>
+                <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing email or autoresponder ID" or API error message).</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - The autoresponder was resent successfully.</li>
+        <li><strong>Red (ring)</strong> - The autoresponder resending process failed (e.g., missing email, autoresponder ID, or API error).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>
+        This node resends an autoresponder to a subscriber in KlickTipp using their email and the autoresponder ID. The email and autoresponder ID must be provided in
+        <code>msg.payload.email</code> and <code>msg.payload.autoresponder</code>, respectively. Valid session information (sessionId and sessionName)
+        must also be provided in <code>msg.klicktipp</code>. If the operation is successful, the output message will contain
+        <code>msg.payload.success = true</code>. On failure, <code>msg.payload.success</code> will be <code>false</code> and an error message
+        will be returned in <code>msg.error</code>.
+    </p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp resend autoresponder', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Resend Autoresponder";
+		}
+	});
+</script>

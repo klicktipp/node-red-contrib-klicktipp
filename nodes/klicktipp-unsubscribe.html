@@ -1,0 +1,78 @@
+<script type="text/x-red" data-template-name="klicktipp unsubscribe">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp unsubscribe">
+    <p>Unsubscribes a user from a KlickTipp list using their email address. This node requires valid session information to perform the action.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>email</code> - (Required) The email address of the user to unsubscribe.</li>
+            </ul>
+        </dd>
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>On success:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the unsubscription was successful.</li>
+            </ul>
+        </dd>
+        <dt>On failure:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - An object containing <code>success: false</code>.</li>
+                <li><code>msg.error</code> - A string describing the error that occurred.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - The user was unsubscribed successfully.</li>
+        <li><strong>Red (ring)</strong> - The unsubscription failed (e.g., missing email or API error).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>
+        This node unsubscribes a user from a KlickTipp list by making a POST request to the KlickTipp API.
+        The email to unsubscribe must be provided in <code>msg.payload.email</code>. Valid session information (sessionId and sessionName)
+        from a prior login request must also be provided in <code>msg.klicktipp</code>. If the operation is successful,
+        the output message will contain <code>msg.payload.success = true</code>. On failure, <code>msg.payload.success</code> will be <code>false</code>
+        and the <code>msg.error</code> will describe the reason.
+    </p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp unsubscribe', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Unsubscribe";
+		}
+	});
+</script>

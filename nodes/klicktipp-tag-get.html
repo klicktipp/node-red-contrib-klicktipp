@@ -1,0 +1,76 @@
+<script type="text/x-red" data-template-name="klicktipp tag get">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp tag get">
+    <p>Fetches the definition of a specific tag from the KlickTipp API based on the provided tag ID.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+            </ul>
+        </dd>
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>tagId</code> - The ID of the tag to fetch.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>On success:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - The tag definition object retrieved from the API.</li>
+            </ul>
+        </dd>
+        <dt>On failure:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> will be <code>null</code>.</li>
+                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - Tag definition fetched successfully.</li>
+        <li><strong>Red (ring)</strong> - Failed to fetch tag definition (e.g., missing tag ID or API error).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>
+        This node fetches the definition of a specific tag from the KlickTipp API using the <code>tagId</code> provided in <code>msg.payload</code>.
+        Session information (<code>sessionId</code> and <code>sessionName</code>) must be provided in <code>msg.klicktipp</code> for a successful API call.
+        On success, the fetched tag definition is returned in <code>msg.payload</code>. On failure, <code>msg.payload</code> will be <code>null</code> and an error message will be provided in <code>msg.error</code>.
+    </p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag get', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Get";
+		}
+	});
+</script>

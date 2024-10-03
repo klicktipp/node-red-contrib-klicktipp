@@ -1,0 +1,71 @@
+<script type="text/x-red" data-template-name="klicktipp subscription process redirect">
+	<div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp subscription process redirect">
+	<p>Fetches the redirection URL for a specific subscription process in the KlickTipp API.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+            </ul>
+        </dd>
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>listId</code> - The ID of the subscription process (list) for which to retrieve the redirection URL.</li>
+                <li><code>email</code> - The email address associated with the subscription process.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            On success:
+            <ul>
+                <li><code>redirectionUrl</code> - The URL to which the subscriber will be redirected for the specified subscription process.</li>
+            </ul>
+            On failure:
+            <ul>
+                <li><code>error</code> - An error message describing what went wrong.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - Successfully fetched the redirection URL.</li>
+        <li><strong>Red (ring)</strong> - Failed to fetch the redirection URL due to an error (e.g., missing list ID or email).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>This node fetches the redirection URL for a specific subscription process (list) in the KlickTipp API. It requires the <code>sessionId</code> and <code>sessionName</code> from a successful login. Additionally, the <code>listId</code> (subscription process ID) and <code>email</code> must be provided in <code>msg.payload</code>.</p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp subscription process redirect', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: {type: "klicktipp-config", required: true},
+			name: {value: ""}
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Subscription Process Redirect";
+		}
+	});
+</script>

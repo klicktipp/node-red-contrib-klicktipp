@@ -1,0 +1,73 @@
+<script type="text/x-red" data-template-name="klicktipp signout">
+    <div class="form-row">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
+        <input type="text" id="node-input-apikey" placeholder="Enter your API key">
+    </div>
+    <div class="form-row">
+        <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+        <input type="text" id="node-input-email" placeholder="Enter email address">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp signout">
+    <p>Untags a subscriber in KlickTipp using their API key and email address. This node requires valid API credentials to perform the action.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>apiKey</code> - (Required) The API key for authentication.</li>
+                <li><code>email</code> - (Required) The email address of the subscriber to untag.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>On success:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - An object containing <code>success: true</code> if the untagging operation was successful.</li>
+            </ul>
+        </dd>
+        <dt>On failure:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - An object containing <code>success: false</code>.</li>
+                <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing API key or email" or API error).</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - Untagging operation was successful.</li>
+        <li><strong>Red (ring)</strong> - Untagging operation failed (e.g., missing API key, email, or API error).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>
+        This node untags a subscriber in KlickTipp using their API key and email address. The <code>apikey</code> and <code>email</code> must be provided
+        in <code>msg.payload</code>. If the operation is successful, the output message will contain <code>msg.payload.success = true</code>. On failure,
+        <code>msg.payload.success = false</code>, and an error message will be returned in <code>msg.error</code>.
+    </p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp signout', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			apikey: { value: "" },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Signout";
+		}
+	});
+</script>

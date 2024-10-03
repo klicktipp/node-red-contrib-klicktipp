@@ -1,0 +1,65 @@
+<script type="text/x-red" data-template-name="klicktipp tag index">
+	<div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp tag index">
+	<p>Fetches all manual tags associated with the logged-in user from the KlickTipp API.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>On success:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code>An array of all manual tags associated with the logged-in user.</li>
+            </ul>
+        </dd>
+        <dt>On failure:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> will be <code>null</code>.</li>
+                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - Tags were fetched successfully.</li>
+        <li><strong>Red (ring)</strong> - Failed to fetch the tags due to an error (e.g., API request failed or session invalid).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>This node fetches all manual tags from the KlickTipp API. It requires session information (both <code>sessionId</code> and <code>sessionName</code>) to be passed in <code>msg.klicktipp</code> from a prior login. On success, it returns an array of manual tags in <code>msg.klicktipp.tagsList</code>.</p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag index', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: {type: "klicktipp-config", required: true},
+			name: {value: ""}
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Index";
+		}
+	});
+</script>

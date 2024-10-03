@@ -1,0 +1,80 @@
+<script type="text/x-red" data-template-name="klicktipp tag update">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp tag update">
+    <p>Updates an existing manual tag in the KlickTipp API. Requires the user to provide the tag ID, and optionally the new name or description for the tag.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+            </ul>
+        </dd>
+        <dt>msg.payload <span class="property-type">object</span></dt>
+        <dd>
+            An object that must contain:
+            <ul>
+                <li><code>tagId</code> - The ID of the tag to update (required).</li>
+                <li><code>name</code> - The new name for the tag (optional).</li>
+                <li><code>text</code> - The new description for the tag (optional).</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>On success:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - A boolean value indicating the tag update was successful (<code>true</code>).</li>
+            </ul>
+        </dd>
+        <dt>On failure:</dt>
+        <dd>
+            <ul>
+                <li><code>msg.payload</code> - A boolean value indicating the tag update was failed (<code>false</code>).</li>
+                <li><code>msg.error</code> will contain an error message describing what went wrong.</li>
+            </ul>
+        </dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - The tag was successfully updated.</li>
+        <li><strong>Red (ring)</strong> - The tag update failed (e.g., missing tag ID or API error).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>
+        This node updates an existing manual tag in the KlickTipp system. It requires a valid session (<code>sessionId</code> and
+        <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the <code>tagId</code> in <code>msg.payload</code>.
+        The <code>name</code> and <code>text</code> fields are optional and can be provided to update the tag's name and description.
+        On success, it returns <code>msg.payload.success</code> as <code>true</code>. On failure, <code>msg.payload</code> will be
+        <code>null</code> and the error message will be stored in <code>msg.error</code>.
+    </p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp tag update', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Tag Update";
+		}
+	});
+</script>

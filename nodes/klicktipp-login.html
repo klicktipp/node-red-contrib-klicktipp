@@ -1,0 +1,52 @@
+<script type="text/x-red" data-template-name="klicktipp login">
+    <div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-user"></i><span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i><span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp login">
+    <p>Logs into the KlickTipp API and retrieves session information required for other API interactions.</p>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>msg.klicktipp <span class="property-type">object</span></dt>
+        <dd>
+            An object containing session information returned after a successful login:
+            <ul>
+                <li><code>sessionId</code> - The session ID required for further API interactions.</li>
+                <li><code>sessionName</code> - The session name (cookie) to be used in subsequent requests.</li>
+            </ul>
+        </dd>
+        <dt>msg.error<span class="property-type">string</span></dt>
+        <dd>An error message if the login fails (e.g., due to missing username or password).</dd>
+    </dl>
+    <h3>Node Status</h3>
+    <ul>
+        <li><strong>Green (dot)</strong> - Logged in successfully, and the session information is available.</li>
+        <li><strong>Red (ring)</strong> - Login failed due to an error (e.g., missing credentials or invalid API response).</li>
+    </ul>
+    <h3>Details</h3>
+    <p>This node requires the <strong>KlickTipp Config</strong> node to be configured with a valid username and password.</p>
+    <p>The session information (session ID and session name) is stored in <code>msg.klicktipp</code> and can be used by other KlickTipp nodes in the flow. If the login fails, an error message will be returned in <code>msg.error</code>.</p>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp login', {
+		category: 'KlickTipp',
+		color: "#a6bbcf",
+		defaults: {
+			klicktipp: { type: "klicktipp-config", required: true },
+			name: { value: "" }
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: "klicktipp.png",
+		label: function () {
+			return this.name || "KlickTipp Login";
+		}
+	});
+</script>
