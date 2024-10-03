@@ -1,5 +1,5 @@
 {
-  "name": "node-red-klicktipp",
+  "name": "@klicktipp/node-red-contrib-klicktipp",
   "version": "1.0.0",
   "description": "KlickTipp API integration node for Node-RED",
   "keywords": [
@@ -9,14 +9,14 @@
     "api"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/klicktipp/node-red-contrib-klicktipp#readme",
   "author": {
     "name": "",
     "email": ""
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/klicktipp/node-red-contrib-klicktipp"
   },
   "main": "klicktipp.js",
   "scripts": {
