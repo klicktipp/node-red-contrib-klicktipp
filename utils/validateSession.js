@@ -10,9 +10,9 @@ const handleError = require('./handleError');
 function validateSession(msg, node) {
 	if (!msg?.klicktipp?.sessionId || !msg?.klicktipp?.sessionName) {
 		handleError(node, msg, 'Missing session data', 'Session ID or session name is missing');
-		return false; // Invalid session data
+		return false;
 	}
-	return true; // Valid session data
+	return true;
 }
 
 module.exports = validateSession;

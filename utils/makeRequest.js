@@ -21,7 +21,6 @@ async function makeRequest(
 	verifySSL = true,
 	defaultHeaders = {},
 ) {
-	//try {
 	// Build headers
 	const headers = {
 		'Content-Type': 'application/x-www-form-urlencoded',
