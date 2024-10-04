@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 	const prepareSubscriptionData = require('./utils/prepareCreateSubscriberData');
 	const qs = require('qs');
 
@@ -61,7 +61,7 @@ module.exports = function (RED) {
 					'/subscriber',
 					'POST',
 					qs.stringify(data),
-					getSessionHeaders(msg),
+					getSessionData(msg.sessionDataKey, node),
 				);
 
 				handleResponse(

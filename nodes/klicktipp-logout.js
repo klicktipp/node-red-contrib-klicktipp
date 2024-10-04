@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 
 	/**
 	 * KlickTippLogoutNode - A Node-RED node for logging out from the KlickTipp API.
@@ -41,13 +41,22 @@ module.exports = function (RED) {
 			}
 
 			try {
-				const response = await makeRequest('/account/logout', 'POST', {}, getSessionHeaders(msg));
+				const response = await makeRequest(
+					'/account/logout',
+					'POST',
+					{},
+					getSessionData(msg.sessionDataKey, node),
+				);
 
 				handleResponse(node, msg, response, 'Logged out', 'Logout failed', () => {
+					const flow = node.context().flow;
+					flow.set(msg.sessionDataKey, null);
+
 					msg.payload = { success: true };
 				});
 			} catch (error) {
 				handleError(node, msg, 'Logout failed', error.message);
+				console.log(error);
 			}
 
 			node.send(msg);

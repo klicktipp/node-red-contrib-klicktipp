@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 	const qs = require('qs');
 
 	/**
@@ -60,7 +60,7 @@ module.exports = function (RED) {
 					`/tag/${encodeURIComponent(tagId)}`,
 					'PUT',
 					qs.stringify(updatedTagData),
-					getSessionHeaders(msg),
+					getSessionData(msg.sessionDataKey, node),
 				);
 
 				handleResponse(node, msg, response, 'Tag updated', 'Failed to update tag', () => {

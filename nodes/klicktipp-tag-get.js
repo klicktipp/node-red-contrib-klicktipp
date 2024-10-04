@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 
 	/**
 	 * KlickTippTagGetNode - A Node-RED node to get the definition of a specific tag.
@@ -52,7 +52,7 @@ module.exports = function (RED) {
 					`/tag/${encodeURIComponent(tagId)}`,
 					'GET',
 					{},
-					getSessionHeaders(msg),
+					getSessionData(msg.sessionDataKey, node),
 				);
 
 				handleResponse(

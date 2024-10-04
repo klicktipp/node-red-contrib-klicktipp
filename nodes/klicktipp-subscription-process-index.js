@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 
 	/**
 	 * KlickTippSubscriptionProcessIndexNode - A Node-RED node to get all subscription processes (lists)
@@ -40,8 +40,16 @@ module.exports = function (RED) {
 				return node.send(msg);
 			}
 
+			const flow = node.context().flow;
+			const sessionData = flow.get(msg.sessionDataKey);
+
 			try {
-				const response = await makeRequest('/list', 'GET', {}, getSessionHeaders(msg));
+				const response = await makeRequest(
+					'/list',
+					'GET',
+					{},
+					getSessionData(msg.sessionDataKey, node),
+				);
 
 				handleResponse(
 					node,

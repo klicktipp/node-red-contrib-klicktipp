@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 
 	/**
 	 * KlickTippFieldIndexNode - A Node-RED node to retrieve all contact fields for the logged-in user.
@@ -38,7 +38,12 @@ module.exports = function (RED) {
 			}
 
 			try {
-				const response = await makeRequest('/field', 'GET', {}, getSessionHeaders(msg));
+				const response = await makeRequest(
+					'/field',
+					'GET',
+					{},
+					getSessionData(msg.sessionDataKey, node),
+				);
 
 				handleResponse(
 					node,
@@ -46,7 +51,7 @@ module.exports = function (RED) {
 					response,
 					'Fetched contact fields',
 					'Failed to fetch contact fields',
-					() => {
+					(response) => {
 						msg.payload = response.data;
 					},
 				);

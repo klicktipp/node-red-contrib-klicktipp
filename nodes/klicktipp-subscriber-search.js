@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 	const qs = require('qs');
 
 	/**
@@ -52,7 +52,7 @@ module.exports = function (RED) {
 					'/subscriber/search',
 					'POST',
 					qs.stringify({ email }),
-					getSessionHeaders(msg),
+					getSessionData(msg.sessionDataKey, node),
 				);
 
 				handleResponse(

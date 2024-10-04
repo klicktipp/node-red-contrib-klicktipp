@@ -1,14 +1,17 @@
 const handleError = require('./handleError');
+const getSessionData = require('./getSessionData');
 
 /**
- * Validates the KlickTipp session data within the provided message object.
+ * Validates the KlickTipp session data within the flow context.
  *
- * @param {Object} msg - The message object that contains the KlickTipp session data.
- * @param {Object} node - The Node-RED node, used to set the status.
- * @returns {boolean} - Returns `true` if the session data is valid (i.e., both `sessionId` and `sessionName` are present), otherwise returns `false` and sets an error status on the node using handleError.
+ * @param {Object} msg - The message object, used to pass error information.
+ * @param {Object} node - The Node-RED node instance, used to access the flow context.
+ * @returns {boolean} Returns `true` if the session data is valid, otherwise handles error and returns `false`.
  */
 function validateSession(msg, node) {
-	if (!msg?.klicktipp?.sessionId || !msg?.klicktipp?.sessionName) {
+	const sessionData = getSessionData(msg.sessionDataKey, node);
+
+	if (!sessionData) {
 		handleError(node, msg, 'Missing session data', 'Session ID or session name is missing');
 		return false;
 	}

@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 
 	/**
 	 * KlickTippSubscriberGetNode - A Node-RED node to retrieve information for a specific subscriber.
@@ -51,7 +51,7 @@ module.exports = function (RED) {
 					`/subscriber/${encodeURIComponent(subscriberId)}`,
 					'GET',
 					{},
-					getSessionHeaders(msg),
+					getSessionData(msg.sessionDataKey, node),
 				);
 
 				// Handle the response using handleResponse utility

@@ -5,7 +5,7 @@ module.exports = function (RED) {
 	const handleError = require('./utils/handleError');
 	const makeRequest = require('./utils/makeRequest');
 	const validateSession = require('./utils/validateSession');
-	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const getSessionData = require('./utils/getSessionData');
 
 	/**
 	 * KlickTippTagDeleteNode - A Node-RED node to delete a manual tag.
@@ -52,7 +52,7 @@ module.exports = function (RED) {
 					`/tag/${encodeURIComponent(tagId)}`,
 					'DELETE',
 					{},
-					getSessionHeaders(msg),
+					getSessionData(msg.sessionDataKey, node),
 				);
 
 				handleResponse(node, msg, response, 'Tag deleted', 'Failed to delete tag', () => {
