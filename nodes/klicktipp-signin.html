@@ -1,84 +1,84 @@
 <script type="text/x-red" data-template-name="klicktipp signin">
-    <div class="form-row">
-        <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
-        <input type="text" id="node-input-apikey" placeholder="Enter your API key">
-    </div>
-    <div class="form-row">
-        <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
-        <input type="text" id="node-input-email" placeholder="Enter email address">
-    </div>
-    <div class="form-row">
-        <label for="node-input-smsnumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
-        <input type="text" id="node-input-smsnumber" placeholder="Enter SMS number (optional)">
-    </div>
-    <div class="form-row">
-        <label for="node-input-fields"><i class="fa fa-list"></i> <span>Fields</span></label>
-        <input type="text" id="node-input-fields" placeholder="Enter additional fields (optional)">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-        <input type="text" id="node-input-name" placeholder="Enter node name">
-    </div>
+	<div class="form-row">
+	    <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
+	    <input type="text" id="node-input-apikey" placeholder="Enter your API key">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-smsnumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+	    <input type="text" id="node-input-smsnumber" placeholder="Enter SMS number (optional)">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Fields</span></label>
+	    <input type="text" id="node-input-fields" placeholder="Enter additional fields (optional)">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp signin">
-    <p>Signs a user into KlickTipp using an API key and either their email or SMS number. This node requires valid session information to perform the action.</p>
-    <h3>Inputs</h3>
-    <dl class="message-properties">
-        <dt>msg.payload <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>apiKey</code> - (Required) The API key for authentication.</li>
-                <li><code>email</code> - (Optional) The email address of the subscriber to sign in.</li>
-                <li><code>smsNumber</code> - (Optional) The SMS number of the subscriber to sign in (if email is not provided).</li>
-                <li><code>fields</code> - (Optional) Additional fields to attach to the subscriber (e.g., name, custom data).</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-        <dt>On success:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - An object containing the response data with the redirection URL.</li>
-            </ul>
-        </dd>
-        <dt>On failure:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-                <li><code>msg.error</code> - An error message describing what went wrong.</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Node Status</h3>
-    <ul>
-        <li><strong>Green (dot)</strong> - Subscription was successful.</li>
-        <li><strong>Red (ring)</strong> - Subscription failed (e.g., missing API key, missing email/SMS number, or API error).</li>
-    </ul>
-    <h3>Details</h3>
-    <p>
-        This node subscribes a user to KlickTipp using their API key, email, or SMS number. Either the <code>email</code> or <code>smsnumber</code> must be provided
-        in <code>msg.payload</code>. The API key is also required for authentication. Optionally, you can provide <code>fields</code> to attach additional
-        information to the subscriber. If the operation is successful, the output message will contain the response data with the redirection URL. On failure,
-        an error message will be returned in <code>msg.error</code> and <code>msg.payload</code> will contain <code>{ success: false }</code>.
-    </p>
+	<p>Signs a user into KlickTipp using an API key and either their email or SMS number. This node requires valid session information to perform the action.</p>
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>apiKey</code> - (Required) The API key for authentication.</li>
+	            <li><code>email</code> - (Optional) The email address of the subscriber to sign in.</li>
+	            <li><code>smsNumber</code> - (Optional) The SMS number of the subscriber to sign in (if email is not provided).</li>
+	            <li><code>fields</code> - (Optional) Additional fields to attach to the subscriber (e.g., name, custom data).</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	    <dt>On success:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - An object containing the response data with the redirection URL.</li>
+	        </ul>
+	    </dd>
+	    <dt>On failure:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+	            <li><code>msg.error</code> - An error message describing what went wrong.</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Subscription was successful.</li>
+	    <li><strong>Red (ring)</strong> - Subscription failed (e.g., missing API key, missing email/SMS number, or API error).</li>
+	</ul>
+	<h3>Details</h3>
+	<p>
+	    This node subscribes a user to KlickTipp using their API key, email, or SMS number. Either the <code>email</code> or <code>smsnumber</code> must be provided
+	    in <code>msg.payload</code>. The API key is also required for authentication. Optionally, you can provide <code>fields</code> to attach additional
+	    information to the subscriber. If the operation is successful, the output message will contain the response data with the redirection URL. On failure,
+	    an error message will be returned in <code>msg.error</code> and <code>msg.payload</code> will contain <code>{ success: false }</code>.
+	</p>
 </script>
 
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp signin', {
 		category: 'KlickTipp',
-		color: "#a6bbcf",
+		color: '#F2F2F2',
 		defaults: {
-			apikey: { value: "" },
-			name: { value: "" }
+			apikey: { value: '' },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: "klicktipp.png",
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || "KlickTipp Signin";
-		}
+			return this.name || 'KlickTipp Signin';
+		},
 	});
 </script>

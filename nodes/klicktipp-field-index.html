@@ -1,70 +1,70 @@
 <script type="text/x-red" data-template-name="klicktipp field index">
-    <div class="form-row">
-        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
-        <input type="text" id="node-input-klicktipp" data-i18n="config node">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-        <input type="text" id="node-input-name" placeholder="Enter node name">
-    </div>
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp field index">
-    <p>Retrieves all contact fields for the logged-in user in KlickTipp. This node requires the user to be logged in and have a valid session.</p>
-    <h3>Inputs</h3>
-    <dl class="message-properties">
-        <dt>msg.klicktipp <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-        <dt>On success:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - A list of contact fields retrieved from the API.</li>
-            </ul>
-        </dd>
-        <dt>On failure:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-                <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Node Status</h3>
-    <ul>
-        <li><strong>Green (dot)</strong> - Successfully fetched the contact fields.</li>
-        <li><strong>Red (ring)</strong> - Failed to fetch contact fields (e.g., invalid session data or API error).</li>
-    </ul>
-    <h3>Details</h3>
-    <p>
-        This node retrieves all contact fields associated with the user's KlickTipp account. It requires valid session information
-        (<code>sessionId</code> and <code>sessionName</code>) to be passed in <code>msg.klicktipp</code>. On success, the list of
-        contact fields is returned in <code>msg.payload</code>. On failure, <code>msg.payload</code> will be <code>{ success: false }</code>,
-        and the error message will be stored in <code>msg.error</code>.
-    </p>
+	<p>Retrieves all contact fields for the logged-in user in KlickTipp. This node requires the user to be logged in and have a valid session.</p>
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	    <dt>On success:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - A list of contact fields retrieved from the API.</li>
+	        </ul>
+	    </dd>
+	    <dt>On failure:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+	            <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Successfully fetched the contact fields.</li>
+	    <li><strong>Red (ring)</strong> - Failed to fetch contact fields (e.g., invalid session data or API error).</li>
+	</ul>
+	<h3>Details</h3>
+	<p>
+	    This node retrieves all contact fields associated with the user's KlickTipp account. It requires valid session information
+	    (<code>sessionId</code> and <code>sessionName</code>) to be passed in <code>msg.klicktipp</code>. On success, the list of
+	    contact fields is returned in <code>msg.payload</code>. On failure, <code>msg.payload</code> will be <code>{ success: false }</code>,
+	    and the error message will be stored in <code>msg.error</code>.
+	</p>
 </script>
 
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp field index', {
 		category: 'KlickTipp',
-		color: "#a6bbcf",
+		color: '#F2F2F2',
 		defaults: {
-			klicktipp: { type: "klicktipp-config", required: true },
-			name: { value: "" }
+			klicktipp: { type: 'klicktipp-config', required: true },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: "klicktipp.png",
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || "KlickTipp Field Index";
-		}
+			return this.name || 'KlickTipp Field Index';
+		},
 	});
 </script>

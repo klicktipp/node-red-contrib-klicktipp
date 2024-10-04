@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = function (RED) {
-	const handleResponse = require('../utils/handleResponse');
-	const handleError = require('../utils/handleError');
-	const makeRequest = require('../utils/makeRequest');
-	const validateSession = require('../utils/validateSession');
-	const getSessionHeaders = require('../utils/getSessionHeaders');
+	const handleResponse = require('./utils/handleResponse');
+	const handleError = require('./utils/handleError');
+	const makeRequest = require('./utils/makeRequest');
+	const validateSession = require('./utils/validateSession');
+	const getSessionHeaders = require('./utils/getSessionHeaders');
 	const qs = require('qs');
 
 	/**
@@ -53,7 +53,7 @@ module.exports = function (RED) {
 			try {
 				const updatedTagData = {
 					...(name && { name }), // Only include 'name' if it has a value
-					...(text && { text })  // Only include 'text' if it has a value
+					...(text && { text }), // Only include 'text' if it has a value
 				};
 
 				const response = await makeRequest(

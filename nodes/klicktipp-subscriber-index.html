@@ -1,70 +1,70 @@
 <script type="text/x-red" data-template-name="klicktipp subscriber index">
-    <div class="form-row">
-        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
-        <input type="text" id="node-input-klicktipp" data-i18n="config node">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-        <input type="text" id="node-input-name" placeholder="Enter node name">
-    </div>
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber index">
-    <p>Fetches a list of all active subscribers in KlickTipp. This node requires valid session information to perform the action.</p>
-    <h3>Inputs</h3>
-    <dl class="message-properties">
-        <dt>msg.klicktipp <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-        <dt>On success:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - An array containing the subscriber IDs of all active subscribers.</li>
-            </ul>
-        </dd>
-        <dt>On failure:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>>.</li>
-                <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Unknown error" or API error message).</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Node Status</h3>
-    <ul>
-        <li><strong>Green (dot)</strong> - Successfully fetched the subscriber list.</li>
-        <li><strong>Red (ring)</strong> - Failed to fetch subscribers (e.g., API error).</li>
-    </ul>
-    <h3>Details</h3>
-    <p>
-        This node retrieves a list of all active subscribers in KlickTipp. The node requires valid session information,
-        including the <code>sessionId</code> and <code>sessionName</code> in <code>msg.klicktipp</code>. If the request is successful,
-        the output message will contain an array of subscriber IDs in <code>msg.payload</code>. On failure, <code>msg.payload</code> will
-        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-    </p>
+	<p>Fetches a list of all active subscribers in KlickTipp. This node requires valid session information to perform the action.</p>
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	    <dt>On success:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - An array containing the subscriber IDs of all active subscribers.</li>
+	        </ul>
+	    </dd>
+	    <dt>On failure:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>>.</li>
+	            <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Unknown error" or API error message).</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Successfully fetched the subscriber list.</li>
+	    <li><strong>Red (ring)</strong> - Failed to fetch subscribers (e.g., API error).</li>
+	</ul>
+	<h3>Details</h3>
+	<p>
+	    This node retrieves a list of all active subscribers in KlickTipp. The node requires valid session information,
+	    including the <code>sessionId</code> and <code>sessionName</code> in <code>msg.klicktipp</code>. If the request is successful,
+	    the output message will contain an array of subscriber IDs in <code>msg.payload</code>. On failure, <code>msg.payload</code> will
+	    contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
 </script>
 
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber index', {
 		category: 'KlickTipp',
-		color: "#a6bbcf",
+		color: '#F2F2F2',
 		defaults: {
-			klicktipp: { type: "klicktipp-config", required: true },
-			name: { value: "" }
+			klicktipp: { type: 'klicktipp-config', required: true },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: "klicktipp.png",
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || "KlickTipp Subscriber Index";
-		}
+			return this.name || 'KlickTipp Subscriber Index';
+		},
 	});
 </script>

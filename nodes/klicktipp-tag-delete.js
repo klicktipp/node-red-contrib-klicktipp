@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = function (RED) {
-	const handleResponse = require('../utils/handleResponse');
-	const handleError = require('../utils/handleError');
-	const makeRequest = require('../utils/makeRequest');
-	const validateSession = require('../utils/validateSession');
-	const getSessionHeaders = require('../utils/getSessionHeaders');
+	const handleResponse = require('./utils/handleResponse');
+	const handleError = require('./utils/handleError');
+	const makeRequest = require('./utils/makeRequest');
+	const validateSession = require('./utils/validateSession');
+	const getSessionHeaders = require('./utils/getSessionHeaders');
 
 	/**
 	 * KlickTippTagDeleteNode - A Node-RED node to delete a manual tag.

@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = function (RED) {
-	const handleResponse = require('../utils/handleResponse');
-	const handleError = require('../utils/handleError');
-	const makeRequest = require('../utils/makeRequest');
-	const validateSession = require('../utils/validateSession');
-	const getSessionHeaders = require('../utils/getSessionHeaders');
+	const handleResponse = require('./utils/handleResponse');
+	const handleError = require('./utils/handleError');
+	const makeRequest = require('./utils/makeRequest');
+	const validateSession = require('./utils/validateSession');
+	const getSessionHeaders = require('./utils/getSessionHeaders');
 
 	/**
 	 * KlickTippSubscriptionProcessGetNode - A Node-RED node to get a specific subscription process

@@ -1,4 +1,4 @@
-const validFieldList = [
+const validContactFieldList = [
 	'fieldFirstName',
 	'fieldLastName',
 	'fieldCompanyName',
@@ -17,4 +17,4 @@ const validFieldList = [
 	'fieldLeadValue',
 ];
 
-module.exports = validFieldList;
+module.exports = validContactFieldList;

@@ -1,10 +1,10 @@
 'use strict';
 
 module.exports = function (RED) {
-	const handleResponse = require('../utils/handleResponse');
-	const handleError = require('../utils/handleError');
-	const makeRequest = require('../utils/makeRequest');
-	const prepareApiKeySubscriptionData = require('../utils/prepareApiKeySubscriptionData');
+	const handleResponse = require('./utils/handleResponse');
+	const handleError = require('./utils/handleError');
+	const makeRequest = require('./utils/makeRequest');
+	const prepareApiKeySubscriptionData = require('./utils/prepareApiKeySubscriptionData');
 	const qs = require('qs');
 
 	/**

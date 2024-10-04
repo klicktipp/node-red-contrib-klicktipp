@@ -1,12 +1,12 @@
 'use strict';
 
 module.exports = function (RED) {
-	const handleResponse = require('../utils/handleResponse');
-	const handleError = require('../utils/handleError');
-	const makeRequest = require('../utils/makeRequest');
-	const validateSession = require('../utils/validateSession');
-	const getSessionHeaders = require('../utils/getSessionHeaders');
-	const prepareSubscriptionData = require('../utils/prepareCreateSubscriberData');
+	const handleResponse = require('./utils/handleResponse');
+	const handleError = require('./utils/handleError');
+	const makeRequest = require('./utils/makeRequest');
+	const validateSession = require('./utils/validateSession');
+	const getSessionHeaders = require('./utils/getSessionHeaders');
+	const prepareSubscriptionData = require('./utils/prepareCreateSubscriberData');
 	const qs = require('qs');
 
 	/**

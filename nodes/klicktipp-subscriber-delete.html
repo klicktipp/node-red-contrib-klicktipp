@@ -1,78 +1,78 @@
 <script type="text/x-red" data-template-name="klicktipp subscriber delete">
-    <div class="form-row">
-        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
-        <input type="text" id="node-input-klicktipp" data-i18n="config node">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-        <input type="text" id="node-input-name" placeholder="Enter node name">
-    </div>
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber delete">
-    <p>Deletes a subscriber in KlickTipp by their subscriber ID. This node requires valid session information to perform the action.</p>
-    <h3>Inputs</h3>
-    <dl class="message-properties">
-        <dt>msg.payload <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>subscriberId</code> - (Required) The ID of the subscriber to be deleted.</li>
-            </ul>
-        </dd>
-        <dt>msg.klicktipp <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-        <dt>On success:</dt>
-        <dd>
-            <ul>
-                li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
-            </ul>
-        </dd>
-        <dt>On failure:</dt>
-        <dd>
-            <ul>
-                li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-                <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing subscriber ID" or API error message).</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Node Status</h3>
-    <ul>
-        <li><strong>Green (dot)</strong> - Subscriber was deleted successfully.</li>
-        <li><strong>Red (ring)</strong> - Failed to delete subscriber (e.g., missing subscriber ID or API error).</li>
-    </ul>
-    <h3>Details</h3>
-    <p>
-        This node deletes a subscriber in KlickTipp using their subscriber ID. The subscriber ID must be provided in
-        <code>msg.payload.subscriberId</code>. Valid session information, including <code>sessionId</code> and <code>sessionName</code>,
-        must also be provided in <code>msg.klicktipp</code>. If the subscriber is successfully deleted, the output message will contain
-        <code>msg.payload.success = true</code>. On failure, <code>msg.payload.success</code> will be <code>false</code>, and an error message
-        will be returned in <code>msg.error</code>.
-    </p>
+	<p>Deletes a subscriber in KlickTipp by their subscriber ID. This node requires valid session information to perform the action.</p>
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>subscriberId</code> - (Required) The ID of the subscriber to be deleted.</li>
+	        </ul>
+	    </dd>
+	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	    <dt>On success:</dt>
+	    <dd>
+	        <ul>
+	            li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
+	        </ul>
+	    </dd>
+	    <dt>On failure:</dt>
+	    <dd>
+	        <ul>
+	            li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+	            <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing subscriber ID" or API error message).</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Subscriber was deleted successfully.</li>
+	    <li><strong>Red (ring)</strong> - Failed to delete subscriber (e.g., missing subscriber ID or API error).</li>
+	</ul>
+	<h3>Details</h3>
+	<p>
+	    This node deletes a subscriber in KlickTipp using their subscriber ID. The subscriber ID must be provided in
+	    <code>msg.payload.subscriberId</code>. Valid session information, including <code>sessionId</code> and <code>sessionName</code>,
+	    must also be provided in <code>msg.klicktipp</code>. If the subscriber is successfully deleted, the output message will contain
+	    <code>msg.payload.success = true</code>. On failure, <code>msg.payload.success</code> will be <code>false</code>, and an error message
+	    will be returned in <code>msg.error</code>.
+	</p>
 </script>
 
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber delete', {
 		category: 'KlickTipp',
-		color: "#a6bbcf",
+		color: '#F2F2F2',
 		defaults: {
-			klicktipp: { type: "klicktipp-config", required: true },
-			name: { value: "" }
+			klicktipp: { type: 'klicktipp-config', required: true },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: "klicktipp.png",
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || "KlickTipp Subscriber Delete";
-		}
+			return this.name || 'KlickTipp Subscriber Delete';
+		},
 	});
 </script>

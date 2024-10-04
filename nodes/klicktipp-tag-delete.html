@@ -1,77 +1,77 @@
 <script type="text/x-red" data-template-name="klicktipp tag delete">
-    <div class="form-row">
-        <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
-        <input type="text" id="node-input-klicktipp" data-i18n="config node">
-    </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-        <input type="text" id="node-input-name" placeholder="Enter node name">
-    </div>
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag delete">
-    <p>Deletes a manual tag in the KlickTipp API. Requires the user to provide the tag ID of the tag to delete.</p>
-    <h3>Inputs</h3>
-    <dl class="message-properties">
-        <dt>msg.klicktipp <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-                <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-            </ul>
-        </dd>
-        <dt>msg.payload <span class="property-type">object</span></dt>
-        <dd>
-            An object that must contain:
-            <ul>
-                <li><code>tagId</code> - The ID of the tag to delete (required).</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-        <dt>On success:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
-            </ul>
-        </dd>
-        <dt>On failure:</dt>
-        <dd>
-            <ul>
-                <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-                <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
-            </ul>
-        </dd>
-    </dl>
-    <h3>Node Status</h3>
-    <ul>
-        <li><strong>Green (dot)</strong> - The tag was successfully deleted.</li>
-        <li><strong>Red (ring)</strong> - The tag deletion failed (e.g., missing tag ID or API error).</li>
-    </ul>
-    <h3>Details</h3>
-    <p>
-        This node deletes a manual tag from the KlickTipp system. It requires a valid session (<code>sessionId</code> and
-        <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the <code>tagId</code> in <code>msg.payload</code>.
-        On success, it returns <code>msg.payload</code> as <code>{ success: true }</code>. On failure, <code>msg.payload</code> will
-        contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-    </p>
+	<p>Deletes a manual tag in the KlickTipp API. Requires the user to provide the tag ID of the tag to delete.</p>
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
+	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
+	        </ul>
+	    </dd>
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        An object that must contain:
+	        <ul>
+	            <li><code>tagId</code> - The ID of the tag to delete (required).</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	    <dt>On success:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
+	        </ul>
+	    </dd>
+	    <dt>On failure:</dt>
+	    <dd>
+	        <ul>
+	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
+	            <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
+	        </ul>
+	    </dd>
+	</dl>
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - The tag was successfully deleted.</li>
+	    <li><strong>Red (ring)</strong> - The tag deletion failed (e.g., missing tag ID or API error).</li>
+	</ul>
+	<h3>Details</h3>
+	<p>
+	    This node deletes a manual tag from the KlickTipp system. It requires a valid session (<code>sessionId</code> and
+	    <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the <code>tagId</code> in <code>msg.payload</code>.
+	    On success, it returns <code>msg.payload</code> as <code>{ success: true }</code>. On failure, <code>msg.payload</code> will
+	    contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
 </script>
 
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp tag delete', {
 		category: 'KlickTipp',
-		color: "#a6bbcf",
+		color: '#F2F2F2',
 		defaults: {
-			klicktipp: { type: "klicktipp-config", required: true },
-			name: { value: "" }
+			klicktipp: { type: 'klicktipp-config', required: true },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: "klicktipp.png",
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || "KlickTipp Tag Delete";
-		}
+			return this.name || 'KlickTipp Tag Delete';
+		},
 	});
 </script>

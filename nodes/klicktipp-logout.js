@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = function (RED) {
-	const handleResponse = require('../utils/handleResponse');
-	const handleError = require('../utils/handleError');
-	const makeRequest = require('../utils/makeRequest');
-	const validateSession = require('../utils/validateSession');
-	const getSessionHeaders = require('../utils/getSessionHeaders');
+	const handleResponse = require('./utils/handleResponse');
+	const handleError = require('./utils/handleError');
+	const makeRequest = require('./utils/makeRequest');
+	const validateSession = require('./utils/validateSession');
+	const getSessionHeaders = require('./utils/getSessionHeaders');
 
 	/**
 	 * KlickTippLogoutNode - A Node-RED node for logging out from the KlickTipp API.

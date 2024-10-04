@@ -19,7 +19,7 @@
     "url": "https://github.com/klicktipp/node-red-contrib-klicktipp"
   },
   "scripts": {
-    "format": "prettier 'utils/**/*.js' 'nodes/**/*.js' '.prettierrc.js' --write"
+    "format": "prettier 'utils/**/*.js' 'nodes/**/*.js' 'nodes/**/*.html' '.prettierrc.js' --write"
   },
   "engines": {
     "node": ">=14",
