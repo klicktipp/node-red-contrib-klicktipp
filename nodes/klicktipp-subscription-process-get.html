@@ -11,50 +11,57 @@
 
 <script type="text/x-red" data-help-name="klicktipp subscription process get">
 	<p>Get a specific subscription process from the KlickTipp API for the logged-in user.</p>
-	   <h3>Inputs</h3>
-	   <dl class="message-properties">
-	       <dt>msg.klicktipp<span class="property-type">object</span></dt>
-	       <dd>
-	           An object that must contain the following:
-	           <ul>
-	               <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	               <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	           </ul>
-	       </dd>
-	       <dt>msg.payload<span class="property-type">object</span></dt>
-	       <dd>
-	           An object that must contain the following:
-	           <ul>
-	               <li><code>listId</code> - TThe ID of the subscription process (list) to retrieve.</li>
-	           </ul>
-	       </dd>
-	   </dl>
-	   <h3>Outputs</h3>
-	   <dl class="message-properties">
-	       <dd>
-	           On success:
-	           <ul>
-	               <li><code>msg.payload</code> - An object representing the subscription process.</li>
-	           </ul>
-	           On failure:
-	           <ul>
-	           	<li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	               <li><code>msg.error</code> - An error message indicating why the request failed.</li>
-	           </ul>
-	       </dd>
-	   </dl>
-	   <h3>Node Status</h3>
-	   <ul>
-	       <li><strong>Green (dot)</strong> - Subscription processes fetched successfully.</li>
-	       <li><strong>Red (ring)</strong> - Failed to fetch subscription processes due to an error.</li>
-	   </ul>
-	   <h3>Details</h3>
-	   <p>
+
+	<h3>Details</h3>
+	<p>
 		This node fetches a list of all subscription processes (lists) available to the logged-in user via the KlickTipp API.
-		Session information must be passed in <code>msg.klicktipp</code>, containing both <code>sessionId</code> and <code>sessionName</code>.
+	</p>
+	<p>
 		Upon success, the output will contain an associative array, where the keys represent list IDs and the values are the corresponding subscription process names.
+	</p>
+	<p>
 		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	   </p>
+	</p>
+	<p>
+		It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	<dt>msg.payload<span class="property-type">object</span></dt>
+	<dd>
+	   An object that must contain the following:
+	   <ul>
+		   <li><code>listId</code> - TThe ID of the subscription process (list) to retrieve.</li>
+	   </ul>
+	</dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			On success:
+			<ul>
+				<li>An object representing the subscription process.</li>
+			</ul>
+		</dd>
+		<dd>
+			On failure:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	   <li><strong>Green (dot)</strong> - Subscription processes fetched successfully.</li>
+	   <li><strong>Red (ring)</strong> - Failed to fetch subscription processes due to an error.</li>
+	</ul>
 </script>
 
 <script type="text/javascript">

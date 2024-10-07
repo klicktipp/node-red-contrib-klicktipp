@@ -11,51 +11,59 @@
 
 <script type="text/x-red" data-help-name="klicktipp subscription process redirect">
 	<p>Fetches the redirection URL for a specific subscription process in the KlickTipp API.</p>
-	   <h3>Inputs</h3>
-	   <dl class="message-properties">
-	       <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	       <dd>
-	           An object that must contain:
-	           <ul>
-	               <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	               <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	           </ul>
-	       </dd>
-	       <dt>msg.payload <span class="property-type">object</span></dt>
-	       <dd>
-	           An object that must contain:
-	           <ul>
-	               <li><code>listId</code> - The ID of the subscription process (list) for which to retrieve the redirection URL.</li>
-	               <li><code>email</code> - The email address associated with the subscription process.</li>
-	           </ul>
-	       </dd>
-	   </dl>
-	   <h3>Outputs</h3>
-	   <dl class="message-properties">
-	       <dd>
-	           On success:
-	           <ul>
-	               <li><code>msg.payload</code> - The URL to which the subscriber will be redirected for the specified subscription process.</li>
-	           </ul>
-	           On failure:
-	           <ul>
-	           	<li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	               <li><code>error</code> - An error message describing what went wrong.</li>
-	           </ul>
-	       </dd>
-	   </dl>
-	   <h3>Node Status</h3>
-	   <ul>
-	       <li><strong>Green (dot)</strong> - Successfully fetched the redirection URL.</li>
-	       <li><strong>Red (ring)</strong> - Failed to fetch the redirection URL due to an error (e.g., missing list ID or email).</li>
-	   </ul>
-	   <h3>Details</h3>
-	   <p>
+
+	<h3>Details</h3>
+	<p>
 		This node fetches the redirection URL for a specific subscription process (list) in the KlickTipp API.
-		It requires the <code>sessionId</code> and <code>sessionName</code> from a successful login.
-		Additionally, the <code>listId</code> (subscription process ID) and <code>email</code> must be provided in <code>msg.payload</code>.
+		The <code>listId</code> (subscription process ID) and <code>email</code> must be provided in <code>msg.payload</code>.
+	</p>
+	<p>
+		On success, <code>msg.payload</code> is the URL to which the subscriber will be redirected for the specified subscription process.
+	</p>
+	<p>
 		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
 	</p>
+	<p>
+		It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	<dt>msg.payload <span class="property-type">object</span></dt>
+	<dd>
+	   An object that must contain:
+	   <ul>
+		   <li><code>listId</code> - (Required) The ID of the subscription process (list) for which to retrieve the redirection URL.</li>
+		   <li><code>email</code> - (Required) The email address associated with the subscription process.</li>
+	   </ul>
+	</dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			On success:
+			<ul>
+				<li>The URL to which the subscriber will be redirected for the specified subscription process.</li>
+			</ul>
+		</dd>
+		<dd>
+			On failure:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+		<li><strong>Green (dot)</strong> - Successfully fetched the redirection URL.</li>
+		<li><strong>Red (ring)</strong> - Failed to fetch the redirection URL due to an error (e.g., missing list ID or email).</li>
+	</ul>
 </script>
 
 <script type="text/javascript">

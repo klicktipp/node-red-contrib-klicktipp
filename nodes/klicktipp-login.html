@@ -12,55 +12,58 @@
 <script type="text/x-red" data-help-name="klicktipp login">
 	<p>Logs into the KlickTipp API and retrieves session information required for other API interactions.</p>
 
-	   <h3>Automatic Logout</h3>
-	   <p>
-	       This node implements an <strong>automatic logout</strong> feature to enhance security and manage session lifecycles. After a successful login, the node schedules an automatic logout to occur after a predefined timeout period (default is <strong>10 minutes</strong>). This helps prevent unused sessions from remaining active indefinitely.
-	   </p>
-	   <p>
-	       If you perform a manual logout using the <strong>KlickTipp Logout</strong> node before the automatic logout occurs, the automatic logout timer will be canceled to prevent redundant logout attempts.
-	   </p>
-	   <p>
-	       The automatic logout ensures that the session is invalidated even if a manual logout is not performed, providing an additional layer of security.
-	   </p>
+	<h3>Details</h3>
+	<p>
+	   This node requires the <strong>KlickTipp Config</strong> node to be configured with a valid username and password.
+	   The session data (session ID and session name) is stored in the flow context and can be retrieved using
+	   <code>msg.sessionDataKey</code>.
+	</p>
+	<p>
+	   If the login fails, an error message will be returned in <code>msg.error</code>, and
+	   <code>msg.payload</code> will contain <code>{ success: false }</code>.
+	</p>
+	<p>
+	   Upon successful login, an automatic logout is scheduled and will occur after 10 minutes unless canceled manually.
+	</p>
 
-	   <h3>Outputs</h3>
-	   <dl class="message-properties">
-	       <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	       <dd>
-	           An object containing session information returned after a successful login:
-	           <ul>
-	               <li><code>sessionId</code> - The session ID required for further API interactions.</li>
-	               <li><code>sessionName</code> - The session name (cookie) to be used in subsequent requests.</li>
-	           </ul>
-	       </dd>
-	       <dd>
-	           On success:
-	           <ul>
-	               <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
-	           </ul>
-	       </dd>
-	       <dd>
-	           On failure:
-	           <ul>
-	               <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	               <li><code>msg.error</code> - An error message indicating why the request failed.</li>
-	           </ul>
-	       </dd>
-	   </dl>
-	   <h3>Node Status</h3>
-	   <ul>
-	       <li><strong>Green (dot)</strong> - Logged in successfully, and the session information is available.</li>
-	       <li><strong>Red (ring)</strong> - Login failed due to an error (e.g., missing credentials or invalid API response).</li>
-	   </ul>
-	   <h3>Details</h3>
-	   <p>This node requires the <strong>KlickTipp Config</strong> node to be configured with a valid username and password.</p>
-	   <p>
-	       The session information (session ID and session name) is stored in <code>msg.klicktipp</code> and can be used by other KlickTipp nodes in the flow.
-	       If the login fails, an error message will be returned in <code>msg.error</code>, and <code>msg.payload</code> will contain <code>{ success: false }</code>.
-	   </p>
-	   <p>
-	       The automatic logout is scheduled upon successful login and will log out the session after the 10 minutes.
-	   </p>
+	<h3>Automatic Logout</h3>
+	<p>
+	   This node includes an <strong>automatic logout</strong> feature. After a successful login, the node schedules
+	   a logout to occur after 10 minutes, helping to prevent unused sessions from remaining active.
+	</p>
+	<p>
+	   Performing a manual logout using the <strong>KlickTipp Logout</strong> node cancels the automatic logout to avoid
+	   redundant logout attempts.
+	</p>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	   <dt>msg.sessionDataKey <span class="property-type">string</span></dt>
+	   <dd>A unique key for retrieving the session data (session ID and session name) from the flow context.</dd>
+
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message indicating why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	   <li><strong>Green (dot)</strong> - Logged in successfully, and session data is stored in the flow context.</li>
+	   <li><strong>Red (ring)</strong> - Login failed due to an error (e.g., missing credentials or invalid API response).</li>
+	</ul>
 </script>
 
 <script type="text/javascript">

@@ -11,54 +11,58 @@
 
 <script type="text/x-red" data-help-name="klicktipp tag create">
 	<p>Creates a new manual tag in the KlickTipp API based on the provided tag name and optional description.</p>
+
+	<h3>Details</h3>
+	<p>
+	   This node creates a new manual tag in the KlickTipp system. It requires a tag name in <code>msg.payload.name</code>. Optionally, a description can be added using <code>msg.payload.text</code>.
+	</p>
+	<p>
+	   On success, it returns the ID of the newly created tag in <code>msg.payload</code>.
+	</p>
+	<p>
+		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
+	<p>
+	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	    <dd>
-	        An object that must contain:
-	        <ul>
-	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	        </ul>
-	    </dd>
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
 	        An object that must contain:
 	        <ul>
-	            <li><code>name</code> - The name of the tag to create (required).</li>
-	            <li><code>text</code> - An description of the tag (optional).</li>
+	            <li><code>name</code> - (Required) The name of the tag to create (required).</li>
+	            <li><code>text</code> - (Optional) An description of the tag (optional).</li>
 	        </ul>
 	    </dd>
 	</dl>
+
 	<h3>Outputs</h3>
 	<dl class="message-properties">
-	    <dt>On success:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - The ID of the newly created tag.</li>
-	        </ul>
-	    </dd>
-	    <dt>On failure:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	            <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
-	        </ul>
-	    </dd>
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			On success:
+			<ul>
+				<li>The ID of the newly created tag.</li>
+			</ul>
+		</dd>
+		<dd>
+			On failure:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>An error message explaining why the request failed.</dd>
 	</dl>
+
 	<h3>Node Status</h3>
 	<ul>
 	    <li><strong>Green (dot)</strong> - The tag was created successfully.</li>
 	    <li><strong>Red (ring)</strong> - Failed to create the tag (e.g., missing tag name or API error).</li>
 	</ul>
-	<h3>Details</h3>
-	<p>
-	    This node creates a new manual tag in the KlickTipp system. It requires a valid session (both <code>sessionId</code> and
-	    <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the tag name is required in
-	    <code>msg.payload.name</code>. Optionally, a description can be added using <code>msg.payload.text</code>.
-	    On success, it returns the ID of the newly created tag in <code>msg.payload</code>. On failure, <code>msg.payload</code>
-	    will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
 </script>
 
 <script type="text/javascript">

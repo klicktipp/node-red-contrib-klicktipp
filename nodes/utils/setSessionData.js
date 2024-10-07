@@ -3,18 +3,12 @@
  *
  * @param {string} sessionDataKey - The key used to retrieve the session data from flow context.
  * @param {Object} node - The Node-RED node instance, used to access the flow context.
+ * @param data - The KlickTipp session data
  * @returns {Object|null} The session data object if it exists and is valid, otherwise `null`.
  */
-function getSessionData(sessionDataKey, node) {
+function setSessionData(sessionDataKey, node, data) {
 	const flow = node.context().flow;
-	const sessionData = flow.get(sessionDataKey) || {}; // Use empty object if sessionData is null
-
-	const { sessionId = null, sessionName = null } = sessionData;
-
-	return {
-		sessionId,
-		sessionName,
-	};
+	flow.set(sessionDataKey, data);
 }
 
-module.exports = getSessionData;
+module.exports = setSessionData;

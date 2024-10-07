@@ -10,56 +10,61 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag update">
-	<p>Updates an existing manual tag in the KlickTipp API. Requires the user to provide the tag ID, and optionally the new name or description for the tag.</p>
+	<p>Updates an existing manual tag in the KlickTipp API.</p>
+
+	<h3>Details</h3>
+	<p>
+	    This node updates an existing manual tag in the KlickTipp system. It requires the <code>tagId</code> in <code>msg.payload</code>.
+	    The <code>name</code> and <code>text</code> fields are optional and can be provided to update the tag's name and description.
+	</p>
+	<p>
+	    On success, it returns <code>msg.payload.success</code> as <code>{ success: true }</code>.
+	</p>
+	<p>
+	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
+	<p>
+	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	    <dd>
-	        An object that must contain:
-	        <ul>
-	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	        </ul>
-	    </dd>
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
 	        An object that must contain:
 	        <ul>
-	            <li><code>tagId</code> - The ID of the tag to update (required).</li>
-	            <li><code>name</code> - The new name for the tag (optional).</li>
-	            <li><code>text</code> - The new description for the tag (optional).</li>
+	            <li><code>tagId</code> - (Required) The ID of the tag to update.</li>
+	            <li><code>name</code> - (Optional) The new name for the tag.</li>
+	            <li><code>text</code> - (Optional) The new description for the tag.</li>
 	        </ul>
 	    </dd>
 	</dl>
-	<h3>Outputs</h3>
-	<dl class="message-properties">
-	    <dt>On success:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
-	        </ul>
-	    </dd>
-	    <dt>On failure:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	            <li><code>msg.error</code> - Will contain an error message describing what went wrong.</li>
-	        </ul>
-	    </dd>
-	</dl>
+
+	  <h3>Outputs</h3>
+	  <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message indicating why the request failed.</dd>
+	  </dl>
+
 	<h3>Node Status</h3>
 	<ul>
 	    <li><strong>Green (dot)</strong> - The tag was successfully updated.</li>
 	    <li><strong>Red (ring)</strong> - The tag update failed (e.g., missing tag ID or API error).</li>
 	</ul>
-	<h3>Details</h3>
-	<p>
-	    This node updates an existing manual tag in the KlickTipp system. It requires a valid session (<code>sessionId</code> and
-	    <code>sessionName</code>) provided via <code>msg.klicktipp</code>, and the <code>tagId</code> in <code>msg.payload</code>.
-	    The <code>name</code> and <code>text</code> fields are optional and can be provided to update the tag's name and description.
-	    On success, it returns <code>msg.payload.success</code> as <code>{ success: true }</code>. On failure, <code>msg.payload</code> will
-	    contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
 </script>
 
 <script type="text/javascript">

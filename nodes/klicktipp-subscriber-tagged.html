@@ -10,7 +10,21 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber tagged">
-	<p>Retrieves a list of subscribers that are tagged with a specified tag ID in KlickTipp. Requires session information for authentication.</p>
+	<p>Retrieves a list of subscriber IDs that are tagged with a specified tag ID in KlickTipp.</p>
+
+	<h3>Details</h3>
+	<p>
+	    This node retrieves a list of subscriber IDs in KlickTipp that are associated with a specified tag. You must provide a valid tag ID in <code>msg.payload.tagId</code>.
+	</p>
+	<p>
+	    On success, the node will return the list of subscriber IDs.
+	</p>
+	<p>
+	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
+	<p>
+	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -21,31 +35,26 @@
 	            <li><code>tagId</code> - (Required) The ID of the tag used to filter subscribers.</li>
 	        </ul>
 	    </dd>
-	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	    <dd>
-	        An object that must contain:
-	        <ul>
-	            <li><code>sessionId</code> - (Required) The session ID obtained from the login node.</li>
-	            <li><code>sessionName</code> - (Required) The session name (cookie) obtained from the login node.</li>
-	        </ul>
-	    </dd>
 	</dl>
 
 	<h3>Outputs</h3>
 	<dl class="message-properties">
-	    <dt>On success:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - An array of subscribers that are associated with the provided tag ID.</li>
-	        </ul>
-	    </dd>
-	    <dt>On failure:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	            <li><code>msg.error</code> - An error message describing the reason for failure (e.g., missing tag ID, API error).</li>
-	        </ul>
-	    </dd>
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li>An array of subscriber IDs that are associated with the provided tag ID.</li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message indicating why the request failed.</dd>
 	</dl>
 
 	<h3>Node Status</h3>
@@ -53,15 +62,6 @@
 	    <li><strong>Green (dot)</strong> - Successfully retrieved subscribers tagged with the provided tag ID.</li>
 	    <li><strong>Red (ring)</strong> - Failed to retrieve subscribers, either due to missing tag ID or an API request failure.</li>
 	</ul>
-
-	<h3>Details</h3>
-	<p>
-	    This node retrieves a list of subscribers in KlickTipp that are associated with a specified tag. You must provide a valid tag ID in
-	    <code>msg.payload.tagId</code>. Additionally, session information must be passed in <code>msg.klicktipp</code> containing
-	    <code>sessionId</code> and <code>sessionName</code> from a previous successful login.
-	    The node will send a POST request to the <code>/subscriber/tagged</code> endpoint and return the list of subscribers.
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
 </script>
 
 <script type="text/javascript">

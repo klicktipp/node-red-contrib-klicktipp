@@ -10,7 +10,24 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag email">
-	<p>Tags a subscriber (identified by their email) with one or more tags in KlickTipp. This node requires valid session information to perform the action.</p>
+	<p>Tags a subscriber (identified by their email) with one or more tags in KlickTipp.</p>
+
+	<h3>Details</h3>
+	<p>
+	    This node tags a subscriber in KlickTipp using their email and a list of tag IDs. The email and tag IDs must be provided in
+	    <code>msg.payload.email</code> and <code>msg.payload.tagIds</code>, respectively. If only a single tag ID is provided, it will be converted
+	    into an array.
+	</p>
+	<p>
+	    If the operation is successful, the <code>msg.payload</code> will contain <code>{ success: true }</code>.
+	</p>
+	<p>
+	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
+	<p>
+	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
@@ -21,44 +38,33 @@
 	            <li><code>tagIds</code> - (Required) An array of tag IDs or a single tag ID to associate with the subscriber. If a single tag ID is provided, it will be converted into an array.</li>
 	        </ul>
 	    </dd>
-	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	    <dd>
-	        An object that must contain:
-	        <ul>
-	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	        </ul>
-	    </dd>
 	</dl>
-	<h3>Outputs</h3>
-	<dl class="message-properties">
-	    <dt>On success:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - The response data from the KlickTipp API indicating that the email has been successfully tagged.</li>
-	        </ul>
-	    </dd>
-	    <dt>On failure:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	            <li><code>msg.error</code> - A string describing the error that occurred (e.g., "No valid tag IDs provided" or API error message).</li>
-	        </ul>
-	    </dd>
-	</dl>
+
+	  <h3>Outputs</h3>
+	  <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message indicating why the request failed.</dd>
+	  </dl>
+
 	<h3>Node Status</h3>
 	<ul>
 	    <li><strong>Green (dot)</strong> - The email was tagged successfully.</li>
 	    <li><strong>Red (ring)</strong> - The tagging process failed (e.g., missing email, tag IDs, or API error).</li>
 	</ul>
-	<h3>Details</h3>
-	<p>
-	    This node tags a subscriber in KlickTipp using their email and a list of tag IDs. The email and tag IDs must be provided in
-	    <code>msg.payload.email</code> and <code>msg.payload.tagIds</code>, respectively. If only a single tag ID is provided, it will be converted
-	    into an array. Valid session information (sessionId and sessionName) must also be provided in <code>msg.klicktipp</code>. If the operation is successful,
-	    the output message will contain the response data from the KlickTipp API in <code>msg.payload</code>. On failure, <code>msg.payload</code> will
-	    contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
 </script>
 
 <script type="text/javascript">

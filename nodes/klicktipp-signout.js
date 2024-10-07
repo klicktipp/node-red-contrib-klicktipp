@@ -1,11 +1,12 @@
 'use strict';
 
-module.exports = function (RED) {
-	const handleResponse = require('./utils/handleResponse');
-	const handleError = require('./utils/handleError');
-	const makeRequest = require('./utils/makeRequest');
-	const qs = require('qs');
+const handleResponse = require('./utils/handleResponse');
+const handleError = require('./utils/handleError');
+const makeRequest = require('./utils/makeRequest');
+const qs = require('qs');
 
+module.exports = function (RED) {
+	
 	/**
 	 * KlickTippSignoutNode - A Node-RED node to untag an email using an API key.
 	 * This node untags a user by their email using the provided API key.
@@ -14,7 +15,7 @@ module.exports = function (RED) {
 	 *
 	 * Inputs:
 	 * - `msg.payload`: An object that must contain:
-	 *   - `apikey`: (Required) The API key for list building configuration.
+	 *   - `apiKey`: (Required) The API key for list building configuration.
 	 *   - `email`: (Required) The email address of the subscriber.
 	 *
 	 * Outputs:

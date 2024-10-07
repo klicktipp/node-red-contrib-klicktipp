@@ -1,11 +1,12 @@
 'use strict';
 
-module.exports = function (RED) {
-	const handleResponse = require('./utils/handleResponse');
-	const handleError = require('./utils/handleError');
-	const makeRequest = require('./utils/makeRequest');
-	const qs = require('qs');
+const handleResponse = require('./utils/handleResponse');
+const handleError = require('./utils/handleError');
+const makeRequest = require('./utils/makeRequest');
+const qs = require('qs');
 
+module.exports = function (RED) {
+	
 	/**
 	 * KlickTippSignoffNode - A Node-RED node to unsubscribe an email using an API key.
 	 *

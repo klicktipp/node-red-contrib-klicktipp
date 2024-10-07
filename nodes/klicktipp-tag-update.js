@@ -1,16 +1,18 @@
 'use strict';
 
+const handleResponse = require('./utils/handleResponse');
+const handleError = require('./utils/handleError');
+const makeRequest = require('./utils/makeRequest');
+const validateSession = require('./utils/validateSession');
+const getSessionData = require('./utils/getSessionData');
+const qs = require('qs');
+
+
 module.exports = function (RED) {
-	const handleResponse = require('./utils/handleResponse');
-	const handleError = require('./utils/handleError');
-	const makeRequest = require('./utils/makeRequest');
-	const validateSession = require('./utils/validateSession');
-	const getSessionData = require('./utils/getSessionData');
-	const qs = require('qs');
 
 	/**
 	 * KlickTippTagUpdateNode - A Node-RED node to update a manual tag.
-	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
+	 * It requires a valid session ID and session name (obtained during login) to perform the request.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
@@ -19,10 +21,6 @@ module.exports = function (RED) {
 	 *   - `tagId`: (Required) The ID of the tag to be updated.
 	 *   - `name`: (Optional) The new tag name. If not provided, it will remain unchanged.
 	 *   - `text`: (Optional) The new tag description. If not provided, it will remain unchanged.
-	 * - `msg.klicktipp`: An object that must contain:
-	 *   - `sessionId`: (Required) The session ID obtained during login.
-	 *   - `sessionName`: (Required) The session name obtained during login.
-	 *
 	 * Outputs:
 	 * - `msg.payload`: On success, contains `{ success: true }`.
 	 *   On failure:

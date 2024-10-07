@@ -10,7 +10,22 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber update">
-	<p>Updates a subscriber in KlickTipp by their subscriber ID. You can update the subscriber's fields, email, or SMS number. This node requires valid session information to perform the action.</p>
+	<p>Update a subscriber in KlickTipp by their subscriber ID.</p>
+
+	<h3>Details</h3>
+	<p>
+	    This node updates a subscriber in KlickTipp using their subscriber ID. The subscriber ID must be provided in <code>msg.payload.subscriberId</code>.
+	</p>
+	<p>
+	    If the operation is successful, the output message will contain <code>msg.payload.success = true</code>.
+	</p>
+	<p>
+		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
+	</p>
+	<p>
+	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
@@ -23,45 +38,33 @@
 	            <li><code>newSmsNumber</code> - (Optional) The new SMS number for the subscriber.</li>
 	        </ul>
 	    </dd>
-	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	    <dd>
-	        An object that must contain:
-	        <ul>
-	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	        </ul>
-	    </dd>
 	</dl>
-	<h3>Outputs</h3>
-	<dl class="message-properties">
-	    <dt>On success:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: true }</code>.</li>
-	        </ul>
-	    </dd>
-	    <dt>On failure:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	            <li><code>msg.error</code> - A string describing the error that occurred (e.g., "Missing subscriber ID" or API error message).</li>
-	        </ul>
-	    </dd>
-	</dl>
+
+   <h3>Outputs</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message explaining why the request failed.</dd>
+   </dl>
+
 	<h3>Node Status</h3>
 	<ul>
 	    <li><strong>Green (dot)</strong> - Subscriber was updated successfully.</li>
 	    <li><strong>Red (ring)</strong> - Failed to update subscriber (e.g., missing subscriber ID, invalid data, or API error).</li>
 	</ul>
-	<h3>Details</h3>
-	<p>
-	    This node updates a subscriber in KlickTipp using their subscriber ID. The subscriber ID must be provided in
-	    <code>msg.payload.subscriberId</code>. You can update various subscriber details, such as their fields, email, or SMS number.
-	    If no data is provided, the node will not perform the update. Valid session information, including <code>sessionId</code>
-	    and <code>sessionName</code>, must be provided in <code>msg.klicktipp</code>. If the operation is successful, the output message
-	    will contain <code>msg.payload.success = true</code>. On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>,
-	    and an error message will be returned in <code>msg.error</code>.
-	</p>
 </script>
 
 <script type="text/javascript">

@@ -10,7 +10,19 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscribe">
-	<p>Subscribes a user to a list in KlickTipp. The user can be subscribed via email or SMS number, and optional fields, tags, or lists can be provided.</p>
+	<p>Subscribes a user to a list in KlickTipp.</p>
+
+	<h3>Details</h3>
+	<p>
+	    This node subscribes a user to a KlickTipp list using either an email address or an SMS number. You can optionally provide additional fields, tags, or a specific list for the subscription.
+	</p>
+	<p>
+		On failure, an error message will be returned in <code>msg.error</code> and <code>msg.payload</code> will contain <code>{ success: false }</code>.
+	</p>
+	<p>
+	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
+	</p>
+
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
@@ -24,43 +36,33 @@
 	            <li><code>fields</code> - (Optional) Additional fields to attach to the subscriber (e.g., name, custom data).</li>
 	        </ul>
 	    </dd>
-	    <dt>msg.klicktipp <span class="property-type">object</span></dt>
-	    <dd>
-	        An object that must contain:
-	        <ul>
-	            <li><code>sessionId</code> - The session ID obtained from the login node.</li>
-	            <li><code>sessionName</code> - The session name (cookie) obtained from the login node.</li>
-	        </ul>
-	    </dd>
 	</dl>
+
 	<h3>Outputs</h3>
-	<dl class="message-properties">
-	    <dt>On success:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - An object representing the subscriber that was created or subscribed.</li>
-	        </ul>
-	    </dd>
-	    <dt>On failure:</dt>
-	    <dd>
-	        <ul>
-	            <li><code>msg.payload</code> - Will be <code>{ success: false }</code>.</li>
-	            <li><code>msg.error</code> - An error message describing what went wrong.</li>
-	        </ul>
-	    </dd>
-	</dl>
+	   <dl class="message-properties">
+	       <dt>msg.payload <span class="property-type">object</span></dt>
+	       <dd>
+	           On success:
+	           <ul>
+	               <li>An object representing the subscriber that was created.</li>
+	           </ul>
+	       </dd>
+	       <dd>
+	           On failure:
+	           <ul>
+	               <li><code>{ success: false }</code></li>
+	           </ul>
+	       </dd>
+
+	       <dt>msg.error <span class="property-type">string</span></dt>
+	       <dd>An error message explaining why the request failed.</dd>
+	   </dl>
+
 	<h3>Node Status</h3>
 	<ul>
 	    <li><strong>Green (dot)</strong> - Subscription was successful.</li>
 	    <li><strong>Red (ring)</strong> - Subscription failed (e.g., missing required data or API error).</li>
 	</ul>
-	<h3>Details</h3>
-	<p>
-	    This node subscribes a user to a KlickTipp list using either an email address or an SMS number. You can optionally provide additional
-	    fields, tags, or a specific list for the subscription. This node requires session information to be passed in <code>msg.klicktipp</code>
-	    containing <code>sessionId</code> and <code>sessionName</code> from a successful login. On failure,
-	    an error message will be returned in <code>msg.error</code> and <code>msg.payload</code> will contain <code>{ success: false }</code>.
-	</p>
 </script>
 
 <script type="text/javascript">

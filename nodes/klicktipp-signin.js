@@ -1,12 +1,13 @@
 'use strict';
 
-module.exports = function (RED) {
-	const handleResponse = require('./utils/handleResponse');
-	const handleError = require('./utils/handleError');
-	const makeRequest = require('./utils/makeRequest');
-	const prepareApiKeySubscriptionData = require('./utils/prepareApiKeySubscriptionData');
-	const qs = require('qs');
+const handleResponse = require('./utils/handleResponse');
+const handleError = require('./utils/handleError');
+const makeRequest = require('./utils/makeRequest');
+const prepareApiKeySubscriptionData = require('./utils/prepareApiKeySubscriptionData');
+const qs = require('qs');
 
+module.exports = function (RED) {
+	
 	/**
 	 * KlickTippSigninNode - A Node-RED node to subscribe an email using an API key.
 	 * This node subscribes a user by their email or SMS number using the provided API key.
@@ -15,9 +16,9 @@ module.exports = function (RED) {
 	 *
 	 * Inputs:
 	 * - `msg.payload`: An object that must contain:
-	 *   - `apikey`: The KlickTipp API key (listbuildng configuration).
+	 *   - `apiKey`: The KlickTipp API key (listbuildng configuration).
 	 *   - `email` (Required): The email address of the subscriber.
-	 *   - `smsnumber` (Optional): The SMS number of the subscriber.
+	 *   - `smsNumber` (Optional): The SMS number of the subscriber.
 	 *   - `fields` (Optional): Additional fields for the subscriber.
 	 *
 	 * Outputs:

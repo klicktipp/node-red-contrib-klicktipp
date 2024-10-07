@@ -9,9 +9,9 @@ const getSessionData = require('./getSessionData');
  * @returns {boolean} Returns `true` if the session data is valid, otherwise handles error and returns `false`.
  */
 function validateSession(msg, node) {
-	const sessionData = getSessionData(msg.sessionDataKey, node);
+	const { sessionId, sessionName } = getSessionData(msg.sessionDataKey, node);
 
-	if (!sessionData) {
+	if (!sessionId || !sessionName) {
 		handleError(node, msg, 'Missing session data', 'Session ID or session name is missing');
 		return false;
 	}

@@ -1,22 +1,20 @@
 'use strict';
 
-module.exports = function (RED) {
-	const handleResponse = require('./utils/handleResponse');
-	const handleError = require('./utils/handleError');
-	const makeRequest = require('./utils/makeRequest');
-	const validateSession = require('./utils/validateSession');
-	const getSessionData = require('./utils/getSessionData');
+const handleResponse = require('./utils/handleResponse');
+const handleError = require('./utils/handleError');
+const makeRequest = require('./utils/makeRequest');
+const validateSession = require('./utils/validateSession');
+const getSessionData = require('./utils/getSessionData');
 
+module.exports = function (RED) {
+	
 	/**
 	 * KlickTippTagGetNode - A Node-RED node to get the definition of a specific tag.
-	 * This node requires valid session credentials (sessionId and sessionName) to be passed within the `msg.klicktipp` object.
+	 * It requires a valid session ID and session name (obtained during login) to perform the request.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.klicktipp`: An object that must contain:
-	 *   - `sessionId`: (Required) The session ID obtained during login.
-	 *   - `sessionName`: (Required) The session name obtained during login.
 	 * - `msg.payload`: An object that must contain:
 	 *   - `tagId`: (Required) The ID of the tag to retrieve.
 	 *

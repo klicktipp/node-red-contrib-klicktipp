@@ -1,19 +1,20 @@
 'use strict';
 
-module.exports = function (RED) {
-	const handleResponse = require('./utils/handleResponse');
-	const handleError = require('./utils/handleError');
-	const makeRequest = require('./utils/makeRequest');
-	const validateSession = require('./utils/validateSession');
-	const getSessionData = require('./utils/getSessionData');
+const handleResponse = require('./utils/handleResponse');
+const handleError = require('./utils/handleError');
+const makeRequest = require('./utils/makeRequest');
+const validateSession = require('./utils/validateSession');
+const getSessionData = require('./utils/getSessionData');
+const resetSessionData = require('./utils/resetSessionData');
 
+module.exports = function (RED) {
+	
 	/**
 	 * KlickTippLogoutNode - A Node-RED node for logging out from the KlickTipp API.
 	 *
 	 * This node logs out from the KlickTipp API by invalidating the active session.
-	 * It requires a valid session ID and session name (obtained during login)
-	 * to perform the logout request. Upon successful logout, the node updates its status
-	 * and returns a success message in `msg.payload`.
+	 * It requires a valid session ID and session name (obtained during login) to perform the request.
+	 * Upon successful logout, the node destroy the session data, updates its status and returns a success message in `msg.payload`.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
@@ -49,8 +50,7 @@ module.exports = function (RED) {
 				);
 
 				handleResponse(node, msg, response, 'Logged out', 'Logout failed', () => {
-					const flow = node.context().flow;
-					flow.set(msg.sessionDataKey, null);
+					resetSessionData(msg.sessionDataKey, node);
 
 					msg.payload = { success: true };
 				});
