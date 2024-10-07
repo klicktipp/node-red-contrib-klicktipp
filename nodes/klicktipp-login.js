@@ -10,8 +10,7 @@ const clearAutoLogout = require('./utils/clearAutoLogout');
 
 module.exports = function (RED) {
 	// Constants
-	// const LOGOUT_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes converted to milliseconds
-	const LOGOUT_TIMEOUT_MS = 60 * 1000; // 10 minutes converted to milliseconds
+	const LOGOUT_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes converted to milliseconds
 
 	/**
 	 * KlickTippLoginNode - A Node-RED node for logging in to the KlickTipp API.
