@@ -43,13 +43,13 @@ module.exports = function (RED) {
 
 			let { email = '', tagIds = [] } = msg?.payload;
 
-			if (!email || !Array.isArray(tagIds)) {
-				return handleError(node, msg, 'Missing email or tag IDs', 'Invalid input: email or tagIds');
-			}
-
 			// Ensure tagIds is an array, even if a single tagId is provided
 			if (typeof tagIds === 'number') {
 				tagIds = [tagIds];
+			}
+
+			if (!email || !Array.isArray(tagIds)) {
+				return handleError(node, msg, 'Missing email or tag IDs', 'Invalid input: email or tagIds');
 			}
 
 			try {

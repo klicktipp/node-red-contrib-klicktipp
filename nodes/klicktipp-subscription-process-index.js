@@ -34,9 +34,6 @@ module.exports = function (RED) {
 				return node.send(msg);
 			}
 
-			const flow = node.context().flow;
-			const sessionData = flow.get(msg.sessionDataKey);
-
 			try {
 				const response = await makeRequest(
 					'/list',

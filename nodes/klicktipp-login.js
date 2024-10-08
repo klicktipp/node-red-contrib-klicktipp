@@ -5,7 +5,7 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const setSessionData = require('./utils/setSessionData');
 const generateUniqueSessionKey = require('./utils/generateUniqueSessionKey');
-const scheduleAutoLogout = require('./utils/sheduleAutoLogout');
+const scheduleAutoLogout = require('./utils/scheduleAutoLogout');
 const clearAutoLogout = require('./utils/clearAutoLogout');
 
 module.exports = function (RED) {
