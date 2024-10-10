@@ -39,8 +39,9 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			const { name = '', text = '' } = msg?.payload;
+			//tagName is used to avoid conflict with the Node-RED core name property
+			const name = config.tagName || msg?.payload?.name;
+			const text = config.tagDescription || msg?.payload?.text;
 
 			if (!name) {
 				handleError(node, msg, 'Missing tag name');

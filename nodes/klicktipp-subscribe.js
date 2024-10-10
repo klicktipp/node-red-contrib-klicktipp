@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/validateSession');
 const getSessionData = require('./utils/getSessionData');
 const prepareSubscriptionData = require('./utils/prepareCreateSubscriberData');
+const extractSubscribeFields = require('./utils/extractSubscribeFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -43,8 +44,14 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			const { email = '', smsNumber = '', listId = 0, tagId = 0, fields = {} } = msg.payload;
+			
+			const {
+				email,
+				smsNumber,
+				listId,
+				tagId,
+				fields
+			} = extractSubscribeFields(config, msg.payload);
 
 			if (!email) {
 				handleError(node, msg, 'Missing email or SMS number');

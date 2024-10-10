@@ -4,6 +4,10 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
+	    <label for="node-input-tagId"><i class="fa fa-envelope"></i> <span>Tag ID</span></label>
+	    <input type="text" id="node-input-tagId" placeholder="Enter tag ID">
+	</div>
+	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
@@ -70,6 +74,10 @@
 		color: '#F2F2F2',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
+			tagId: {
+				value: '',
+				validate: RED.validators.number()
+			},
 			name: { value: '' },
 		},
 		inputs: 1,

@@ -1,7 +1,7 @@
 <script type="text/x-red" data-template-name="klicktipp signoff">
 	<div class="form-row">
-	       <label for="node-input-apikey"><i class="fa fa-key"></i> <span>API Key</span></label>
-	       <input type="text" id="node-input-apikey" placeholder="Enter your API key">
+	       <label for="node-input-apiKey"><i class="fa fa-key"></i> <span>API Key</span></label>
+	       <input type="text" id="node-input-apiKey" placeholder="Enter your API key">
 	   </div>
 	   <div class="form-row">
 	       <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
@@ -66,7 +66,19 @@
 		category: 'KlickTipp',
 		color: '#F2F2F2',
 		defaults: {
-			apikey: { value: '' },
+			apiKey: { value: '' },
+			email: {
+				value: '',
+				validate: function(email) {
+					// If email is empty, skip validation
+					if (!email) {
+						return true;
+					}
+					// Apply regex validation only if email is provided
+					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+					return emailRegex.test(email);
+				}
+			},
 			name: { value: '' },
 		},
 		inputs: 1,

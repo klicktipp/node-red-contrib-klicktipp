@@ -39,8 +39,9 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			const { email = '', listId = '' } = msg?.payload;
+			
+			const email = config.email || msg?.payload?.email;
+			const listId = config.listId || msg?.payload?.listId;
 
 			if (!listId || !email) {
 				handleError(node, msg, 'Missing list ID or email');

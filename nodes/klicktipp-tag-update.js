@@ -37,7 +37,10 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const { tagId, name, text } = msg.payload;
+			const tagId = config.tagId || msg?.payload?.tagId;
+			//tagName is used to avoid conflict with the Node-RED core name property
+			const name = config.tagName || msg?.payload?.name;
+			const text = config.tagDescription || msg?.payload?.text;
 
 			if (!validateSession(msg, node)) {
 				return node.send(msg);

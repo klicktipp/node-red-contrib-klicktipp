@@ -32,7 +32,9 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const { apiKey, email = '' } = msg.payload;
+			// Extract fields from config and msg.payload
+			const apiKey = config.apiKey || msg.payload?.apiKey;
+			const email = config.email || msg.payload?.email;
 
 			if (!apiKey || !email) {
 				handleError(node, msg, 'Missing API key or email');

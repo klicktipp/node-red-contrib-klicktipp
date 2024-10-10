@@ -35,7 +35,7 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const email = msg?.payload?.email || '';
+			const email = config.email || msg?.payload?.email;
 
 			if (!validateSession(msg, node)) {
 				return node.send(msg);

@@ -4,6 +4,89 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
+	    <input type="text" id="node-input-listId" placeholder="Enter List ID (optional)">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-tagId"><i class="fa fa-tags"></i> <span>Tag ID</span></label>
+	    <input type="text" id="node-input-tagId" placeholder="Enter Tag ID (optional)">
+	</div>
+	<!-- Toggle for Address section -->
+	<div class="form-row">
+    	<label for="toggle-contact-fields-section"><i class="fa fa-list"></i> <span>Fields</span></label>
+    	<input type="checkbox" id="toggle-contact-fields-section">
+	</div>
+	<div id="contact-fields-section" style="display: none;">
+		<div class="form-row">
+			<label for="node-input-fieldFirstName"><i class="fa fa-user"></i> First Name</label>
+			<input type="text" id="node-input-fieldFirstName" placeholder="Enter first name (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldLastName"><i class="fa fa-user"></i> Last Name</label>
+			<input type="text" id="node-input-fieldLastName" placeholder="Enter last name (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldStreet1"><i class="fa fa-home"></i> Street 1</label>
+			<input type="text" id="node-input-fieldStreet1" placeholder="Enter street address 1 (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldStreet2"><i class="fa fa-home"></i> Street 2</label>
+			<input type="text" id="node-input-fieldStreet2" placeholder="Enter street address 2 (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldCity"><i class="fa fa-home"></i> City</label>
+			<input type="text" id="node-input-fieldCity" placeholder="Enter city (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldState"><i class="fa fa-globe"></i> State</label>
+			<input type="text" id="node-input-fieldState" placeholder="Enter state (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldZip"><i class="fa fa-envelope"></i> Zip</label>
+			<input type="text" id="node-input-fieldZip" placeholder="Enter zip code (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldCountry"><i class="fa fa-globe"></i> Country</label>
+			<input type="text" id="node-input-fieldCountry" placeholder="Enter country (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldPrivatePhone"><i class="fa fa-phone"></i> Private Phone</label>
+			<input type="text" id="node-input-fieldPrivatePhone" placeholder="Enter private phone number (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldMobilePhone"><i class="fa fa-mobile"></i> Mobile Phone</label>
+			<input type="text" id="node-input-fieldMobilePhone" placeholder="Enter mobile phone number (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldPhone"><i class="fa fa-phone"></i> Phone</label>
+			<input type="text" id="node-input-fieldPhone" placeholder="Enter phone number (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldFax"><i class="fa fa-fax"></i> Fax</label>
+			<input type="text" id="node-input-fieldFax" placeholder="Enter fax number (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldWebsite"><i class="fa fa-globe"></i> Website</label>
+			<input type="text" id="node-input-fieldWebsite" placeholder="Enter website URL (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldBirthday"><i class="fa fa-birthday-cake"></i> Birthday</label>
+			<input type="text" id="node-input-fieldBirthday" placeholder="Enter birthday (optional)">
+		</div>
+		<div class="form-row">
+			<label for="node-input-fieldLeadValue"><i class="fa fa-usd"></i> Lead Value</label>
+			<input type="text" id="node-input-fieldLeadValue" placeholder="Enter lead value (optional)">
+		</div>
+	</div>
+	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
@@ -72,6 +155,42 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
+			email: {
+				value: '',
+				validate: function(email) {
+					// If email is empty, skip validation
+					if (!email) {
+						return true;
+					}
+					// Apply regex validation only if email is provided
+					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+					return emailRegex.test(email);
+				}
+			},
+			smsNumber: { value: '' },
+			listId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+			tagId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+			fieldFirstName: { value: '' },
+			fieldLastName: { value: '' },
+			fieldStreet1: { value: '' },
+			fieldStreet2: { value: '' },
+			fieldCity: { value: '' },
+			fieldState: { value: '' },
+			fieldZip: { value: '' },
+			fieldCountry: { value: '' },
+			fieldPrivatePhone: { value: '' },
+			fieldMobilePhone: { value: '' },
+			fieldPhone: { value: '' },
+			fieldFax: { value: '' },
+			fieldWebsite: { value: '' },
+			fieldBirthday: { value: 0 },
+			fieldLeadValue: { value: 0 },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -79,5 +198,46 @@
 		label: function () {
 			return this.name || 'KlickTipp Subscribe';
 		},
+		oneditprepare: function() {
+			// Toggle Address section visibility
+			const checkbox = $('#toggle-contact-fields-section');
+			const contactFieldsSection = $('#contact-fields-section');
+
+			checkbox.on('click', function() {
+				contactFieldsSection.toggle();
+			});
+
+			// Helper function to check if any field is populated
+			function isFieldPopulated(fieldIds) {
+				return fieldIds.some(function (fieldId) {
+					return $(fieldId).val().trim() !== ''; // Trim to ensure empty spaces are not counted
+				});
+			}
+
+			// List of contact field selectors
+			const contactFields = [
+				'#node-input-fieldFirstName',
+				'#node-input-fieldLastName',
+				'#node-input-fieldStreet1',
+				'#node-input-fieldStreet2',
+				'#node-input-fieldCity',
+				'#node-input-fieldState',
+				'#node-input-fieldZip',
+				'#node-input-fieldCountry',
+				'#node-input-fieldPrivatePhone',
+				'#node-input-fieldMobilePhone',
+				'#node-input-fieldPhone',
+				'#node-input-fieldFax',
+				'#node-input-fieldWebsite',
+				'#node-input-fieldBirthday',
+				'#node-input-fieldLeadValue'
+			];
+
+			// Check if at least one field is populated and show the section
+			if (isFieldPopulated(contactFields)) {
+				checkbox.prop('checked', true);
+				contactFieldsSection.show();
+			}
+		}
 	});
 </script>

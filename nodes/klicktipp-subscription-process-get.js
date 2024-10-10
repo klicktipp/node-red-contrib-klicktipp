@@ -38,7 +38,7 @@ module.exports = function (RED) {
 				return node.send(msg);
 			}
 
-			const listId = msg?.payload?.listId || '';
+			const listId = config.listId || msg?.payload?.listId;
 
 			if (!listId) {
 				handleError(node, msg, 'Missing list ID');

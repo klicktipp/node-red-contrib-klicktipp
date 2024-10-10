@@ -40,8 +40,9 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			let { email = '', tagIds = [] } = msg?.payload;
+			
+			const email = config.email || msg?.payload?.email;
+			let tagIds = config.tagId || msg?.payload?.tagIds;
 
 			if (!email || !Array.isArray(tagIds)) {
 				return handleError(node, msg, 'Missing email or tag IDs', 'Invalid input: email or tagIds');

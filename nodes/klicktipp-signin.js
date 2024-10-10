@@ -4,6 +4,7 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const prepareApiKeySubscriptionData = require('./utils/prepareApiKeySubscriptionData');
+const extractSignInFields = require('./utils/extractSignInFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -36,7 +37,12 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			const { apiKey, email = '', smsNumber = '', fields = {} } = msg.payload;
+			const {
+				apiKey,
+				email,
+				smsNumber,
+				fields
+			} = extractSignInFields(config, msg.payload);
 
 			if (!apiKey || (!email && !smsNumber)) {
 				handleError(node, msg, 'Missing API key or email/SMS number');
