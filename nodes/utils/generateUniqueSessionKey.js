@@ -1,14 +1,14 @@
+const { v4: uuidv4 } = require('uuid');
+
 /**
- * Generates a unique session key by combining a timestamp with a random number.
+ * Generates a unique session key by combining a customizable prefix and a UUID.
  *
+ * @param {string} [prefix='klicktippSession'] - Optional prefix for the session key.
  * @returns {string} A unique session key for storing session data.
  */
-
-// question: why not use a UUID library?
-function generateUniqueSessionKey() {
-	const timestamp = Date.now();
-	const randomNum = Math.floor(Math.random() * 1000000);
-	return `klicktippSession_${timestamp}_${randomNum}`;
+function generateUniqueSessionKey(prefix = 'klicktippSession') {
+	// Create a session key using the provided prefix and UUID
+	return `${prefix}_${uuidv4()}`;
 }
 
 module.exports = generateUniqueSessionKey;
