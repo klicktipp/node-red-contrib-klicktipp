@@ -82,15 +82,7 @@
 			},
 			email: {
 				value: '',
-				validate: function(email) {
-					// If email is empty, skip validation
-					if (!email) {
-						return true;
-					}
-					// Apply regex validation only if email is provided
-					const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-					return emailRegex.test(email);
-				},
+				validate: validateEmail
 			}
 		},
 		inputs: 1,
