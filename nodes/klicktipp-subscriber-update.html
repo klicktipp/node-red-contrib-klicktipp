@@ -20,68 +20,7 @@
     	<label for="toggle-contact-fields-section"><i class="fa fa-list"></i> <span>Fields</span></label>
     	<input type="checkbox" id="toggle-contact-fields-section">
 	</div>
-	<div id="contact-fields-section" style="display: none;">
-		<div class="form-row">
-			<label for="node-input-fieldFirstName"><i class="fa fa-user"></i> First Name</label>
-			<input type="text" id="node-input-fieldFirstName" placeholder="Enter first name (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldLastName"><i class="fa fa-user"></i> Last Name</label>
-			<input type="text" id="node-input-fieldLastName" placeholder="Enter last name (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldStreet1"><i class="fa fa-home"></i> Street 1</label>
-			<input type="text" id="node-input-fieldStreet1" placeholder="Enter street address 1 (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldStreet2"><i class="fa fa-home"></i> Street 2</label>
-			<input type="text" id="node-input-fieldStreet2" placeholder="Enter street address 2 (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldCity"><i class="fa fa-home"></i> City</label>
-			<input type="text" id="node-input-fieldCity" placeholder="Enter city (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldState"><i class="fa fa-globe"></i> State</label>
-			<input type="text" id="node-input-fieldState" placeholder="Enter state (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldZip"><i class="fa fa-envelope"></i> Zip</label>
-			<input type="text" id="node-input-fieldZip" placeholder="Enter zip code (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldCountry"><i class="fa fa-globe"></i> Country</label>
-			<input type="text" id="node-input-fieldCountry" placeholder="Enter country (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldPrivatePhone"><i class="fa fa-phone"></i> Private Phone</label>
-			<input type="text" id="node-input-fieldPrivatePhone" placeholder="Enter private phone number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldMobilePhone"><i class="fa fa-mobile"></i> Mobile Phone</label>
-			<input type="text" id="node-input-fieldMobilePhone" placeholder="Enter mobile phone number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldPhone"><i class="fa fa-phone"></i> Phone</label>
-			<input type="text" id="node-input-fieldPhone" placeholder="Enter phone number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldFax"><i class="fa fa-fax"></i> Fax</label>
-			<input type="text" id="node-input-fieldFax" placeholder="Enter fax number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldWebsite"><i class="fa fa-globe"></i> Website</label>
-			<input type="text" id="node-input-fieldWebsite" placeholder="Enter website URL (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldBirthday"><i class="fa fa-birthday-cake"></i> Birthday</label>
-			<input type="text" id="node-input-fieldBirthday" placeholder="Enter birthday (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldLeadValue"><i class="fa fa-usd"></i> Lead Value</label>
-			<input type="text" id="node-input-fieldLeadValue" placeholder="Enter lead value (optional)">
-		</div>
-	</div>
+	<div id="contact-fields-section" style="display: none;"></div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -161,22 +100,9 @@
 				value: '',
 				validate: validateEmail
 			},
-			newSmsNumber: { value: '' },
-			fieldFirstName: { value: '' },
-			fieldLastName: { value: '' },
-			fieldStreet1: { value: '' },
-			fieldStreet2: { value: '' },
-			fieldCity: { value: '' },
-			fieldState: { value: '' },
-			fieldZip: { value: '' },
-			fieldCountry: { value: '' },
-			fieldPrivatePhone: { value: '' },
-			fieldMobilePhone: { value: '' },
-			fieldPhone: { value: '' },
-			fieldFax: { value: '' },
-			fieldWebsite: { value: '' },
-			fieldBirthday: { value: 0 },
-			fieldLeadValue: { value: 0 },
+			fields: {
+				value: {}
+			}
 		},
 		inputs: 1,
 		outputs: 1,
@@ -185,7 +111,17 @@
 			return this.name || 'KlickTipp Subscriber Update';
 		},
 		oneditprepare: function() {
-			toggleContactFields();
+			const contactListContainer = $('#contact-fields-section');
+			populateContactFields(contactListContainer, this.fields);
+		},
+		// When the node editor is saved, capture the selected tagId
+		oneditsave: function() {
+			// Collect all field values and store them in this.fields
+			this.fields = {};
+			$('#contact-fields-section input').each((index, element) => {
+				const fieldId = $(element).attr('id').replace('node-input-', '');
+				this.fields[fieldId] = $(element).val();
+			});
 		}
 	});
 </script>

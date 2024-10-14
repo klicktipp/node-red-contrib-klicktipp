@@ -4,9 +4,11 @@
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-		<label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
-		<input type="text" id="node-input-listId" placeholder="Enter list ID (required)">
-	</div>
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
+        <select id="node-input-listId">
+            <!-- List ID will be populated here -->
+        </select>
+    </div>
 	<div class="form-row">
 	   <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	   <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -86,5 +88,14 @@
 		label: function () {
 			return this.name || 'KlickTipp Subscription Process Get';
 		},
+		oneditprepare: function() {
+			const listIdDropdown = $('#node-input-listId');
+			populateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process');
+		},
+		// When the node editor is saved, capture the selected tagId
+		oneditsave: function() {
+			console.log('Save this: ' + $('#node-input-listId').val());
+			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
+		}
 	});
 </script>

@@ -7,10 +7,12 @@
 	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
 	</div>
-	<div class="form-row">
-	    <label for="node-input-tagId"><i class="fa fa-tag""></i> <span>Tag ID</span></label>
-	    <input type="text" id="node-input-tagId" placeholder="Enter tag ID">
-	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tags</span></label>
+        <select id="node-input-tagId" multiple style="height: auto; width: 100%;">
+            <!-- Tags will be populated here -->
+        </select>
+    </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -86,8 +88,7 @@
 				validate: validateEmail
 			},
 			tagId: {
-				value: '',
-				validate: RED.validators.number()
+				value: [],
 			},
 			name: { value: '' },
 		},
@@ -97,5 +98,39 @@
 		label: function () {
 			return this.name || 'KlickTipp Tag Email';
 		},
+		oneditprepare: function() {
+			const tagDropdown = $('#node-input-tagId');
+			populateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+			// // Add a simple loading message while tags are being fetched
+			// tagDropdown.append($('<option>').text('Loading tags...'));
+			//
+			// // Fetch the tags from the KlickTipp API
+			// $.getJSON('/klicktipp/tags', function (tags) {
+			// 	tagDropdown.empty(); // Clear loading message
+			//
+			// 	// Populate the select dropdown with the tag options
+			// 	$.each(tags, function (tagId, tagName) {
+			// 		tagDropdown.append($('<option>', { value: tagId, text: tagName }));
+			// 	});
+			//
+			// 	// Pre-select the previously saved tagId(s) if available
+			// 	if (Array.isArray(this.tagId)) {
+			// 		tagDropdown.val(this.tagId);
+			// 	}
+			// }.bind(this)).fail(function () {
+			// 	RED.notify('Failed to load KlickTipp tags', 'error');
+			// 	tagDropdown.empty();
+			// 	tagDropdown.append($('<option>').text('Failed to load tags'));
+			// });
+
+			// Set a minimum height for better UX
+			tagDropdown.css({
+				'min-height': '100px', // Adjust height to accommodate multiple selections
+				'width': '100%'
+			});
+		},
+		oneditsave: function() {
+			this.tagId = $('#node-input-tagId').val(); // Save the selected tagId(s)
+		}
 	});
 </script>

@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/validateSession');
 const getSessionData = require('./utils/getSessionData');
 const qs = require('qs');
+const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
 
 module.exports = function (RED) {
 	
@@ -34,6 +35,48 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessRedirectNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		
+		createCachedApiEndpoint(RED, node, config, {
+			endpoint: '/klicktipp/subscription-process',
+			permission: 'klicktipp.read',
+			cacheContext: 'flow',
+			cacheKey: 'subscriptionProcessCache',
+			cacheTimestampKey: 'cacheTimestamp',
+			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			fetchFunction: async (req, res) => {
+				const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+				
+				if (!klicktippConfig || !klicktippConfig.username || !klicktippConfig.password) {
+					res.status(400).json({ error: 'KlickTipp credentials missing' });
+					throw new Error('KlickTipp credentials missing');
+				}
+				
+				console.log('Fetching data from KlickTipp API');
+				
+				// Login to KlickTipp API
+				const loginResponse = await makeRequest('/account/login', 'POST', {
+					username: klicktippConfig.username,
+					password: klicktippConfig.password,
+				});
+				
+				if (!loginResponse.data || !loginResponse.data.sessid || !loginResponse.data.session_name) {
+					throw new Error('Login failed');
+				}
+				
+				const sessionData = {
+					sessionId: loginResponse.data.sessid,
+					sessionName: loginResponse.data.session_name,
+				};
+				
+				// Fetch subscription processes from KlickTipp API
+				const response = await makeRequest('/list', 'GET', {}, sessionData);
+				
+				// Logout from KlickTipp API
+				await makeRequest('/account/logout', 'POST', {}, sessionData);
+				
+				return response.data; // Assuming response.data contains the tags
+			},
+		});
 
 		node.on('input', async function (msg) {
 			if (!validateSession(msg, node)) {

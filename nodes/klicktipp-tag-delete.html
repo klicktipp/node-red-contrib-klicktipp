@@ -3,10 +3,12 @@
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-	<div class="form-row">
-	    <label for="node-input-tagId"><i class="fa fa-tag""></i> <span>Tag ID</span></label>
-	    <input type="text" id="node-input-tagId" placeholder="Enter tag ID">
-	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
+        <select id="node-input-tagId">
+            <!-- Tags will be populated here -->
+        </select>
+    </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -86,5 +88,14 @@
 		label: function () {
 			return this.name || 'KlickTipp Tag Delete';
 		},
+		oneditprepare: function() {
+			const tagDropdown = $('#node-input-tagId');
+			populateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+		},
+		// When the node editor is saved, capture the selected tagId
+		oneditsave: function() {
+			console.log('Save this: ' + $('#node-input-tagId').val());
+			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
+		}
 	});
 </script>

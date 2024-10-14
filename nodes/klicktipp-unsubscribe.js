@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/validateSession');
 const getSessionData = require('./utils/getSessionData');
 const qs = require('qs');
+const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
 
 module.exports = function (RED) {
 

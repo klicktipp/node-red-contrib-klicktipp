@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/validateSession');
 const getSessionData = require('./utils/getSessionData');
 const qs = require('qs');
+const clearCache = require("./utils/cache/clearCache");
 
 module.exports = function (RED) {
 	
@@ -66,6 +67,9 @@ module.exports = function (RED) {
 
 				handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
 					msg.payload = response.data;
+					
+					// Clear the cache after a successful delete
+					clearCache(node, 'tagCache');
 				});
 			} catch (error) {
 				handleError(node, msg, 'Failed to create tag', error.message);
