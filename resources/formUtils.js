@@ -192,20 +192,21 @@ function ktGenerateCustomField(fieldKey, fieldLabel, defaultValue = '') {
                 data-field-key="${fieldKey}"
                 data-field-label="${fieldLabel}"
             >
-                <i class="fa fa-times"></i>
+                <i class="fa fa-minus"></i>
             </button>
         </div>
     `;
 	
-	// Event Delegation for Removing Custom Fields
-	container.on('click', '.remove-custom-field-btn', function () {
-		const fieldKey = $(this).data('field-key');
-		const fieldLabel = $(this).data('field-label');
+	container.append(formRow);
+	
+	// Attach the remove event directly after appending the field
+	$(`#form-row-${fieldKey} .remove-custom-field-btn`).on('click', function () {
+		// Remove the custom field from the form
 		$(`#form-row-${fieldKey}`).remove();
+		
+		// Add the option back to the dropdown
 		$('#custom-fields-dropdown').append($('<option>', { value: fieldKey, text: fieldLabel }));
 	});
-	
-	container.append(formRow);
 }
 
 // Restore Custom Fields
