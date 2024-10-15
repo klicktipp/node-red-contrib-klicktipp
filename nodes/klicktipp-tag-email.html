@@ -101,27 +101,6 @@
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
-			// // Add a simple loading message while tags are being fetched
-			// tagDropdown.append($('<option>').text('Loading tags...'));
-			//
-			// // Fetch the tags from the KlickTipp API
-			// $.getJSON('/klicktipp/tags', function (tags) {
-			// 	tagDropdown.empty(); // Clear loading message
-			//
-			// 	// Populate the select dropdown with the tag options
-			// 	$.each(tags, function (tagId, tagName) {
-			// 		tagDropdown.append($('<option>', { value: tagId, text: tagName }));
-			// 	});
-			//
-			// 	// Pre-select the previously saved tagId(s) if available
-			// 	if (Array.isArray(this.tagId)) {
-			// 		tagDropdown.val(this.tagId);
-			// 	}
-			// }.bind(this)).fail(function () {
-			// 	RED.notify('Failed to load KlickTipp tags', 'error');
-			// 	tagDropdown.empty();
-			// 	tagDropdown.append($('<option>').text('Failed to load tags'));
-			// });
 
 			// Set a minimum height for better UX
 			tagDropdown.css({
