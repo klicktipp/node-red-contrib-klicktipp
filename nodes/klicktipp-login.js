@@ -3,8 +3,8 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const setSessionData = require('./utils/setSessionData');
-const generateUniqueSessionKey = require('./utils/generateUniqueSessionKey');
+const setSessionData = require('./utils/session/setSessionData');
+const generateUniqueSessionKey = require('./utils/session/generateUniqueSessionKey');
 const scheduleAutoLogout = require('./utils/sheduleAutoLogout');
 const clearAutoLogout = require('./utils/clearAutoLogout');
 

@@ -1,4 +1,4 @@
-const handleError = require('./handleError');
+const handleError = require('../handleError');
 const getSessionData = require('./getSessionData');
 
 /**

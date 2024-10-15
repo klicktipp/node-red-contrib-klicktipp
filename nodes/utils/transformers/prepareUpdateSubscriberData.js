@@ -1,4 +1,4 @@
-const validContactFieldList = require('../constants/validContactFieldList');
+const validContactFieldList = require('../../constants/validContactFieldList');
 
 /**
  * Prepares the data object for updating a subscriber by filtering valid fields and including optional new email and SMS number.

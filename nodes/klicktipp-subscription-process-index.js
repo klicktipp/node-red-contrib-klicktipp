@@ -3,8 +3,8 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const validateSession = require('./utils/session/validateSession');
+const getSessionData = require('./utils/session/getSessionData');
 
 module.exports = function (RED) {
 	
@@ -33,9 +33,6 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			const flow = node.context().flow;
-			const sessionData = flow.get(msg.sessionDataKey);
 
 			try {
 				const response = await makeRequest(

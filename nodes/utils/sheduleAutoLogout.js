@@ -1,9 +1,9 @@
 const handleResponse = require('./handleResponse');
 const handleError = require('./handleError');
-const getSessionData = require('../utils/getSessionData');
+const getSessionData = require('./session/getSessionData');
 const makeRequest = require('./makeRequest');
 const clearAutoLogout = require('./clearAutoLogout');
-const resetSessionData = require('./resetSessionData');
+const resetSessionData = require('./session/resetSessionData');
 
 /**
  * Schedules automatic logout after a predefined timeout period.

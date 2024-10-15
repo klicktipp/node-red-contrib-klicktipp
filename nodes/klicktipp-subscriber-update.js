@@ -3,12 +3,13 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
-const prepareUpdateSubscriberData = require('./utils/prepareUpdateSubscriberData');
-const extractUpdateSubscriberFields = require('./utils/extractUpdateSubscriberFields');
+const validateSession = require('./utils/session/validateSession');
+const getSessionData = require('./utils/session/getSessionData');
+const prepareUpdateSubscriberData = require('./utils/transformers/prepareUpdateSubscriberData');
+const extractUpdateSubscriberFields = require('./utils/transformers/extractUpdateSubscriberFields');
 const qs = require('qs');
 const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
+const fetchKlickTippData = require("./utils/fetchKlickTippData");
 
 module.exports = function (RED) {
 	
@@ -39,6 +40,9 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+		
+		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, config, {
 			endpoint: '/klicktipp/contact-fields',
 			permission: 'klicktipp.read',
@@ -46,42 +50,7 @@ module.exports = function (RED) {
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: async (req, res) => {
-				const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-				
-				if (!klicktippConfig || !klicktippConfig.username || !klicktippConfig.password) {
-					res.status(400).json({ error: 'KlickTipp credentials missing' });
-					return;
-					//throw new Error('KlickTipp credentials missing');
-				}
-				
-				console.log('Fetching data from KlickTipp API');
-				
-				// Login to KlickTipp API
-				const loginResponse = await makeRequest('/account/login', 'POST', {
-					username: klicktippConfig.username,
-					password: klicktippConfig.password,
-				});
-				
-				if (!loginResponse.data || !loginResponse.data.sessid || !loginResponse.data.session_name) {
-					res.status(400).json({ error: 'Login failed' });
-					return;
-					//throw new Error('Login failed');
-				}
-				
-				const sessionData = {
-					sessionId: loginResponse.data.sessid,
-					sessionName: loginResponse.data.session_name,
-				};
-				
-				// Fetch tags from KlickTipp API
-				const response = await makeRequest('/field', 'GET', {}, sessionData);
-				
-				// Logout from KlickTipp API
-				await makeRequest('/account/logout', 'POST', {}, sessionData);
-				
-				return response.data; // Assuming response.data contains the tags
-			},
+			fetchFunction: async (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/field'),
 		});
 
 		node.on('input', async function (msg) {

@@ -130,12 +130,10 @@
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
-			console.log('Save this: ' + $('#node-input-tagId').val());
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
 			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
 
 			// Collect all field values and store them in this.fields
-			this.fields = {};
 			$('#contact-fields-section input').each((index, element) => {
 				const fieldId = $(element).attr('id').replace('node-input-', '');
 				this.fields[fieldId] = $(element).val();

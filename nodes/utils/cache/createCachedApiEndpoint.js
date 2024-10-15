@@ -1,41 +1,53 @@
+/**
+ * Creates a cached API endpoint in Node-RED.
+ *
+ * This function sets up an HTTP GET route that either serves cached data (if valid) or fetches fresh data using the provided fetch function.
+ * The fetched data is then cached for future requests within the specified duration.
+ *
+ * @function createCachedApiEndpoint
+ * @param {object} RED - The Node-RED runtime object used to register HTTP routes.
+ * @param {object} node - The Node-RED node instance used to access the context for caching.
+ * @param {object} config - The Node-RED node configuration object.
+ * @param {object} options - Configuration options for the caching endpoint.
+ * @param {string} options.endpoint - The API endpoint to be registered.
+ * @param {string} options.permission - The permission required to access this endpoint.
+ * @param {string} [options.cacheContext='flow'] - The context level where the cache is stored (e.g., 'flow' or 'global').
+ * @param {string} options.cacheKey - The key used to store the cached data.
+ * @param {string} options.cacheTimestampKey - The key used to store the timestamp of when the data was cached.
+ * @param {number} [options.cacheDurationMs=600000] - The duration (in milliseconds) for which the cache is considered valid. Defaults to 10 minutes.
+ * @param {function} options.fetchFunction - The function that fetches new data if the cache is invalid or expired.
+ *
+ */
 function createCachedApiEndpoint(RED, node, config, options) {
 	RED.httpAdmin.get(
 		options.endpoint,
 		RED.auth.needsPermission(options.permission),
-		async function(req, res) {
+		async (req, res) => {
 			try {
-				const context = node.context();
-				const cacheContext = context[options.cacheContext || 'flow'];
+				const context = node.context()[options.cacheContext || 'flow'];
+				const { cacheKey, cacheTimestampKey, cacheDurationMs = 10 * 60 * 1000 } = options;
 				
-				let cacheData = cacheContext.get(options.cacheKey) || null;
-				let cacheTimestamp = cacheContext.get(options.cacheTimestampKey) || null;
+				// Check if cached data is still valid
+				const cachedData = context.get(cacheKey);
+				const cacheTimestamp = context.get(cacheTimestampKey);
+				const isCacheValid = cachedData && cacheTimestamp && (Date.now() - cacheTimestamp < cacheDurationMs);
 				
-				const CACHE_DURATION_MS = options.cacheDurationMs || (10 * 60 * 1000);
-				
-				function isCacheValid() {
-					if (!cacheData || !cacheTimestamp) {
-						return false;
-					}
-					const currentTime = Date.now();
-					return (currentTime - cacheTimestamp) < CACHE_DURATION_MS;
+				if (isCacheValid) {
+					console.log('Serving from cache');
+					return res.json(cachedData);
 				}
 				
-				if (isCacheValid()) {
-					console.log('Using cached data');
-					return res.json(cacheData);
-				}
-				
+				// Fetch new data
 				const data = await options.fetchFunction(req, res);
 				
-				cacheData = data;
-				cacheTimestamp = Date.now();
+				// Cache the new data
+				context.set(cacheKey, data);
+				context.set(cacheTimestampKey, Date.now());
 				
-				cacheContext.set(options.cacheKey, cacheData);
-				cacheContext.set(options.cacheTimestampKey, cacheTimestamp);
+				res.json(data);
 				
-				res.json(cacheData);
 			} catch (error) {
-				console.error(error);
+				console.error('Error fetching data:', error);
 				res.status(500).json({ error: 'Failed to fetch data', message: error.message });
 			}
 		}

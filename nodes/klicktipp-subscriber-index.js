@@ -3,8 +3,8 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const validateSession = require('./utils/session/validateSession');
+const getSessionData = require('./utils/session/getSessionData');
 
 module.exports = function (RED) {
 	

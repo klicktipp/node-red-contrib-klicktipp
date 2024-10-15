@@ -3,10 +3,9 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const validateSession = require('./utils/session/validateSession');
+const getSessionData = require('./utils/session/getSessionData');
 const qs = require('qs');
-const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
 
 module.exports = function (RED) {
 

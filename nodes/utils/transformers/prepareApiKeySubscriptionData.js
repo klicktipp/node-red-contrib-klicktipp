@@ -1,4 +1,4 @@
-const validContactFieldList = require('../constants/validContactFieldList');
+const validContactFieldList = require('../../constants/validContactFieldList');
 
 /**
  * Prepares the subscription data object for API requests by filtering and including only valid contact fields.
