@@ -136,10 +136,8 @@
 			// Collect all field values and store them in this.fields
 			this.fields = {};
 			$('#contact-fields-section input').each((index, element) => {
-				console.log(element);
 				const fieldId = $(element).attr('id').replace('node-input-', '');
 				this.fields[fieldId] = $(element).val();
-				console.log(this.fields);
 			});
 		}
 	});
