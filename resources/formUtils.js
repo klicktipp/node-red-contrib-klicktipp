@@ -135,6 +135,11 @@ function ktGenerateFormFields(fields, defaultValues = {}) {
 function ktGenerateCustomFieldsDropdown(customFields, defaultValues) {
 	const container = $('#contact-fields-section');
 	
+	// Check if customFields is empty
+	if ($.isEmptyObject(customFields)) {
+		return; // Do not render anything if customFields is empty
+	}
+	
 	const dropdownRow = `
         <div class="form-row">
             <label for="custom-fields-dropdown">
