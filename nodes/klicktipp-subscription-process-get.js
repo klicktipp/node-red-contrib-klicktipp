@@ -45,7 +45,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/list')
+			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/list')
 		});
 
 		node.on('input', async function (msg) {

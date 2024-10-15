@@ -51,7 +51,7 @@ module.exports = function (RED) {
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: async (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/field'),
+			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/field'),
 		});
 		
 		// Get the tag list for display in Node UI
@@ -62,7 +62,7 @@ module.exports = function (RED) {
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/tag')
+			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/tag')
 		});
 		
 		// Get the subscription process list for display in Node UI
@@ -73,7 +73,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/list')
+			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/list')
 		});
 
 		node.on('input', async function (msg) {

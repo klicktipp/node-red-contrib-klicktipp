@@ -38,7 +38,7 @@ function createCachedApiEndpoint(RED, node, config, options) {
 				}
 				
 				// Fetch new data
-				const data = await options.fetchFunction(req, res);
+				const data = await options.fetchFunction();
 				
 				// Cache the new data
 				context.set(cacheKey, data);

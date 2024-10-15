@@ -47,7 +47,7 @@ module.exports = function (RED) {
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: async (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/field'),
+			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/field'),
 		});
 
 		node.on('input', async function (msg) {

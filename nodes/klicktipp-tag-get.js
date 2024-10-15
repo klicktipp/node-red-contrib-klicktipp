@@ -44,7 +44,7 @@ module.exports = function (RED) {
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (req, res) => fetchKlickTippData(req, res, klicktippConfig, '/tag')
+			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/tag')
 		});
 
 		node.on('input', async function (msg) {

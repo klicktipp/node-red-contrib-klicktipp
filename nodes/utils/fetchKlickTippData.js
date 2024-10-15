@@ -6,21 +6,20 @@ const makeRequest = require("./makeRequest");
  *
  * @async
  * @function fetchKlickTippData
- * @param {object} req - The HTTP request object.
- * @param {object} res - The HTTP response object.
  * @param {object} klicktippConfig - The KlickTipp configuration object containing the username and password.
  * @param {string} klicktippConfig.username - The KlickTipp username.
  * @param {string} klicktippConfig.password - The KlickTipp password.
  * @param {string} endpoint - The specific API endpoint to fetch data from (e.g., '/tag', '/field').
- * @returns {Promise<object>} - Returns a Promise that resolves to the fetched data or an error response.
+ * @returns {Promise<object>} - Returns a Promise that resolves to the fetched data or throws an error.
  *
  * @throws {Error} If the KlickTipp credentials are missing or invalid.
  * @throws {Error} If the API request fails at any point (login, fetching data, logout).
  *
  */
-async function fetchKlickTippData(req, res, klicktippConfig, endpoint) {
+async function fetchKlickTippData(klicktippConfig, endpoint) {
 	if (!klicktippConfig || !klicktippConfig.username || !klicktippConfig.password) {
-		return res.status(400).json({ error: 'KlickTipp credentials missing' });
+		console.log('KlickTipp credentials missing');
+		return;
 	}
 	
 	try {
@@ -33,7 +32,8 @@ async function fetchKlickTippData(req, res, klicktippConfig, endpoint) {
 		});
 		
 		if (!loginResponse.data?.sessid || !loginResponse.data?.session_name) {
-			return res.status(400).json({ error: 'Login failed' });
+			console.log('Login failed');
+			return;
 		}
 		
 		const sessionData = {
@@ -51,7 +51,6 @@ async function fetchKlickTippData(req, res, klicktippConfig, endpoint) {
 		
 	} catch (error) {
 		console.error(`Failed to fetch data from ${endpoint}`, error);
-		return res.status(500).json({ error: `Failed to fetch data from ${endpoint}`, message: error.message });
 	}
 }
 
