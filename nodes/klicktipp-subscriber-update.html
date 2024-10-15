@@ -98,7 +98,7 @@
 			},
 			newEmail: {
 				value: '',
-				validate: validateEmail
+				validate: ktValidateEmail
 			},
 			fields: {
 				value: {}
@@ -112,7 +112,7 @@
 		},
 		oneditprepare: function() {
 			const contactListContainer = $('#contact-fields-section');
-			populateContactFields(contactListContainer, this.fields);
+			ktPopulateContactFields(contactListContainer, this.fields);
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

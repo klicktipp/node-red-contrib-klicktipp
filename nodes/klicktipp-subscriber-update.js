@@ -6,7 +6,6 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/session/validateSession');
 const getSessionData = require('./utils/session/getSessionData');
 const prepareUpdateSubscriberData = require('./utils/transformers/prepareUpdateSubscriberData');
-const extractUpdateSubscriberFields = require('./utils/transformers/extractUpdateSubscriberFields');
 const qs = require('qs');
 const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
 const fetchKlickTippData = require("./utils/fetchKlickTippData");
@@ -22,7 +21,7 @@ module.exports = function (RED) {
 	 * Inputs:
 	 * - `msg.payload`: An object that must contain:
 	 *   - `subscriberId`: (Required) The ID of the subscriber to update.
-	 *   - `fields` (Optional): Fields of the subscriber to update. See validContactFieldList variable
+	 *   - `fields` (Optional): Fields of the subscriber to update.
 	 *   - `newEmail` (Optional): The new email address of the subscriber.
 	 *   - `newSmsNumber` (Optional): The new SMS number of the subscriber.
 	 *
@@ -63,7 +62,7 @@ module.exports = function (RED) {
 				fields,
 				newEmail,
 				newSmsNumber
-			} = extractUpdateSubscriberFields(config, msg.payload);
+			} = config || msg.payload;
 
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');

@@ -85,7 +85,7 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: validateEmail
+				validate: ktValidateEmail
 			},
 			tagId: {
 				value: [],
@@ -100,7 +100,7 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			populateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
 			// // Add a simple loading message while tags are being fetched
 			// tagDropdown.append($('<option>').text('Loading tags...'));
 			//

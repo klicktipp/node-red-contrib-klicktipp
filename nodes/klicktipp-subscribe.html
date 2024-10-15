@@ -28,7 +28,7 @@
     	<label for="toggle-contact-fields-section"><i class="fa fa-list"></i> <span>Fields</span></label>
     	<input type="checkbox" id="toggle-contact-fields-section">
 	</div>
-	<div id="contact-fields-section" style="display: none;"></div>
+	<div id="contact-fields-section"></div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -100,7 +100,7 @@
 			name: { value: '' },
 			email: {
 				value: '',
-				validate: validateEmail
+				validate: ktValidateEmail
 			},
 			smsNumber: { value: '' },
 			listId: {
@@ -124,19 +124,22 @@
 			const listIdDropdown = $('#node-input-listId');
 			const contactListContainer = $('#contact-fields-section');
 
-			populateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
-			populateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process');
-			populateContactFields(contactListContainer, this.fields);
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process');
+			ktPopulateContactFields(contactListContainer, this.fields);
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
-			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
+			this.listId = Number($('#node-input-listId').val()); // Save the selected listId
 
 			// Collect all field values and store them in this.fields
+			this.fields = {};
 			$('#contact-fields-section input').each((index, element) => {
+				console.log(element);
 				const fieldId = $(element).attr('id').replace('node-input-', '');
 				this.fields[fieldId] = $(element).val();
+				console.log(this.fields);
 			});
 		}
 	});

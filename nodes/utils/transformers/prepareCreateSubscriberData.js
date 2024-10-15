@@ -1,5 +1,3 @@
-const validContactFieldList = require('../../constants/validContactFieldList');
-
 /**
  * Prepares the data object for creating a subscriber by filtering valid fields and including optional parameters.
  *
@@ -11,31 +9,27 @@ const validContactFieldList = require('../../constants/validContactFieldList');
  * @returns {Object} The prepared subscriber data object containing email, and optionally, SMS number, list ID, tag ID, and filtered fields.
  */
 function prepareCreateSubscriberData(email, smsNumber = '', listId = 0, tagId = 0, fields = {}) {
-	// Filter fields to include only valid keys
-	const filteredFields = Object.fromEntries(
-		Object.entries(fields).filter(([key]) => validContactFieldList.includes(key)),
-	);
-
 	const data = {
-		email: email,
+		email
 	};
-
-	if (smsNumber) {
+	
+	// Add optional fields only if they contain valid values
+	if (smsNumber.trim()) {
 		data.smsnumber = smsNumber;
 	}
-
-	if (listId) {
+	
+	if (listId > 0) {
 		data.listid = listId;
 	}
-
-	if (tagId) {
+	
+	if (tagId > 0) {
 		data.tagid = tagId;
 	}
-
-	if (filteredFields) {
-		data.fields = filteredFields;
+	
+	if (Object.keys(fields).length > 0) {
+		data.fields = fields;
 	}
-
+	
 	return data;
 }
 

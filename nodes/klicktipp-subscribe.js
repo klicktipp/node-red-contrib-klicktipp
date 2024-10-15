@@ -6,7 +6,6 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/session/validateSession');
 const getSessionData = require('./utils/session/getSessionData');
 const prepareSubscriptionData = require('./utils/transformers/prepareCreateSubscriberData');
-const extractSubscribeFields = require('./utils/transformers/extractSubscribeFields');
 const qs = require('qs');
 const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
 const fetchKlickTippData = require("./utils/fetchKlickTippData");
@@ -24,7 +23,7 @@ module.exports = function (RED) {
 	 *   - `email`: (Required) The email address of the recipient.
 	 *   - `listId`: (Optional) The ID of the double opt-in process.
 	 *   - `tagId`: (Optional) The ID of the tag with which your contacts are tagged.
-	 *   - `fields`: (Optional) Additional data for the recipient (e.g., first name, address). See validContactFieldList variable
+	 *   - `fields`: (Optional) Additional data for the recipient (e.g., first name, address).
 	 *   - `smsNumber`: (Optional) The SMS mobile number of the recipient.
 	 *
 	 * Outputs:
@@ -88,7 +87,7 @@ module.exports = function (RED) {
 				listId,
 				tagId,
 				fields
-			} = extractSubscribeFields(config, msg.payload);
+			} = config || msg.payload;
 
 			if (!email) {
 				handleError(node, msg, 'Missing email or SMS number');

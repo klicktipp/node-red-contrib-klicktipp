@@ -84,7 +84,7 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: validateEmail
+				validate: ktValidateEmail
 			},
 			tagId: {
 				value: '',
@@ -100,7 +100,7 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			populateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
