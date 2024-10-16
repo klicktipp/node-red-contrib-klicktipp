@@ -3,11 +3,40 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
+
+		if (!subscriberId) {
+			handleError(this, msg, 'Missing subscriber ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				`/subscriber/${encodeURIComponent(subscriberId)}`,
+				'GET',
+				{},
+				msg.sessionData,
+			);
+
+			// Handle the response using handleResponse utility
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched subscriber information',
+				'Failed to fetch subscriber information',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to fetch subscriber', error.message);
+		}
+	};
 	/**
 	 * KlickTippSubscriberGetNode - A Node-RED node to retrieve information for a specific subscriber.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -31,44 +60,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-			
-			const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
-
-			if (!subscriberId) {
-				handleError(node, msg, 'Missing subscriber ID');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					`/subscriber/${encodeURIComponent(subscriberId)}`,
-					'GET',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				// Handle the response using handleResponse utility
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched subscriber information',
-					'Failed to fetch subscriber information',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch subscriber', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp subscriber get', KlickTippSubscriberGetNode);

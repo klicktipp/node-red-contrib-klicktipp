@@ -5,11 +5,10 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const prepareApiKeySubscriptionData = require('./utils/transformers/prepareApiKeySubscriptionData');
 const qs = require('qs');
-const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
-const fetchKlickTippData = require("./utils/fetchKlickTippData");
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
 
 module.exports = function (RED) {
-	
 	/**
 	 * KlickTippSigninNode - A Node-RED node to subscribe an email using an API key.
 	 * This node subscribes a user by their email or SMS number using the provided API key.
@@ -37,8 +36,6 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, config, {
 			endpoint: '/klicktipp/contact-fields',
@@ -47,16 +44,11 @@ module.exports = function (RED) {
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/field'),
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field')
 		});
 
 		node.on('input', async function (msg) {
-			const {
-				apiKey,
-				email,
-				smsNumber,
-				fields
-			} = config || msg.payload;
+			const { apiKey, email, smsNumber, fields } = config || msg.payload;
 
 			if (!apiKey || (!email && !smsNumber)) {
 				handleError(node, msg, 'Missing API key or email/SMS number');

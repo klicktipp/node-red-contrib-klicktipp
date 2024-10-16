@@ -43,16 +43,6 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 - **Node Name:** `klicktipp-config`
 - **Description:** This is a configuration node used to store your KlickTipp API credentials (username and password). You will use this node to authenticate other KlickTipp nodes.
 
-### KlickTipp Login
-
-- **Node Name:** `klicktipp login`
-- **Description:** Logs in to the KlickTipp API using the credentials stored in the configuration node. The session ID and session name will be saved to the message (`msg.klicktipp`) for use in subsequent requests.
-
-### KlickTipp Logout
-
-- **Node Name:** `klicktipp logout`
-- **Description:** Logs out from the KlickTipp API, invalidating the current session.
-
 ### Subscription Process Nodes
 
 - **Node Names:**

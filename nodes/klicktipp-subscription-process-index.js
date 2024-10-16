@@ -3,11 +3,28 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		try {
+			const response = await makeRequest('/list', 'GET', {}, msg.sessionData);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched subscription processes',
+				'Failed to fetch subscription processes',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to fetch subscription processes', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippSubscriptionProcessIndexNode - A Node-RED node to get all subscription processes (lists) associated with the logged-in user.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -28,36 +45,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessIndexNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					'/list',
-					'GET',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched subscription processes',
-					'Failed to fetch subscription processes',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch subscription processes', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType(

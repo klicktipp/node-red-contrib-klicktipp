@@ -3,11 +3,28 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		try {
+			const response = await makeRequest('/tag', 'GET', {}, msg.sessionData);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched manual tags',
+				'Failed to fetch manual tags',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to fetch manual tags', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippTagIndexNode - A Node-RED node to get all manual tags of the logged-in user.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -26,36 +43,7 @@ module.exports = function (RED) {
 	function KlickTippTagIndexNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					'/tag',
-					'GET',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched manual tags',
-					'Failed to fetch manual tags',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch manual tags', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp tag index', KlickTippTagIndexNode);

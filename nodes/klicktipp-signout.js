@@ -6,7 +6,6 @@ const makeRequest = require('./utils/makeRequest');
 const qs = require('qs');
 
 module.exports = function (RED) {
-	
 	/**
 	 * KlickTippSignoutNode - A Node-RED node to untag an email using an API key.
 	 * This node untags a user by their email using the provided API key.

@@ -8,17 +8,17 @@
  */
 function prepareUpdateSubscriberData(newEmail, newSmsNumber = '', fields = {}) {
 	const data = { newEmail };
-	
+
 	// Include new SMS number only if it is non-empty after trimming
 	if (newSmsNumber.trim()) {
 		data.newSmsNumber = newSmsNumber;
 	}
-	
+
 	// Add fields only if it's not an empty object
 	if (Object.keys(fields).length > 0) {
 		data.fields = fields;
 	}
-	
+
 	return data;
 }
 

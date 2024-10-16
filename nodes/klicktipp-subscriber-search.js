@@ -3,12 +3,41 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
 const qs = require('qs');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const email = config.email || msg?.payload?.email;
+		
+		if (!email) {
+			handleError(this, msg, 'Missing email', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				'/subscriber/search',
+				'POST',
+				qs.stringify({ email }),
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Subscriber ID retrieved',
+				'Failed to search for subscriber',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to search for subscriber', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippSubscriberSearchNode - A Node-RED node to search for a subscriber by email and return the subscriber ID.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -32,43 +61,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberSearchNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			const email = config.email || msg?.payload?.email;
-
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			if (!email) {
-				handleError(node, msg, 'Missing email');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					'/subscriber/search',
-					'POST',
-					qs.stringify({ email }),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Subscriber ID retrieved',
-					'Failed to search for subscriber',
-					() => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to search for subscriber', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp subscriber search', KlickTippSubscriberSearchNode);

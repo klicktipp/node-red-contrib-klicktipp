@@ -3,13 +3,43 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
+const clearCache = require('./utils/cache/clearCache');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const qs = require('qs');
-const clearCache = require("./utils/cache/clearCache");
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		//tagName is used to avoid conflict with the Node-RED core name property
+		const name = config.tagName || msg?.payload?.name;
+		const text = config.tagDescription || msg?.payload?.text;
+
+		if (!name) {
+			handleError(node, msg, 'Missing tag name');
+			return this.send(msg);
+		}
+
+		try {
+			const data = {
+				name,
+			};
+
+			if (text) {
+				data.text = text;
+			}
+
+			const response = await makeRequest('/tag', 'POST', qs.stringify(data), msg.sessionData);
+
+			handleResponse(this, msg, response, 'Tag created', 'Failed to create tag', (response) => {
+				msg.payload = response.data;
+
+				// Clear the cache after a successful delete
+				clearCache(this, 'tagCache');
+			});
+		} catch (error) {
+			handleError(this, msg, 'Failed to create tag', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippTagCreateNode - A Node-RED node to create a new manual tag.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -36,48 +66,7 @@ module.exports = function (RED) {
 	function KlickTippTagCreateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-			//tagName is used to avoid conflict with the Node-RED core name property
-			const name = config.tagName || msg?.payload?.name;
-			const text = config.tagDescription || msg?.payload?.text;
-
-			if (!name) {
-				handleError(node, msg, 'Missing tag name');
-				return node.send(msg);
-			}
-
-			try {
-				const data = {
-					name,
-				};
-
-				if (text) {
-					data.text = text;
-				}
-
-				const response = await makeRequest(
-					'/tag',
-					'POST',
-					qs.stringify(data),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
-					msg.payload = response.data;
-					
-					// Clear the cache after a successful delete
-					clearCache(node, 'tagCache');
-				});
-			} catch (error) {
-				handleError(node, msg, 'Failed to create tag', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp tag create', KlickTippTagCreateNode);

@@ -3,11 +3,41 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
 const qs = require('qs');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
+	const coreFunction = async function (msg, config) {
+		const email = config.email || msg?.payload?.email;
+		
+		if (!email) {
+			handleError(this, msg, 'Missing email', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				'/subscriber/unsubscribe',
+				'POST',
+				qs.stringify({ email }),
+				msg.sessionData,
+			);
+
+			// Handle the response
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Unsubscribed successfully',
+				'Failed to unsubscribe',
+				() => {
+					msg.payload = { success: true };
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to unsubscribe', error.message);
+		}
+	};
 
 	/**
 	 * KlickTippUnsubscribeNode - A Node-RED node to unsubscribe an email.
@@ -33,43 +63,7 @@ module.exports = function (RED) {
 	function KlickTippUnsubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			const email = config.email || msg?.payload?.email;
-
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			if (!email) {
-				return handleError(node, msg, 'Missing email');
-			}
-
-			try {
-				const response = await makeRequest(
-					'/subscriber/unsubscribe',
-					'POST',
-					qs.stringify({ email }),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				// Handle the response
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Unsubscribed successfully',
-					'Failed to unsubscribe',
-					() => {
-						msg.payload = { success: true };
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to unsubscribe', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 	RED.nodes.registerType('klicktipp unsubscribe', KlickTippUnsubscribeNode);
 };

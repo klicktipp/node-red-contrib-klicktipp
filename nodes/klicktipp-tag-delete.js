@@ -3,14 +3,39 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
-const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
-const clearCache = require("./utils/cache/clearCache");
-const fetchKlickTippData = require("./utils/fetchKlickTippData");
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const clearCache = require('./utils/cache/clearCache');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const tagId = config.tagId || msg?.payload?.tagId;
+
+		if (!tagId) {
+			handleError(this, msg, 'Missing tag ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				`/tag/${encodeURIComponent(tagId)}`,
+				'DELETE',
+				{},
+				msg.sessionData,
+			);
+
+			handleResponse(this, msg, response, 'Tag deleted', 'Failed to delete tag', () => {
+				msg.payload = { success: true };
+
+				// Clear the cache after a successful delete
+				clearCache(this, 'tagCache');
+			});
+		} catch (error) {
+			handleError(this, msg, 'Failed to delete tag', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippTagDeleteNode - A Node-RED node to delete a manual tag.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -35,9 +60,7 @@ module.exports = function (RED) {
 	function KlickTippTagDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, config, {
 			endpoint: '/klicktipp/tags',
@@ -46,41 +69,10 @@ module.exports = function (RED) {
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/tag')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag')
 		});
 
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			const tagId = config.tagId || msg?.payload?.tagId;
-
-			if (!tagId) {
-				handleError(node, msg, 'Missing tag ID');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					`/tag/${encodeURIComponent(tagId)}`,
-					'DELETE',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(node, msg, response, 'Tag deleted', 'Failed to delete tag', () => {
-					msg.payload = { success: true };
-					
-					// Clear the cache after a successful delete
-					clearCache(node, 'tagCache');
-				});
-			} catch (error) {
-				handleError(node, msg, 'Failed to delete tag', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp tag delete', KlickTippTagDeleteNode);

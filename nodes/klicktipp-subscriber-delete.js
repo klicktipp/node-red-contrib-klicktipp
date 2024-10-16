@@ -3,11 +3,39 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
+
+		if (!subscriberId) {
+			handleError(this, msg, 'Missing subscriber ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				`/subscriber/${encodeURIComponent(subscriberId)}`,
+				'DELETE',
+				{},
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Subscriber deleted',
+				'Failed to delete subscriber',
+				() => {
+					msg.payload = { success: true };
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to delete subscriber', error.message);
+		}
+	};
 	/**
 	 * KlickTippSubscriberDeleteNode - A Node-RED node to delete a subscriber.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -31,43 +59,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-			
-			const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
-
-			if (!subscriberId) {
-				handleError(node, msg, 'Missing subscriber ID');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					`/subscriber/${encodeURIComponent(subscriberId)}`,
-					'DELETE',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Subscriber deleted',
-					'Failed to delete subscriber',
-					() => {
-						msg.payload = { success: true };
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to delete subscriber', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp subscriber delete', KlickTippSubscriberDeleteNode);

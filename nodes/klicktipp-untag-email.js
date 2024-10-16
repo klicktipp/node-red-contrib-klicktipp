@@ -3,14 +3,48 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
 const qs = require('qs');
-const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
-const fetchKlickTippData = require("./utils/fetchKlickTippData");
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const email = config.email || msg?.payload?.email;
+		const tagId = config.tagId || msg?.payload?.tagId;
+		
+		if (!email) {
+			handleError(this, msg, 'Missing email', 'Invalid input');
+			return this.send(msg);
+		}
+		
+		if (!tagId) {
+			handleError(this, msg, 'Missing tag ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				'/subscriber/untag',
+				'POST',
+				qs.stringify({ email, tagid: tagId }),
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Email untagged successfully',
+				'Failed to untag email',
+				() => {
+					msg.payload = { success: true };
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to untag email', error.message);
+		}
+	};
 	/**
 	 * KlickTippUntagEmailNode - A Node-RED node to untag an email.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -36,9 +70,7 @@ module.exports = function (RED) {
 	function KlickTippUntagEmailNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, config, {
 			endpoint: '/klicktipp/tags',
@@ -47,44 +79,10 @@ module.exports = function (RED) {
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/tag')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag')
 		});
 
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-			const email = config.email || msg?.payload?.email;
-			const tagId = config.tagId || msg?.payload?.tagId;
-
-			if (!email || !tagId) {
-				return handleError(node, msg, 'Missing email or tag ID', 'Invalid input: email or tagId');
-			}
-
-			try {
-				const response = await makeRequest(
-					'/subscriber/untag',
-					'POST',
-					qs.stringify({ email, tagid: tagId }),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Email untagged successfully',
-					'Failed to untag email',
-					() => {
-						msg.payload = { success: true };
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to untag email', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp untag email', KlickTippUntagEmailNode);

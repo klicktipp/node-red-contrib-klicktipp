@@ -3,14 +3,43 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
 const qs = require('qs');
-const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
-const fetchKlickTippData = require("./utils/fetchKlickTippData");
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const tagId = config.tagId || msg?.payload?.tagId;
+
+		if (!tagId) {
+			handleError(this, msg, 'Missing tag ID');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				'/subscriber/tagged',
+				'POST',
+				qs.stringify({ tagid: tagId }),
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Subscribers tagged retrieved',
+				'Failed to retrieve tagged subscribers',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(node, msg, 'Failed to retrieve tagged subscribers', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippSubscriberTaggedNode - A Node-RED node to retrieve all active subscribers tagged with a specific tag ID.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -35,8 +64,6 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, config, {
 			endpoint: '/klicktipp/tags',
@@ -45,45 +72,10 @@ module.exports = function (RED) {
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/tag')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag')
 		});
-		
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
 
-			const tagId = config.tagId || msg?.payload?.tagId;
-
-			if (!tagId) {
-				handleError(node, msg, 'Missing tag ID');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					'/subscriber/tagged',
-					'POST',
-					qs.stringify({ tagid: tagId }),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Subscribers tagged retrieved',
-					'Failed to retrieve tagged subscribers',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to retrieve tagged subscribers', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType('klicktipp subscriber tagged', KlickTippSubscriberTaggedNode);

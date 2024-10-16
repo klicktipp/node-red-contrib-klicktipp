@@ -3,14 +3,54 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/session/validateSession');
-const getSessionData = require('./utils/session/getSessionData');
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const qs = require('qs');
-const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
-const fetchKlickTippData = require("./utils/fetchKlickTippData");
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const email = config.email || msg?.payload?.email;
+		const listId = config.listId || msg?.payload?.listId;
+		
+		if (!listId) {
+			handleError(this, msg, 'Missing list ID ', 'Invalid input');
+			return this.send(msg);
+		}
+
+		if (!email) {
+			handleError(this, msg, 'Missing email', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const data = {
+				listid: listId,
+				email: email,
+			};
+
+			const response = await makeRequest(
+				'/list/redirect',
+				'POST',
+				qs.stringify(data),
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched redirection URL',
+				'Failed to fetch redirection URL',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to fetch redirection URL', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippSubscriptionProcessRedirectNode - A Node-RED node to get the redirection URL for a given subscription process and email.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -36,9 +76,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessRedirectNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		// Get the subscription process list for display in Node UI
 		createCachedApiEndpoint(RED, node, config, {
 			endpoint: '/klicktipp/subscription-process',
@@ -47,51 +85,10 @@ module.exports = function (RED) {
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: () => fetchKlickTippData(klicktippConfig, '/list')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list')
 		});
 
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-			
-			const email = config.email || msg?.payload?.email;
-			const listId = config.listId || msg?.payload?.listId;
-
-			if (!listId || !email) {
-				handleError(node, msg, 'Missing list ID or email');
-				return node.send(msg);
-			}
-
-			try {
-				const data = {
-					listid: listId,
-					email: email,
-				};
-
-				const response = await makeRequest(
-					'/list/redirect',
-					'POST',
-					qs.stringify(data),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched redirection URL',
-					'Failed to fetch redirection URL',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch redirection URL', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
 	RED.nodes.registerType(
