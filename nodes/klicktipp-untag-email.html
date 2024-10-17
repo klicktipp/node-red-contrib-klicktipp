@@ -6,6 +6,7 @@
 	<div class="form-row">
 	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
     <div class="form-row">
         <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
@@ -84,11 +85,16 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: ktValidateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
 			},
 			tagId: {
 				value: '',
-				validate: RED.validators.number()
+				validate: RED.validators.number(),
+				required: true
 			},
 			name: { value: '' },
 		},
@@ -100,7 +106,7 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/untag-email');
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

@@ -6,6 +6,7 @@
 	<div class="form-row">
 	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Subscriber ID</span></label>
 	    <input type="text" id="node-input-subscriberId" placeholder="Enter Subscriber ID (required)">
+	    <input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -75,8 +76,12 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			subscriberId: {
-				value: '',
-				validate: RED.validators.number()
+				required: true,
+				value: 0,
+				validate: RED.validators.typedInput('subscriberIdType')
+			},
+			subscriberIdType: {
+				value: 'num'
 			},
 			name: { value: '' },
 		},
@@ -85,6 +90,9 @@
 		icon: 'klicktipp.png',
 		label: function () {
 			return this.name || 'KlickTipp Subscriber Delete';
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['msg', 'flow', 'global', 'num', 'jsonata', 'env']);
 		},
 	});
 </script>

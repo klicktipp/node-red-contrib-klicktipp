@@ -7,22 +7,24 @@ const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint')
 const clearCache = require('./utils/cache/clearCache');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const tagId = config.tagId || msg?.payload?.tagId;
-		//tagName is used to avoid conflict with the Node-RED core name property
-		const name = config.tagName || msg?.payload?.name;
-		const text = config.tagDescription || msg?.payload?.text;
+		const node = this;
+		
+		const tagId = config?.tagId;
+		const name = await evaluatePropertyAsync(RED, config.tagName, config.tagNameType, node, msg);
+		const text = await evaluatePropertyAsync(RED, config.tagDescription, config.tagDescriptionType, node, msg);
 		
 		if (!tagId) {
-			handleError(this, msg, 'Missing tag ID', 'Invalid input');
+			handleError(node, msg, 'Missing tag ID', 'Invalid input');
 			return this.send(msg);
 		}
 
 		if (name === '' && text === '') {
-			handleError(this, msg, 'Nothing to update', 'Invalid input');
+			handleError(node, msg, 'Nothing to update', 'Invalid input');
 			return this.send(msg);
 		}
 
@@ -43,10 +45,10 @@ module.exports = function (RED) {
 				msg.payload = { success: true };
 
 				// Clear the cache after a successful update
-				clearCache(this, 'tagCache');
+				clearCache(node, 'tagCache');
 			});
 		} catch (error) {
-			handleError(this, msg, 'Failed to update tag', error.message);
+			handleError(node, msg, 'Failed to update tag', error.message);
 		}
 	};
 
@@ -75,10 +77,11 @@ module.exports = function (RED) {
 	function KlickTippTagUpdateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		// Get the tag list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/tags',
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+		
+		// Get the contact field list for display in Node UI
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/tags/update',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',

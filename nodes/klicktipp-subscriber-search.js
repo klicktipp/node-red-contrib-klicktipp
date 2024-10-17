@@ -5,14 +5,16 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const qs = require('qs');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const email = config.email || msg?.payload?.email;
+		const node = this;
+		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 		
 		if (!email) {
-			handleError(this, msg, 'Missing email', 'Invalid input');
-			return this.send(msg);
+			handleError(node, msg, 'Missing email', 'Invalid input');
+			return node.send(msg);
 		}
 
 		try {
@@ -24,7 +26,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'Subscriber ID retrieved',
@@ -34,7 +36,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to search for subscriber', error.message);
+			handleError(node, msg, 'Failed to search for subscriber', error.message);
 		}
 	};
 

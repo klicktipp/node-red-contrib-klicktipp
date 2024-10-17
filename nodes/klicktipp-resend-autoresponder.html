@@ -6,10 +6,12 @@
 	<div class="form-row">
 		<label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 		<input type="text" id="node-input-email" placeholder="Enter email address">
+		<input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
 		<label for="node-input-autoresponder"><i class="fa fa-mobile"></i> <span>Autoresponder</span></label>
 		<input type="text" id="node-input-autoresponder" placeholder="Enter the ID of the autoresponder (optional)">
+		<input type="hidden" id="node-input-autoresponderType">
 	</div>
 	<div class="form-row">
 		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -76,20 +78,31 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
-			autoresponder: {
-				value: 0,
-				validate: RED.validators.number()
-			},
 			email: {
 				value: '',
-				validate: ktValidateEmail
-			}
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
+			},
+			autoresponder: {
+				value: 0,
+				validate: RED.validators.typedInput('autoresponderType')
+			},
+			autoresponderType: {
+				value: 'num'
+			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.png',
 		label: function () {
 			return this.name || 'KlickTipp Resend Autoresponder';
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
+			ktInitializeTypedInput("#node-input-autoresponder", "#node-input-autoresponderType", 'num', ['msg', 'flow', 'global', 'num', 'jsonata', 'env']);
 		},
 	});
 </script>

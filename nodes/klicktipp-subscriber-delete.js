@@ -4,14 +4,16 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
+		const node = this;
+		const subscriberId = await evaluatePropertyAsync(RED, config.subscriberId, config.subscriberIdType, node, msg);
 
 		if (!subscriberId) {
-			handleError(this, msg, 'Missing subscriber ID', 'Invalid input');
-			return this.send(msg);
+			handleError(node, msg, 'Missing subscriber ID', 'Invalid input');
+			return node.send(msg);
 		}
 
 		try {
@@ -23,7 +25,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'Subscriber deleted',
@@ -33,7 +35,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to delete subscriber', error.message);
+			handleError(node, msg, 'Failed to delete subscriber', error.message);
 		}
 	};
 	/**

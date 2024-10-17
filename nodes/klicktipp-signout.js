@@ -4,6 +4,7 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const qs = require('qs');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	/**
@@ -32,9 +33,8 @@ module.exports = function (RED) {
 		const node = this;
 
 		node.on('input', async function (msg) {
-			// Extract fields from config and msg.payload
-			const apiKey = config.apiKey || msg.payload?.apiKey;
-			const email = config.email || msg.payload?.email;
+			const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+			const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
 
 			if (!apiKey || !email) {
 				handleError(node, msg, 'Missing API key or email');

@@ -7,20 +7,23 @@ const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint')
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const qs = require('qs');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const email = config.email || msg?.payload?.email;
-		const listId = config.listId || msg?.payload?.listId;
+		const node = this;
+		
+		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+		const listId = config.listId;
 		
 		if (!listId) {
-			handleError(this, msg, 'Missing list ID ', 'Invalid input');
-			return this.send(msg);
+			handleError(node, msg, 'Missing list ID ', 'Invalid input');
+			return node.send(msg);
 		}
 
 		if (!email) {
-			handleError(this, msg, 'Missing email', 'Invalid input');
-			return this.send(msg);
+			handleError(node, msg, 'Missing email', 'Invalid input');
+			return node.send(msg);
 		}
 
 		try {
@@ -37,7 +40,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'Fetched redirection URL',
@@ -47,7 +50,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch redirection URL', error.message);
+			handleError(node, msg, 'Failed to fetch redirection URL', error.message);
 		}
 	};
 
@@ -76,10 +79,11 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessRedirectNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		// Get the subscription process list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/subscription-process',
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+		
+		// Get the contact field list for display in Node UI
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/subscription-process/get-redirect',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscriptionProcessCache',

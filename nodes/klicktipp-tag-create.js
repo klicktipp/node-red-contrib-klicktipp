@@ -5,13 +5,15 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const clearCache = require('./utils/cache/clearCache');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
+		const node = this;
 		//tagName is used to avoid conflict with the Node-RED core name property
-		const name = config.tagName || msg?.payload?.name;
-		const text = config.tagDescription || msg?.payload?.text;
+		const name = await evaluatePropertyAsync(RED, config.tagName, config.tagNameType, node, msg);
+		const text = await evaluatePropertyAsync(RED, config.tagDescription, config.tagDescriptionType, node, msg);
 
 		if (!name) {
 			handleError(node, msg, 'Missing tag name');
@@ -29,14 +31,14 @@ module.exports = function (RED) {
 
 			const response = await makeRequest('/tag', 'POST', qs.stringify(data), msg.sessionData);
 
-			handleResponse(this, msg, response, 'Tag created', 'Failed to create tag', (response) => {
+			handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
 				msg.payload = response.data;
 
 				// Clear the cache after a successful delete
-				clearCache(this, 'tagCache');
+				clearCache(node, 'tagCache');
 			});
 		} catch (error) {
-			handleError(this, msg, 'Failed to create tag', error.message);
+			handleError(node, msg, 'Failed to create tag', error.message);
 		}
 	};
 

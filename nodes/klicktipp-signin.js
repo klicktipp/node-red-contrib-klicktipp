@@ -7,6 +7,7 @@ const prepareApiKeySubscriptionData = require('./utils/transformers/prepareApiKe
 const qs = require('qs');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	/**
@@ -35,10 +36,11 @@ module.exports = function (RED) {
 	function KlickTippSigninNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);  // Get specific config node here
 		
 		// Get the contact field list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/contact-fields',
+		createCachedApiEndpoint(RED, node, klicktippConfig,{
+			endpoint: '/klicktipp/signin/contact-fields',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',
@@ -46,20 +48,24 @@ module.exports = function (RED) {
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field')
 		});
-
+		
 		node.on('input', async function (msg) {
-			const { apiKey, email, smsNumber, fields } = config || msg.payload;
-
+			const {fields} = config;
+			
+			const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+			const smsNumber = await evaluatePropertyAsync(RED, config.smsNumber, config.smsNumberType, node, msg);
+			const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
+			
 			if (!apiKey || (!email && !smsNumber)) {
 				handleError(node, msg, 'Missing API key or email/SMS number');
 				return node.send(msg);
 			}
-
+			
 			const data = prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields);
-
+			
 			try {
 				const response = await makeRequest('/subscriber/signin', 'POST', qs.stringify(data));
-
+				
 				handleResponse(
 					node,
 					msg,
@@ -73,7 +79,7 @@ module.exports = function (RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to subscribe', error.message);
 			}
-
+			
 			node.send(msg);
 		});
 	}

@@ -6,6 +6,7 @@
 	<div class="form-row">
 	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
     <div class="form-row">
         <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tags</span></label>
@@ -85,7 +86,11 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: ktValidateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
 			},
 			tagId: {
 				value: [],
@@ -100,7 +105,8 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/tag-email');
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
 
 			// Set a minimum height for better UX
 			tagDropdown.css({

@@ -2,10 +2,12 @@
 	<div class="form-row">
 	       <label for="node-input-apiKey"><i class="fa fa-key"></i> <span>API Key</span></label>
 	       <input type="text" id="node-input-apiKey" placeholder="Enter your API key">
+	       <input type="hidden" id="node-input-apiKeyType">
 	   </div>
 	   <div class="form-row">
 	       <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	       <input type="text" id="node-input-email" placeholder="Enter email address">
+	       <input type="hidden" id="node-input-emailType">
 	   </div>
 	   <div class="form-row">
 	       <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -66,10 +68,21 @@
 		category: 'KlickTipp',
 		color: '#F2F2F2',
 		defaults: {
-			apiKey: { value: '' },
+			apiKey: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('apiKeyType')
+			},
+			apiKeyType: {
+				value: 'str'
+			},
 			email: {
 				value: '',
-				validate: ktValidateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
 			},
 			name: { value: '' },
 		},
@@ -78,6 +91,10 @@
 		icon: 'klicktipp.png',
 		label: function () {
 			return this.name || 'KlickTipp Signout';
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
+			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType");
 		},
 	});
 </script>

@@ -6,10 +6,12 @@
 	<div class="form-row">
 		<label for="node-input-tagName"><i class="fa fa-tags""></i> <span>Name</span></label>
 		<input type="text" id="node-input-tagName" placeholder="Enter name (required)">
+		<input type="hidden" id="node-input-tagNameType">
 	</div>
 	<div class="form-row">
 		<label for="node-input-tagDescription"><i class="fa fa-tags""></i> <span>Description</span></label>
 		<input type="text" id="node-input-tagDescription" placeholder="Enter description (optional)">
+		<input type="hidden" id="node-input-tagDescriptionType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -80,8 +82,22 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			//tagName is used to avoid conflict with the Node-RED core name property
-			tagName: { value: '' },
-			tagDescription: { value: '' },
+			tagName: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('tagNameType')
+			},
+			tagNameType: {
+				value: 'str'
+			},
+			tagDescription: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('tagDescriptionType')
+			},
+			tagDescriptionType: {
+				value: 'str'
+			},
 			name: { value: '' },
 		},
 		inputs: 1,
@@ -89,6 +105,10 @@
 		icon: 'klicktipp.png',
 		label: function () {
 			return this.name || 'KlickTipp Tag Create';
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType");
+			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType");
 		},
 	});
 </script>

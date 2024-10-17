@@ -4,20 +4,23 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const email = config.email || msg.payload?.email;
-		const autoresponder = config.autoresponder || msg.payload?.autoresponder;
+		const node = this;
+		
+		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+		const autoresponder = await evaluatePropertyAsync(RED, config.autoresponder, config.autoresponderType, node, msg);
 		
 		if (!email) {
-			handleError(this, msg, 'Missing email', 'Invalid input');
+			handleError(node, msg, 'Missing email', 'Invalid input');
 			return this.send(msg);
 		}
 		
 		if (!autoresponder) {
-			handleError(this, msg, 'Missing autoresponder ID', 'Invalid input');
+			handleError(node, msg, 'Missing autoresponder ID', 'Invalid input');
 			return this.send(msg);
 		}
 
@@ -31,7 +34,7 @@ module.exports = function (RED) {
 
 			// Handle the response
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'Autoresponder resent successfully',
@@ -41,7 +44,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to resend autoresponder', error.message);
+			handleError(node, msg, 'Failed to resend autoresponder', error.message);
 		}
 	};
 	/**

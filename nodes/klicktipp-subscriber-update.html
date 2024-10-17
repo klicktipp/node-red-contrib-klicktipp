@@ -6,14 +6,17 @@
 	<div class="form-row">
 	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Subscriber ID</span></label>
 	    <input type="text" id="node-input-subscriberId" placeholder="Enter Subscriber ID (required)">
+	    <input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	    <input type="text" id="node-input-newEmail" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-newEmailType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-newSmsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
 	    <input type="text" id="node-input-newSmsNumber" placeholder="Enter SMS number (optional)">
+	    <input type="hidden" id="node-input-newSmsNumberType">
 	</div>
 	<!-- Toggle for Address section -->
 	<div id="contact-fields-section"></div>
@@ -89,12 +92,28 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
 			subscriberId: {
-				value: '',
-				validate: RED.validators.number()
+				required: true,
+				value: 0,
+				validate: RED.validators.typedInput('subscriberIdType')
+			},
+			subscriberIdType: {
+				value: 'num'
 			},
 			newEmail: {
 				value: '',
-				validate: ktValidateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			newEmailType: {
+				value: 'str'
+			},
+			newSmsNumber: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			newSmsNumberType: {
+				value: 'str'
 			},
 			fields: {
 				value: {}
@@ -108,7 +127,10 @@
 		},
 		oneditprepare: function() {
 			const contactListContainer = $('#contact-fields-section');
-			ktPopulateContactFields(contactListContainer, this.fields);
+			ktPopulateContactFields(contactListContainer, this.fields, '/klicktipp/update-subscriber/contact-fields');
+			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['msg', 'flow', 'global', 'num', 'jsonata', 'env']);
+			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType");
+			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType");
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

@@ -1,15 +1,22 @@
 <script type="text/x-red" data-template-name="klicktipp signin">
 	<div class="form-row">
+	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
 	    <label for="node-input-apiKey"><i class="fa fa-key"></i> <span>API Key</span></label>
 	    <input type="text" id="node-input-apiKey" placeholder="Enter your API key">
+	    <input type="hidden" id="node-input-apiKeyType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
 	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
+	    <input type="hidden" id="node-input-smsNumberType">
 	</div>
 	<div id="contact-fields-section"></div>
 	<div class="form-row">
@@ -69,12 +76,31 @@
 		category: 'KlickTipp',
 		color: '#F2F2F2',
 		defaults: {
-			apiKey: { value: '' },
+			klicktipp: { type: 'klicktipp-config', required: true },
+			apiKey: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('apiKeyType')
+			},
+			apiKeyType: {
+				value: 'str'
+			},
 			email: {
 				value: '',
-				validate: ktValidateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
 			},
-			smsNumber: { value: '' },
+			emailType: {
+				value: 'str'
+			},
+			smsNumber: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			smsNumberType: {
+				value: 'str'
+			},
 			fields: {
 				value: {},
 			},
@@ -88,7 +114,10 @@
 		},
 		oneditprepare: function() {
 			const contactListContainer = $('#contact-fields-section');
-			ktPopulateContactFields(contactListContainer, this.fields);
+			ktPopulateContactFields(contactListContainer, this.fields, '/klicktipp/signin/contact-fields');
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
+			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType");
+			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType");
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

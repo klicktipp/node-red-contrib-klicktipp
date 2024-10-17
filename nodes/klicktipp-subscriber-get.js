@@ -4,10 +4,12 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
+		const node = this;
+		const subscriberId = await evaluatePropertyAsync(RED, config.subscriberId, config.subscriberIdType, node, msg);
 
 		if (!subscriberId) {
 			handleError(this, msg, 'Missing subscriber ID', 'Invalid input');
@@ -24,7 +26,7 @@ module.exports = function (RED) {
 
 			// Handle the response using handleResponse utility
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'Fetched subscriber information',
@@ -34,7 +36,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch subscriber', error.message);
+			handleError(node, msg, 'Failed to fetch subscriber', error.message);
 		}
 	};
 	/**

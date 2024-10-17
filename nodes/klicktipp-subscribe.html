@@ -6,10 +6,12 @@
 	<div class="form-row">
 	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
 	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
+	     <input type="hidden" id="node-input-smsNumberType">
 	</div>
 	<div class="form-row">
         <label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
@@ -95,9 +97,19 @@
 			name: { value: '' },
 			email: {
 				value: '',
-				validate: ktValidateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
 			},
-			smsNumber: { value: '' },
+			emailType: {
+				value: 'str'
+			},
+			smsNumber: {
+				value: '',
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			smsNumberType: {
+				value: 'str'
+			},
 			listId: {
 				value: '',
 				validate: RED.validators.number()
@@ -121,7 +133,10 @@
 
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags');
 			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process');
-			ktPopulateContactFields(contactListContainer, this.fields);
+			ktPopulateContactFields(contactListContainer, this.fields, '/klicktipp/subscribe/contact-fields');
+
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
+			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType");
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

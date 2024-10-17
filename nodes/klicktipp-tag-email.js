@@ -3,23 +3,25 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const qs = require('qs');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const email = config.email || msg?.payload?.email;
+		const node = this;
+		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 		let tagIds = config.tagId || msg?.payload?.tagIds;
 		
 		if (!email) {
-			handleError(this, msg, 'Missing email', 'Invalid input');
-			return this.send(msg);
+			handleError(node, msg, 'Missing email', 'Invalid input');
+			return node.send(msg);
 		}
 
 		if (!Array.isArray(tagIds)) {
-			return handleError(this, msg, 'Missing tag IDs', 'Invalid input');
+			return handleError(node, msg, 'Missing tag IDs', 'Invalid input');
 		}
 
 		// Ensure tagIds is an array, even if a single tagId is provided
@@ -50,7 +52,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to tag email', error.message);
+			handleError(node, msg, 'Failed to tag email', error.message);
 		}
 	};
 
@@ -79,10 +81,11 @@ module.exports = function (RED) {
 	function KlickTippTagEmailNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		// Get the tag list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/tags',
+		
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+		// Get the contact field list for display in Node UI
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/tags/tag-email',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',

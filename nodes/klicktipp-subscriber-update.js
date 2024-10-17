@@ -4,18 +4,24 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const prepareUpdateSubscriberData = require('./utils/transformers/prepareUpdateSubscriberData');
-const qs = require('qs');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const { subscriberId, fields, newEmail, newSmsNumber } = config || msg.payload;
+		const node = this;
+		
+		const { fields } = config;
+		const newEmail = await evaluatePropertyAsync(RED, config.newEmail, config.newEmailType, node, msg);
+		const newSmsNumber = await evaluatePropertyAsync(RED, config.newSmsNumber, config.newSmsNumberType, node, msg);
+		const subscriberId = await evaluatePropertyAsync(RED, config.subscriberId, config.subscriberIdType, node, msg);
 
 		if (!subscriberId) {
 			handleError(node, msg, 'Missing subscriber ID');
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		const data = prepareUpdateSubscriberData(newEmail, newSmsNumber, fields);
@@ -29,7 +35,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'Subscriber updated',
@@ -39,7 +45,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to update subscriber', error.message);
+			handleError(node, msg, 'Failed to update subscriber', error.message);
 		}
 	};
 
@@ -69,10 +75,11 @@ module.exports = function (RED) {
 	function KlickTippSubscriberUpdateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+		
 		// Get the contact field list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/contact-fields',
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/update-subscriber/contact-fields',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',

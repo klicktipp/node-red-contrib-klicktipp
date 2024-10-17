@@ -61,7 +61,8 @@ function ktPopulateDropdown(dropdown, currentItemId, action) {
 				dropdown.val(Array.isArray(currentItemId) ? currentItemId : [currentItemId]);
 			}
 		})
-		.fail(() => {
+		.fail((response) => {
+			console.log(response.error());
 			RED.notify('Failed to load KlickTipp items', 'error');
 			dropdown.empty().append($('<option>').text('Failed to load items'));
 		})
@@ -72,14 +73,14 @@ function ktPopulateDropdown(dropdown, currentItemId, action) {
 }
 
 // Contact Fields Population
-function ktPopulateContactFields(container, defaultValues = {}) {
+function ktPopulateContactFields(container, defaultValues = {}, action) {
 	const spinner = ktCreateSpinner();
 	container.before(spinner);
 	
 	spinner.show();
 	container.hide();
 	
-	$.getJSON('/klicktipp/contact-fields')
+	$.getJSON(action)
 		.done((items) => {
 			container.empty();
 			
@@ -223,5 +224,18 @@ function ktRestoreCustomFields(customFields, defaultValues) {
 			ktGenerateCustomField(fieldKey, fieldLabel, value);
 			dropdown.find(`option[value="${fieldKey}"]`).remove();
 		}
+	});
+}
+
+function ktInitializeTypedInput(
+	elementId,
+	typeFieldId,
+	defaultType = 'str',
+	availableTypes = ['msg', 'flow', 'global', 'str', 'jsonata', 'env'])
+{
+	$(elementId).typedInput({
+		default: defaultType,
+		typeField: $(typeFieldId),
+		types: availableTypes
 	});
 }

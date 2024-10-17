@@ -63,10 +63,11 @@ module.exports = function (RED) {
 	function KlickTippTagGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 		
 		// Get the tag list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/tags',
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/tags/get',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',
