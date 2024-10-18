@@ -19,11 +19,11 @@
 	    <input type="hidden" id="node-input-smsNumberType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-fields"><i class="fa fa-mobile"></i> <span>Contact fields</span></label>
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Contact fields</span></label>
 	    <input type="text" id="node-input-fields" placeholder="Contact fields">
 	    <input type="hidden" id="node-input-fieldsType">
 	</div>
-	<div id="contact-fields-section" class="form-row"></div>
+	<div id="contact-fields-section" class="form-row" style="display: none"></div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -107,11 +107,14 @@
 				value: 'str'
 			},
 			fields: {
-				value: {},
-				validate: RED.validators.typedInput('fieldsType')
+				value: '',
+				validate: function(v) {
+					// Allow empty values
+					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
+				}
 			},
 			fieldsType: {
-				value: 'json'
+				value: 'msg'
 			},
 			fieldsData: {
 				value: {}
@@ -139,8 +142,7 @@
 			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
-
-			ktInitializeCustomTypedInput("#node-input-fields", "#node-input-fieldsType", 'json', ['json', customContactFieldsType]);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', customContactFieldsType]);
 
 			$(fieldsInput).on("change", (event, type) => {
 				if (type === "fieldsFromApi") {
