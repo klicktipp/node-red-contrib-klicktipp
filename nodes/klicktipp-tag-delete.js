@@ -60,10 +60,11 @@ module.exports = function (RED) {
 	function KlickTippTagDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
+		
 		// Get the tag list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/tags/delete',
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/tags/delete-tag-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',

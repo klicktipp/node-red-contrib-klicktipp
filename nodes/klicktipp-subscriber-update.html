@@ -18,8 +18,12 @@
 	    <input type="text" id="node-input-newSmsNumber" placeholder="Enter SMS number (optional)">
 	    <input type="hidden" id="node-input-newSmsNumberType">
 	</div>
-	<!-- Toggle for Address section -->
-	<div id="contact-fields-section"></div>
+	<div class="form-row">
+	    <label for="node-input-fields"><i class="fa fa-mobile"></i> <span>Contact fields</span></label>
+	    <input type="text" id="node-input-fields" placeholder="Contact fields">
+	    <input type="hidden" id="node-input-fieldsType">
+	</div>
+	<div id="contact-fields-section" class="form-row"></div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -116,8 +120,15 @@
 				value: 'str'
 			},
 			fields: {
+				value: {},
+				validate: RED.validators.typedInput('fieldsType')
+			},
+			fieldsType: {
+				value: 'json'
+			},
+			fieldsData: {
 				value: {}
-			}
+			},
 		},
 		inputs: 1,
 		outputs: 1,
@@ -127,10 +138,32 @@
 		},
 		oneditprepare: function() {
 			const contactListContainer = $('#contact-fields-section');
-			ktPopulateContactFields(contactListContainer, this.fields, '/klicktipp/update-subscriber/contact-fields');
-			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['msg', 'flow', 'global', 'num', 'jsonata', 'env']);
-			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType");
-			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType");
+			const fieldsInput = $("#node-input-fields");
+
+			const customContactFieldsType = {
+				value: "fieldsFromApi",
+				label: "Contact fields list",
+				icon: "fa fa-cog",
+				hasValue: false
+			}
+
+			ktPopulateContactFields(contactListContainer, this.fields, '/klicktipp/contact-fields/update-subscriber-node');
+			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
+			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType", 'str', ['str']);
+
+			ktInitializeCustomTypedInput("#node-input-fields", "#node-input-fieldsType", 'json', ['json', customContactFieldsType]);
+
+			$(fieldsInput).on("change", (event, type) => {
+				if (type === "fieldsFromApi") {
+					// Show the contact fields section and populate the fields from the API
+					contactListContainer.show();
+					ktPopulateContactFields(contactListContainer, this.fieldsData, '/klicktipp/signin/contact-fields');
+				} else {
+					// Hide the contact fields section for other types
+					contactListContainer.hide();
+				}
+			});
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

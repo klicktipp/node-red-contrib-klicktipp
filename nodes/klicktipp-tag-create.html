@@ -107,8 +107,8 @@
 			return this.name || 'KlickTipp Tag Create';
 		},
 		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType");
-			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType");
+			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType", 'str', ['str']);
 		},
 	});
 </script>

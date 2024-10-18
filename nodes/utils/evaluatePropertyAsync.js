@@ -12,7 +12,7 @@
  *
  * @throws {Error} If the property evaluation fails, the promise is rejected with an error.
  */
-function evaluatePropertyAsync(RED,property, propertyType, node, msg) {
+function evaluatePropertyAsync(RED, property, propertyType, node, msg) {
 	return new Promise((resolve, reject) => {
 		RED.util.evaluateNodeProperty(
 			property,

@@ -63,10 +63,11 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 
 		// Get the subscription process list for display in Node UI
-		createCachedApiEndpoint(RED, node, config, {
-			endpoint: '/klicktipp/subscription-process/get',
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: '/klicktipp/subscription-process/get-process-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscriptionProcessCache',

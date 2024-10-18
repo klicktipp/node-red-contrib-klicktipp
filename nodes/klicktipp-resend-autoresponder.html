@@ -101,8 +101,8 @@
 			return this.name || 'KlickTipp Resend Autoresponder';
 		},
 		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
-			ktInitializeTypedInput("#node-input-autoresponder", "#node-input-autoresponderType", 'num', ['msg', 'flow', 'global', 'num', 'jsonata', 'env']);
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-autoresponder", "#node-input-autoresponderType", 'num', ['num']);
 		},
 	});
 </script>

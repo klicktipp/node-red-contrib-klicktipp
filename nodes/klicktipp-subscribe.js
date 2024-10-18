@@ -8,13 +8,15 @@ const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint')
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const getContactFields = require("./utils/getContactFields");
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		const { listId, tagId, fields } = config;
+		const { listId, tagId } = config;
 		
+		const fields = await getContactFields(RED, config, node, msg);
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 		const smsNumber = await evaluatePropertyAsync(RED, config.smsNumber, config.smsNumberType, node, msg);
 
@@ -56,7 +58,7 @@ module.exports = function (RED) {
 
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/subscribe/contact-fields',
+			endpoint: '/klicktipp/contact-fields/subscribe-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscribeNodeContactFieldsCache',
@@ -67,10 +69,10 @@ module.exports = function (RED) {
 
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/tags',
+			endpoint: '/klicktipp/tags/subscribe-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
-			cacheKey: 'subscribeNodetagCache',
+			cacheKey: 'subscribeNodeTagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag')
@@ -78,10 +80,10 @@ module.exports = function (RED) {
 
 		// Get the subscription process list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/subscription-process',
+			endpoint: '/klicktipp/subscription-process/subscribe-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
-			cacheKey: 'subscribeNodesubscriptionProcessCache',
+			cacheKey: 'subscribeNodeCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list')

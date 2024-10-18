@@ -105,8 +105,8 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/tag-email');
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType");
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/tag-email-node');
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 
 			// Set a minimum height for better UX
 			tagDropdown.css({

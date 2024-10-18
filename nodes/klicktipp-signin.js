@@ -4,10 +4,11 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const prepareApiKeySubscriptionData = require('./utils/transformers/prepareApiKeySubscriptionData');
-const qs = require('qs');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const getContactFields = require("./utils/getContactFields");
+const qs = require('qs');
 
 module.exports = function (RED) {
 	/**
@@ -40,7 +41,7 @@ module.exports = function (RED) {
 		
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig,{
-			endpoint: '/klicktipp/signin/contact-fields',
+			endpoint: '/klicktipp/contact-fields/signin-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',
@@ -50,20 +51,19 @@ module.exports = function (RED) {
 		});
 		
 		node.on('input', async function (msg) {
-			const {fields} = config;
-			
-			const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-			const smsNumber = await evaluatePropertyAsync(RED, config.smsNumber, config.smsNumberType, node, msg);
-			const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
-			
-			if (!apiKey || (!email && !smsNumber)) {
-				handleError(node, msg, 'Missing API key or email/SMS number');
-				return node.send(msg);
-			}
-			
-			const data = prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields);
-			
 			try {
+				const fields = await getContactFields(RED, config, node, msg);
+				const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+				const smsNumber = await evaluatePropertyAsync(RED, config.smsNumber, config.smsNumberType, node, msg);
+				const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
+				
+				if (!apiKey || (!email && !smsNumber)) {
+					handleError(node, msg, 'Missing API key or email/SMS number');
+					return node.send(msg);
+				}
+				
+				const data = prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields);
+				
 				const response = await makeRequest('/subscriber/signin', 'POST', qs.stringify(data));
 				
 				handleResponse(

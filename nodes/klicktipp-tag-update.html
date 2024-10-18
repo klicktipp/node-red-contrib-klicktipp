@@ -118,10 +118,10 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/update');
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/update-tag-node');
 			// Initialize typedInput for both tagName and tagDescription with default values
-			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType");
-			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType");
+			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType", 'str', ['str']);
 		},
 		oneditsave: function() {
 			this.tagId = Number($('#node-input-tagId').val());

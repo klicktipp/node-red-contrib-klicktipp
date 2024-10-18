@@ -67,7 +67,7 @@ module.exports = function (RED) {
 		
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/tags/get',
+			endpoint: '/klicktipp/tags/get-tag-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',
