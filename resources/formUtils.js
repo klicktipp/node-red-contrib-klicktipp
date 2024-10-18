@@ -260,28 +260,6 @@ function ktInitializeTypedInput(
 	});
 }
 
-/**
- * Initializes a typed input field in the Node-RED editor using only the provided types.
- * This does not merge with default types.
- *
- * @param {string} elementSelector - The jQuery selector for the input element.
- * @param {string} typeFieldSelector - The jQuery selector for the hidden field storing the type.
- * @param {string} [defaultType='str'] - The default type for the typed input (e.g., 'str', 'num').
- * @param {Array} availableTypes - List of types available for selection. Only the provided types will be used.
- */
-function ktInitializeCustomTypedInput(
-	elementSelector,
-	typeFieldSelector,
-	defaultType = 'str',
-	availableTypes = []
-) {
-	$(elementSelector).typedInput({
-		default: defaultType,
-		typeField: $(typeFieldSelector),
-		types: availableTypes
-	});
-}
-
 function ktStoreContactFields() {
 	$('#contact-fields-section input').each((index, element) => {
 		const fieldId = $(element).attr('id').replace('node-input-', '');
