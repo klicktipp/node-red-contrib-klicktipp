@@ -15,29 +15,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber search">
-	<p>Searches for a subscriber in KlickTipp using their email address.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node searches for a subscriber in KlickTipp using their email address. The email address must be provided in <code>msg.payload.email</code>.
-	</p>
-	<p>
-	     If the subscriber is found, the subscriber details will be returned in <code>msg.payload</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Returns the subscriber ID for an email address. Use the subscriber_get node to retrieve detailed information about this subscriber.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties
 	        <ul>
-	            <li><code>email</code> - (Required) The email address of the subscriber to search for.</li>
+	            <li><code>email</code> - (Required) the ID of a manual tag or SmartLink</li>
 	        </ul>
 	    </dd>
 	</dl>

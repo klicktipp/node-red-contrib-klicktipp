@@ -38,10 +38,10 @@
       "klicktipp-tag-update": "nodes/klicktipp-tag-update.js",
       "klicktipp-tag-delete": "nodes/klicktipp-tag-delete.js",
       "klicktipp-field-index": "nodes/klicktipp-field-index.js",
-      "klicktipp-subscribe": "nodes/klicktipp-subscribe.js",
-      "klicktipp-unsubscribe": "nodes/klicktipp-unsubscribe.js",
-      "klicktipp-tag-email": "nodes/klicktipp-tag-email.js",
-      "klicktipp-untag-email": "nodes/klicktipp-untag-email.js",
+      "klicktipp-subscriber-subscribe": "nodes/klicktipp-subscriber-subscribe.js",
+      "klicktipp-subscriber-unsubscribe": "nodes/klicktipp-subscriber-unsubscribe.js",
+      "klicktipp-subscriber-tag": "nodes/klicktipp-subscriber-tag.js",
+      "klicktipp-subscriber-untag": "nodes/klicktipp-subscriber-untag.js",
       "klicktipp-resend-autoresponder": "nodes/klicktipp-resend-autoresponder.js",
       "klicktipp-subscriber-index": "nodes/klicktipp-subscriber-index.js",
       "klicktipp-subscriber-get": "nodes/klicktipp-subscriber-get.js",
@@ -49,9 +49,9 @@
       "klicktipp-subscriber-tagged": "nodes/klicktipp-subscriber-tagged.js",
       "klicktipp-subscriber-update": "nodes/klicktipp-subscriber-update.js",
       "klicktipp-subscriber-delete": "nodes/klicktipp-subscriber-delete.js",
-      "klicktipp-signin": "nodes/klicktipp-signin.js",
-      "klicktipp-signout": "nodes/klicktipp-signout.js",
-      "klicktipp-signoff": "nodes/klicktipp-signoff.js"
+      "klicktipp-subscriber-signin": "nodes/klicktipp-subscriber-signin.js",
+      "klicktipp-subscriber-signout": "nodes/klicktipp-subscriber-signout.js",
+      "klicktipp-subscriber-signoff": "nodes/klicktipp-subscriber-signoff.js"
     }
   },
   "dependencies": {

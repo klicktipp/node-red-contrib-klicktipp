@@ -16,21 +16,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscription process get">
-	<p>Get a specific subscription process from the KlickTipp API for the logged-in user.</p>
-
-	<h3>Details</h3>
-	<p>
-		This node fetches a list of all subscription processes (lists) available to the logged-in user via the KlickTipp API.
-	</p>
-	<p>
-		Upon success, the output will contain an associative array, where the keys represent list IDs and the values are the corresponding subscription process names.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-		It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Returns the name of an opt-in process.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -38,7 +24,7 @@
 	<dd>
 	   An object that must contain the following:
 	   <ul>
-		   <li><code>listId</code> - TThe ID of the subscription process (list) to retrieve.</li>
+		   <li><code>listId</code> - (Required) the ID of a subscription process</li>
 	   </ul>
 	</dd>
 	</dl>

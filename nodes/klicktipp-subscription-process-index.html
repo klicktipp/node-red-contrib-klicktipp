@@ -10,22 +10,6 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscription process index">
-	<p>Fetches all subscription processes (lists) from the KlickTipp API for the logged-in user.</p>
-
-	<h3>Details</h3>
-	<p>
-		This node fetches a list of all subscription processes (lists) available to the logged-in user via the KlickTipp API.
-	</p>
-	<p>
-		Upon success, the output will contain an associative array, where the keys represent list IDs and the values are the corresponding subscription process names.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
-
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>

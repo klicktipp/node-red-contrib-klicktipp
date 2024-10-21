@@ -3,18 +3,18 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const qs = require('qs');
 const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const qs = require('qs');
 
 module.exports = function (RED) {
 	/**
-	 * KlickTippSignoutNode - A Node-RED node to untag an email using an API key.
+	 * KlickTippSubscriberSignoutNode - A Node-RED node to untag an email using an API key.
 	 * This node untags a user by their email using the provided API key.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `apiKey`: (Required) The API key for list building configuration.
 	 *   - `email`: (Required) The email address of the subscriber.
 	 *
@@ -28,7 +28,7 @@ module.exports = function (RED) {
 	 * - If required fields (API key or email) are missing, the node outputs `msg.error` and returns `success: false`.
 	 * - If the API request fails, the node outputs `msg.error` and returns `success: false`.
 	 */
-	function KlickTippSignoutNode(config) {
+	function KlickTippSubscriberSignoutNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 
@@ -60,5 +60,5 @@ module.exports = function (RED) {
 		});
 	}
 
-	RED.nodes.registerType('klicktipp signout', KlickTippSignoutNode);
+	RED.nodes.registerType('klicktipp subscriber signout', KlickTippSubscriberSignoutNode);
 };

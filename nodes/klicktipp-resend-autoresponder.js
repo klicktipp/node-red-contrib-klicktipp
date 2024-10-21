@@ -12,14 +12,14 @@ module.exports = function (RED) {
 		const node = this;
 		
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const autoresponder = await evaluatePropertyAsync(RED, config.autoresponder, config.autoresponderType, node, msg);
+		const autoresponderId = await evaluatePropertyAsync(RED, config.autoresponderId, config.autoresponderIdType, node, msg);
 		
 		if (!email) {
 			handleError(node, msg, 'Missing email', 'Invalid input');
 			return this.send(msg);
 		}
 		
-		if (!autoresponder) {
+		if (!autoresponderId) {
 			handleError(node, msg, 'Missing autoresponder ID', 'Invalid input');
 			return this.send(msg);
 		}
@@ -28,7 +28,7 @@ module.exports = function (RED) {
 			const response = await makeRequest(
 				'/subscriber/resend',
 				'POST',
-				qs.stringify({ email, autoresponder }),
+				qs.stringify({ email, autoresponder: autoresponderId }),
 				msg.sessionData,
 			);
 
@@ -54,7 +54,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `email`: (Required) The email address of the subscriber.
 	 *   - `autoresponder`: (Required) The ID of the autoresponder to resend.
 	 *

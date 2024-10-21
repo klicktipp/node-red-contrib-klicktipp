@@ -15,29 +15,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber get">
-	<p>Fetches information about a specific subscriber in KlickTipp by their subscriber ID.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node retrieves information about a specific subscriber in KlickTipp using their subscriber ID. The subscriber ID must be provided in <code>msg.payload.subscriberId</code>.
-	</p>
-	<p>
-		If the operation is successful, the subscriber's details will be returned in <code>msg.payload</code>.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Returns all available information about a subscriber. For example, you can use it to check when a contact received, opened, or clicked in a specific email.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties
 	        <ul>
-	            <li><code>subscriberId</code> - (Required) The ID of the subscriber to fetch information for.</li>
+	            <li><code>subscriberId</code> - subscriberId – (Required) the subscriber's ID</li>
 	        </ul>
 	    </dd>
 	</dl>

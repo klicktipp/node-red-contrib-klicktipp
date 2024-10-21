@@ -51,14 +51,14 @@ module.exports = function (RED) {
 		}
 	};
 
-	function KlickTippSubscribeNode(config) {
+	function KlickTippSubscriberSubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/contact-fields/subscribe-node',
+			endpoint: '/klicktipp/contact-fields/subscriber-subscribe-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscribeNodeContactFieldsCache',
@@ -69,7 +69,7 @@ module.exports = function (RED) {
 
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/tags/subscribe-node',
+			endpoint: '/klicktipp/tags/subscriber-subscribe-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscribeNodeTagCache',
@@ -80,7 +80,7 @@ module.exports = function (RED) {
 
 		// Get the subscription process list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/subscription-process/subscribe-node',
+			endpoint: '/klicktipp/subscription-processes/subscriber-subscribe-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscribeNodeCache',
@@ -92,5 +92,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp subscribe', KlickTippSubscribeNode);
+	RED.nodes.registerType('klicktipp subscriber subscribe', KlickTippSubscriberSubscribeNode);
 };

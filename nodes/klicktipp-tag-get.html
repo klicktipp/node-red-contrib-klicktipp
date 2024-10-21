@@ -16,29 +16,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag get">
-	<p>Fetches the definition of a specific tag from the KlickTipp API based on the provided tag ID.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node fetches the definition of a specific tag from the KlickTipp API using the <code>tagId</code> provided in <code>msg.payload</code>.
-	</p>
-	<p>.
-	    On success, the fetched tag definition is returned in <code>msg.payload</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Returns the name and description of a tag.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties:
 	        <ul>
-	            <li><code>tagId</code> - (Required) The ID of the tag to fetch.</li>
+	            <li><code>tagId</code> - (Required) the ID of the tag</li>
 	        </ul>
 	    </dd>
 	</dl>

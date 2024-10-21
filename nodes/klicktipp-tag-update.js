@@ -59,7 +59,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `tagId`: (Required) The ID of the tag to be updated.
 	 *   - `name`: (Optional) The new tag name. If not provided, it will remain unchanged.
 	 *   - `text`: (Optional) The new tag description. If not provided, it will remain unchanged.

@@ -21,31 +21,16 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscription process redirect">
-	<p>Fetches the redirection URL for a specific subscription process in the KlickTipp API.</p>
-
-	<h3>Details</h3>
-	<p>
-		This node fetches the redirection URL for a specific subscription process (list) in the KlickTipp API.
-		The <code>listId</code> (subscription process ID) and <code>email</code> must be provided in <code>msg.payload</code>.
-	</p>
-	<p>
-		On success, <code>msg.payload</code> is the URL to which the subscriber will be redirected for the specified subscription process.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-		It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Returns the URL of the opt-in confirmation page for a subscriber's opt-in process.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	<dt>msg.payload <span class="property-type">object</span></dt>
 	<dd>
-	   An object that must contain:
+	   Expected object with the following properties
 	   <ul>
-		   <li><code>listId</code> - (Required) The ID of the subscription process (list) for which to retrieve the redirection URL.</li>
-		   <li><code>email</code> - (Required) The email address associated with the subscription process.</li>
+		   <li><code>listId</code> - (Required) the ID of a subscription process</li>
+		   <li><code>email</code> - (Required) the subscriber's email address</li>
 	   </ul>
 	</dd>
 	</dl>

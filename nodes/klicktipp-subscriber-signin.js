@@ -12,13 +12,13 @@ const qs = require('qs');
 
 module.exports = function (RED) {
 	/**
-	 * KlickTippSigninNode - A Node-RED node to subscribe an email using an API key.
+	 * KlickTippSubscriberSigninNode - A Node-RED node to subscribe an email using an API key.
 	 * This node subscribes a user by their email or SMS number using the provided API key.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `apiKey`: The KlickTipp API key (listbuildng configuration).
 	 *   - `email` (Required): The email address of the subscriber.
 	 *   - `smsNumber` (Optional): The SMS number of the subscriber.
@@ -34,14 +34,14 @@ module.exports = function (RED) {
 	 * - If required fields (API key, email, or SMS) are missing, the node will output `msg.error` and return `{ success: false }`.
 	 * - If the API request fails, the node will output `msg.error` and return `{ success: false }`.
 	 */
-	function KlickTippSigninNode(config) {
+	function KlickTippSubscriberSigninNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);  // Get specific config node here
 		
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig,{
-			endpoint: '/klicktipp/contact-fields/signin-node',
+			endpoint: '/klicktipp/contact-fields/subscriber-signin-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',
@@ -84,5 +84,5 @@ module.exports = function (RED) {
 		});
 	}
 
-	RED.nodes.registerType('klicktipp signin', KlickTippSigninNode);
+	RED.nodes.registerType('klicktipp subscriber signin', KlickTippSubscriberSigninNode);
 };

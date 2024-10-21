@@ -46,7 +46,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `subscriberId`: (Required) The ID of the subscriber.
 	 *
 	 * Outputs:

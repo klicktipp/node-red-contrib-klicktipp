@@ -16,29 +16,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag delete">
-	<p>Delete a manual tag in the KlickTipp API.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node deletes a manual tag from the KlickTipp system. It requires a <code>tagId</code> in <code>msg.payload</code>.
-	</p>
-	<p>
-	    On success, it returns <code>msg.payload</code> as <code>{ success: true }</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Deletes a manual tag or SmartLink.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties:
 	        <ul>
-	            <li><code>tagId</code> - (Required) The ID of the tag to delete.</li>
+	            <li><code>tagId</code> - (Required) the ID of the tag</li>
 	        </ul>
 	    </dd>
 	</dl>

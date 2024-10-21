@@ -16,29 +16,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp subscriber tagged">
-	<p>Retrieves a list of subscriber IDs that are tagged with a specified tag ID in KlickTipp.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node retrieves a list of subscriber IDs in KlickTipp that are associated with a specified tag. You must provide a valid tag ID in <code>msg.payload.tagId</code>.
-	</p>
-	<p>
-	    On success, the node will return the list of subscriber IDs.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Returns an associative array [subscriber_id] => [subscription_timestamp] of subscribers who have been tagged with a specific tag. Use the subscriber_get node to retrieve detailed information about a subscriber.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties
 	        <ul>
-	            <li><code>tagId</code> - (Required) The ID of the tag used to filter subscribers.</li>
+	            <li><code>tagId</code> - Required) the ID of a manual tag or SmartLink</li>
 	        </ul>
 	    </dd>
 	</dl>

@@ -20,30 +20,16 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag create">
-	<p>Creates a new manual tag in the KlickTipp API based on the provided tag name and optional description.</p>
-
-	<h3>Details</h3>
-	<p>
-	   This node creates a new manual tag in the KlickTipp system. It requires a tag name in <code>msg.payload.name</code>. Optionally, a description can be added using <code>msg.payload.text</code>.
-	</p>
-	<p>
-	   On success, it returns the ID of the newly created tag in <code>msg.payload</code>.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+	<p>Creates a new manual tag.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties
 	        <ul>
-	            <li><code>name</code> - (Required) The name of the tag to create (required).</li>
-	            <li><code>text</code> - (Optional) An description of the tag (optional).</li>
+	            <li><code>name</code> - (Required) the name of the manual tag</li>
+	            <li><code>text</code> - (Optional) the description of the manual tag</li>
 	        </ul>
 	    </dd>
 	</dl>

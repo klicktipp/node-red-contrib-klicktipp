@@ -10,21 +10,6 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp tag index">
-	<p>Fetches all manual tags associated with the logged-in user from the KlickTipp API.</p>
-
-	<h3>Details</h3>
-	<p>
-		This node fetches all manual tags from the KlickTipp API.
-	</p>
-	<p>
-		On success, it returns an array of manual tags in <code>msg.klicktipp.tagsList</code>.
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
-
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>

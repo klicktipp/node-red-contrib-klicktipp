@@ -50,7 +50,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `name`: (Required) The name of the tag to be created.
 	 *   - `text`: (Optional) An additional description of the tag.
 	 *

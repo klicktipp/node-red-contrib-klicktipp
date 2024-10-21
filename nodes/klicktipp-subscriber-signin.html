@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp signin">
+<script type="text/x-red" data-template-name="klicktipp subscriber signin">
 	<div class="form-row">
 	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -30,16 +30,8 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp signin">
-	<p>Subscribe a user to KlickTipp using the API key, email, or SMS number.</p>
-
-	<h3>Details</h3>
-	<p>
-	   This node allows you to subscribe a user to KlickTipp by providing an <code>email</code> or <code>smsNumber</code> along with an <code>apiKey</code> for authentication.
-	   You can also optionally provide additional <code>fields</code> to attach custom data to the subscriber.
-	   On success, the response data with a redirection URL will be returned in <code>msg.payload</code>.
-	   On failure, an error message will be returned in <code>msg.error</code>, and <code>msg.payload.success</code> will be <code>false</code>.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp subscriber signin">
+	<p>Adds or updates a subscriber using an API key. The subscriber can be identified by their email address or SMS number, with optional fields.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -47,10 +39,10 @@
 	   <dd>
 		   Must contain:
 		   <ul>
-			   <li><code>apiKey</code> - (Required) The API key for authentication.</li>
-			   <li><code>email</code> - (Optional) The email address of the subscriber to sign in.</li>
-			   <li><code>smsNumber</code> - (Optional) The SMS number of the subscriber to sign in (if email is not provided).</li>
-			   <li><code>fields</code> - (Optional) Additional fields for custom data (e.g., name, other details).</li>
+			   <li><code>apiKey</code> - (Required) the API key for authentication</li>
+			   <li><code>email</code> - (Required) the subscriber's email address</li>
+			   <li><code>smsNumber</code> - (Optional) the subscriber's mobile number</li>
+			   <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.), structured as returned by the field_index node</li>
 		   </ul>
 	   </dd>
 	</dl>
@@ -77,7 +69,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp signin', {
+	RED.nodes.registerType('klicktipp subscriber signin', {
 		category: 'KlickTipp',
 		color: '#F2F2F2',
 		defaults: {
@@ -125,7 +117,7 @@
 		outputs: 1,
 		icon: 'klicktipp.png',
 		label: function () {
-			return this.name || 'KlickTipp Signin';
+			return this.name || 'Subscriber Signin';
 		},
 		oneditprepare: function() {
 			const contactListContainer = $('#contact-fields-section');
@@ -148,7 +140,7 @@
 				if (type === "fieldsFromApi") {
 					// Show the contact fields section and populate the fields from the API
 					contactListContainer.show();
-					ktPopulateContactFields(contactListContainer, this.fieldsData, '/klicktipp/contact-fields/signin-node');
+					ktPopulateContactFields(contactListContainer, this.fieldsData, '/klicktipp/contact-fields/subscriber-signin-node');
 				} else {
 					// Hide the contact fields section for other types
 					contactListContainer.hide();

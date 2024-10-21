@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscribe">
+<script type="text/x-red" data-template-name="klicktipp subscriber subscribe">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -14,7 +14,7 @@
 	     <input type="hidden" id="node-input-smsNumberType">
 	</div>
 	<div class="form-row">
-        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Subscription process ID</span></label>
         <select id="node-input-listId">
             <!-- List ID will be populated here -->
         </select>
@@ -37,31 +37,20 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscribe">
-	<p>Subscribes a user to a list in KlickTipp.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node subscribes a user to a KlickTipp list using either an email address or an SMS number. You can optionally provide additional fields, tags, or a specific list for the subscription.
-	</p>
-	<p>
-		On failure, an error message will be returned in <code>msg.error</code> and <code>msg.payload</code> will contain <code>{ success: false }</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp subscriber subscribe">
+	<p>Adds or updates a subscriber. The subscriber can be identified by their email address or SMS number, with an optional opt-in process, tag, and fields.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties
 	        <ul>
-	            <li><code>email</code> - (Required) The email address of the subscriber.</li>
-	            <li><code>smsNumber</code> - (Optional) The SMS number of the subscriber .</li>
-	            <li><code>listId</code> - (Optional) The ID of the subscription process.</li>
-	            <li><code>tagId</code> - (Optional) The ID of the manual tag the subscriber.</li>
-	            <li><code>fields</code> - (Optional) Additional fields to attach to the subscriber (e.g., name, custom data).</li>
+	            <li><code>email</code> - (Required) the subscriber's email address</li>
+	            <li><code>smsNumber</code> -(Optional) the subscriber's mobile number</li>
+	            <li><code>listId</code> - (Optional) the ID of a subscription process</li>
+	            <li><code>tagId</code> - (Optional) the ID of a manual tag or SmartLink</li>
+	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.), structured as returned by the field_index node</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -94,7 +83,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscribe', {
+	RED.nodes.registerType('klicktipp subscriber subscribe', {
 		category: 'KlickTipp',
 		color: '#F2F2F2',
 		defaults: {
@@ -141,7 +130,7 @@
 		outputs: 1,
 		icon: 'klicktipp.png',
 		label: function () {
-			return this.name || 'KlickTipp Subscribe';
+			return this.name || 'Subscriber Subscribe';
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
@@ -156,8 +145,8 @@
 				hasValue: false
 			}
 
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscribe-node');
-			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process/subscribe-node');
+			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscriber-subscribe-node');
+			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-processes/subscriber-subscribe-node');
 
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
@@ -167,7 +156,7 @@
 				if (type === "fieldsFromApi") {
 					// Show the contact fields section and populate the fields from the API
 					contactListContainer.show();
-					ktPopulateContactFields(contactListContainer, this.fieldsData,'/klicktipp/contact-fields/subscribe-node');
+					ktPopulateContactFields(contactListContainer, this.fieldsData,'/klicktipp/contact-fields/subscriber-subscribe-node');
 				} else {
 					// Hide the contact fields section for other types
 					contactListContainer.hide();
