@@ -59,7 +59,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber tagged', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			tagId: {
@@ -74,6 +74,7 @@
 		label: function () {
 			return this.name || 'Subscriber Tagged';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscriber-tagged-node');

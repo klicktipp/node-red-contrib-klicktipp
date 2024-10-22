@@ -65,7 +65,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscription process redirect', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
@@ -89,6 +89,7 @@
 		label: function () {
 			return this.name || 'Subscription Process Redirect';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			const listIdDropdown = $('#node-input-listId');
 			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process/get-redirect-node');

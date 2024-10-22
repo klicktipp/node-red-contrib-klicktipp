@@ -77,7 +77,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber update', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
@@ -125,41 +125,23 @@
 		label: function () {
 			return this.name || 'Subscriber Update';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
-			const contactListContainer = $('#contact-fields-section');
+			this.contactListContainer = $('#contact-fields-section');
 			const fieldsInput = $("#node-input-fields");
-
-			const customContactFieldsType = {
-				value: "fieldsFromApi",
-				label: "Contact fields list",
-				icon: "fa fa-cog",
-				hasValue: false
-			}
 
 			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
 			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', customContactFieldsType]);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			$(fieldsInput).on("change", (event, type) => {
-				if (type === "fieldsFromApi") {
-					// Show the contact fields section and populate the fields from the API
-					contactListContainer.show();
-					ktPopulateContactFields(contactListContainer, this.fieldsData, '/klicktipp/contact-fields/update-subscriber-node');
-				} else {
-					// Hide the contact fields section for other types
-					contactListContainer.hide();
-				}
-			});
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'update-subscriber-node');
 		},
-		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
-			// Collect all field values and store them in this.fields
 			this.fields = {};
-			$('#contact-fields-section input').each((index, element) => {
-				const fieldId = $(element).attr('id').replace('node-input-', '');
-				this.fields[fieldId] = $(element).val();
-			});
+
+			// Collect all field values and store them in this.fields
+			ktSaveContactFieldValues(this.contactListContainer, this.fields);
 		}
 	});
 </script>

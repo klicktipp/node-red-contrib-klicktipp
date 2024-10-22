@@ -65,7 +65,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber untag', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
@@ -89,6 +89,7 @@
 		label: function () {
 			return this.name || 'Subscriber Untag';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscriber-untag-node');

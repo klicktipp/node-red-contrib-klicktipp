@@ -71,7 +71,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp tag update', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			tagName: {
@@ -101,6 +101,7 @@
 		label: function () {
 			return this.name || 'Tag Update';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/update-tag-node');

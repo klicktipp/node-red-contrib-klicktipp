@@ -58,7 +58,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber get', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			subscriberId: {
@@ -77,6 +77,7 @@
 		label: function () {
 			return this.name || 'Subscriber Get';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
 		},

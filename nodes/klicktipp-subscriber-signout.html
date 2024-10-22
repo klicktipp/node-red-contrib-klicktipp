@@ -60,7 +60,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber signout', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			apiKey: {
 				value: '',
@@ -86,6 +86,7 @@
 		label: function () {
 			return this.name || 'Subscriber Signout';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);

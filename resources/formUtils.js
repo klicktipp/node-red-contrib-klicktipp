@@ -18,6 +18,15 @@ const KLICKTIPP_ICON_MAP = {
 	fieldLeadValue: "fa-usd",
 };
 
+const KT_CONTACT_FIELDS_API_TYPE = "fieldsFromApi"
+
+const KT_CUSTOM_CONTACT_FIELDS_TYPE = {
+	value: KT_CONTACT_FIELDS_API_TYPE,
+	label: "Contact fields list",
+	icon: "fa fa-cog",
+	hasValue: false
+}
+
 // Helper Functions
 function ktCreateSpinner() {
 	return $('<span>', {
@@ -38,46 +47,39 @@ function ktIsCustomField(fieldKey) {
  * @param {string} action - The URL to fetch the items (in JSON format) for the dropdown.
  */
 function ktPopulateDropdown(dropdown, currentItemId, action) {
-	// Create and display the spinner while loading the dropdown options
 	const spinner = ktCreateSpinner();
 	dropdown.before(spinner);
 	
 	spinner.show();
 	dropdown.hide();
 	
-	// Perform the AJAX request to fetch the dropdown items
 	$.getJSON(action)
 		.done((items) => {
-			dropdown.empty(); // Clear any existing options in the dropdown
+			dropdown.empty();
 			
 			if (items && typeof items === 'object') {
-				// Iterate over the items object to populate the dropdown
 				$.each(items, (id, name) => {
-					const displayName = (name && name.trim() !== '') ? name : 'N/A'; // Handle empty names
+					const displayName = name && name.trim() !== '' ? name : 'N/A';
 					dropdown.append($('<option>', { value: id, text: displayName }));
 				});
 				
-				// Select the currentItemId if provided
 				if (currentItemId) {
 					dropdown.val(Array.isArray(currentItemId) ? currentItemId : [currentItemId]);
 				}
 				
-				dropdown.show(); // Show the dropdown once populated
+				dropdown.show();
 			} else {
-				// Handle cases where no valid items are found
-				dropdown.before("<span>No valid items found</span>");
+				dropdown.before('<span>No valid items found</span>');
 			}
 		})
-		.fail((response) => {
-			// Handle any errors that occur during the request
-			const errorMessage = response.error().statusText || 'Failed to load items';
+		.fail((jqXHR) => {
+			const errorMessage = (jqXHR.responseJSON && jqXHR.responseJSON.error) ? jqXHR.responseJSON.error : 'Failed to load items';
 			console.error('Error:', errorMessage);
 			
-			RED.notify(errorMessage, 'error'); // Notify the user of the failure
-			dropdown.before(`<span>${errorMessage}</span>`); // Display the error before the dropdown
+			RED.notify(errorMessage, 'error');
+			dropdown.before(`<span>Error: ${errorMessage}</span>`);
 		})
 		.always(() => {
-			// Always hide the spinner once the request completes (success or failure)
 			spinner.hide();
 		});
 }
@@ -90,45 +92,42 @@ function ktPopulateDropdown(dropdown, currentItemId, action) {
  * @param {string} action - The URL to fetch the contact field data in JSON format.
  */
 function ktPopulateContactFields(container, defaultValues = {}, action) {
-	// Create and display the spinner while loading the fields
 	const spinner = ktCreateSpinner();
 	container.before(spinner);
 	
 	spinner.show();
 	container.hide();
 	
-	// Fetch the contact fields via AJAX
+	// Clear previous error messages
+	container.siblings('.kt-error-message').remove();
+	
 	$.getJSON(action)
 		.done((items) => {
-			container.empty(); // Clear the container before populating
+			container.empty();
 			
-			const standardFields = {}; // Store standard fields
-			const customFields = {};   // Store custom fields
+			const standardFields = {};
+			const customFields = {};
 			
-			// Separate items into standard and custom fields
 			$.each(items, (key, label) => {
 				if (ktIsCustomField(key)) {
-					customFields[key] = label; // Custom field
+					customFields[key] = label;
 				} else {
-					standardFields[key] = label; // Standard field
+					standardFields[key] = label;
 				}
 			});
 			
-			// Generate form fields for standard fields
-			ktGenerateFormFields(standardFields, defaultValues);
-			
-			// Generate dropdowns for custom fields
-			ktGenerateCustomFieldsDropdown(customFields, defaultValues);
+			ktGenerateFormFields(container, standardFields, defaultValues);
+			ktGenerateCustomFieldsDropdown(container, customFields, defaultValues);
 		})
-		.fail(() => {
-			// Handle failure by displaying a message
-			container
-				.empty()
-				.append($('<p>')
-					.text('Failed to load contact fields. Please try again.'));
+		.fail((jqXHR) => {
+			const errorMessage = jqXHR.responseJSON?.error || 'Failed to load contact fields';
+			console.error('Error:', errorMessage);
+			
+			// Notify user and display error message
+			RED.notify(errorMessage, 'error');
+			container.before(`<span class="kt-error-message">Error: ${errorMessage}</span>`)
 		})
 		.always(() => {
-			// Hide the spinner and show the container after loading
 			spinner.hide();
 			container.show();
 		});
@@ -137,43 +136,38 @@ function ktPopulateContactFields(container, defaultValues = {}, action) {
 /**
  * Generates and appends standard form fields to the contact fields section.
  *
+ * @param {object} container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} fields - An object where keys represent field IDs and values are the field labels.
  * @param {object} [defaultValues={}] - Optional object with default values for the form fields, keyed by field IDs.
  */
-function ktGenerateFormFields(fields, defaultValues = {}) {
-	const container = $('#contact-fields-section');
-	
-	// Ensure the container exists
+function ktGenerateFormFields(container, fields, defaultValues = {}) {
 	if (!container.length) {
 		console.error('Container not found for form fields.');
 		return;
 	}
 	
-	// Ensure fields object is valid
 	if (!fields || typeof fields !== 'object') {
 		console.error('Invalid fields provided.');
 		return;
 	}
 	
-	// Loop through the fields and generate form rows
 	$.each(fields, (key, label) => {
-		const iconClass = KLICKTIPP_ICON_MAP[key] || 'fa-question-circle'; // Fallback icon class
-		const defaultValue = defaultValues[key] || ''; // Get default value or set empty
+		const iconClass = KLICKTIPP_ICON_MAP[key] || 'fa-question-circle';
+		const defaultValue = defaultValues[key] || '';
 		
-		// Construct form row HTML
 		const formRow = `
-            <div class="form-row">
-                <label for="node-input-${key}">
-                    <i class="fa ${iconClass}"></i> ${label}
-                </label>
-                <input
-                    type="text"
-                    id="node-input-${key}"
-                    placeholder="Enter ${label.toLowerCase()} (optional)"
-                    value="${defaultValue}"
-                >
-            </div>
-        `;
+      <div class="form-row">
+        <label for="node-input-${key}">
+          <i class="fa ${iconClass}"></i> ${label}
+        </label>
+        <input
+          type="text"
+          id="node-input-${key}"
+          placeholder="Enter ${label.toLowerCase()} (optional)"
+          value="${defaultValue}"
+        >
+      </div>
+    `;
 		container.append(formRow);
 	});
 }
@@ -181,44 +175,42 @@ function ktGenerateFormFields(fields, defaultValues = {}) {
 /**
  * Generates a dropdown for custom fields, restores previously added custom fields, and adds functionality to add new fields.
  *
+ * @param {object} container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} customFields - An object where keys represent field IDs and values are the field labels.
  * @param {object} defaultValues - An object containing default values for any previously added custom fields, keyed by field ID.
  */
-function ktGenerateCustomFieldsDropdown(customFields, defaultValues) {
-	const container = $('#contact-fields-section');
-	
-	// Ensure the container exists
+function ktGenerateCustomFieldsDropdown(container, customFields, defaultValues) {
 	if (!container.length) {
 		console.error('Container not found for custom fields dropdown.');
 		return;
 	}
 	
-	// Check if customFields object is empty and exit if so
 	if ($.isEmptyObject(customFields)) {
-		return; // Do not render anything if customFields is empty
+		return;
 	}
 	
-	// Create the dropdown row only if customFields exist
+	// Create the dropdown row with class selectors instead of IDs
 	const dropdownRow = `
-        <div class="form-row">
-            <label for="custom-fields-dropdown">
-                <i class="fa fa-plus"></i> Add Custom Field
-            </label>
-            <select id="custom-fields-dropdown">
-                <option value="" disabled selected>Choose value</option>
-            </select>
-            <button type="button" id="add-custom-field-btn" class="btn btn-sm" style="border: none; background: none;">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-            </button>
-        </div>
-    `;
+    <div class="form-row">
+      <label>
+        <i class="fa fa-plus"></i> Add Custom Field
+      </label>
+      <select class="custom-fields-dropdown">
+        <option value="" disabled selected>Choose value</option>
+      </select>
+      <button type="button" class="add-custom-field-btn btn btn-sm" style="border: none; background: none;">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      </button>
+    </div>
+  `;
 	
 	// Append the dropdown row to the container
 	container.append(dropdownRow);
 	
-	const dropdown = $('#custom-fields-dropdown');
+	// Select elements within the container to prevent conflicts
+	const dropdown = container.find('.custom-fields-dropdown');
+	const addButton = container.find('.add-custom-field-btn');
 	
-	// Ensure dropdown exists
 	if (!dropdown.length) {
 		console.error('Dropdown element not found.');
 		return;
@@ -230,73 +222,64 @@ function ktGenerateCustomFieldsDropdown(customFields, defaultValues) {
 	});
 	
 	// Restore previously added custom fields
-	ktRestoreCustomFields(customFields, defaultValues);
+	ktRestoreCustomFields(container, dropdown, customFields, defaultValues);
 	
 	// Add event listener to the 'Add Custom Field' button
-	$('#add-custom-field-btn').on('click', () => {
+	addButton.on('click', () => {
 		const selectedFieldKey = dropdown.val();
 		const selectedFieldLabel = dropdown.find('option:selected').text();
 		
 		// If no field is selected or the field is already added, exit
-		if (!selectedFieldKey || $('#node-input-' + selectedFieldKey).length) {
+		if (!selectedFieldKey || container.find(`#node-input-${selectedFieldKey}`).length) {
 			return;
 		}
 		
 		// Generate the selected custom field and remove it from the dropdown
-		ktGenerateCustomField(selectedFieldKey, selectedFieldLabel);
+		ktGenerateCustomField(container, selectedFieldKey, selectedFieldLabel);
 		dropdown.find(`option[value="${selectedFieldKey}"]`).remove();
 	});
 }
 
-
 /**
  * Generates and appends an individual custom field input with a remove button to the contact fields section.
  *
+ * @param {object} container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {string} fieldKey - The unique key/ID for the custom field.
  * @param {string} fieldLabel - The label to display for the custom field.
  * @param {string} [defaultValue=''] - Optional default value for the custom field input.
  */
-function ktGenerateCustomField(fieldKey, fieldLabel, defaultValue = '') {
-	const container = $('#contact-fields-section');
-	
-	// Ensure the container exists before appending the field
+function ktGenerateCustomField(container, fieldKey, fieldLabel, defaultValue = '') {
 	if (!container.length) {
 		console.error('Container not found for custom fields.');
 		return;
 	}
 	
-	// Generate the custom field's form row HTML
 	const formRow = `
-        <div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">
-            <label for="node-input-${fieldKey}">
-                <i class="fa fa-question-circle"></i> ${fieldLabel}
-            </label>
-            <input
-                type="text"
-                id="node-input-${fieldKey}"
-                placeholder="Enter ${fieldLabel.toLowerCase()} (optional)"
-                value="${defaultValue}"
-            >
-            <button
-                type="button"
-                class="remove-custom-field-btn btn btn-sm btn-danger"
-                data-field-key="${fieldKey}"
-                data-field-label="${fieldLabel}"
-            >
-                <i class="fa fa-minus"></i>
-            </button>
-        </div>
-    `;
+    <div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">
+      <label for="node-input-${fieldKey}">
+        <i class="fa fa-question-circle"></i> ${fieldLabel}
+      </label>
+      <input
+        type="text"
+        id="node-input-${fieldKey}"
+        placeholder="Enter ${fieldLabel.toLowerCase()} (optional)"
+        value="${defaultValue}"
+      >
+      <button
+        type="button"
+        class="remove-custom-field-btn btn btn-sm btn-danger"
+        data-field-key="${fieldKey}"
+        data-field-label="${fieldLabel}"
+      >
+        <i class="fa fa-minus"></i>
+      </button>
+    </div>
+  `;
 	
-	// Append the custom field to the container
 	container.append(formRow);
 	
-	// Attach the remove event to the remove button after appending the field
 	$(`#form-row-${fieldKey} .remove-custom-field-btn`).on('click', function () {
-		// Remove the custom field from the form
 		$(`#form-row-${fieldKey}`).remove();
-		
-		// Add the removed field option back to the dropdown
 		$('#custom-fields-dropdown').append($('<option>', { value: fieldKey, text: fieldLabel }));
 	});
 }
@@ -304,29 +287,21 @@ function ktGenerateCustomField(fieldKey, fieldLabel, defaultValue = '') {
 /**
  * Restores previously added custom fields by generating them and removing the corresponding options from the dropdown.
  *
+ * @param {object} container - The DOM element where the custom fields will be added.
+ * @param {object} dropdown - The dropdown element containing custom field options.
  * @param {object} customFields - An object where keys represent custom field IDs and values are the corresponding labels.
  * @param {object} defaultValues - An object containing previously saved default values, where keys represent field IDs and values are the field values.
  */
-function ktRestoreCustomFields(customFields, defaultValues) {
-	const dropdown = $('#custom-fields-dropdown');
-	
-	// Ensure the dropdown exists
+function ktRestoreCustomFields(container, dropdown, customFields, defaultValues) {
 	if (!dropdown.length) {
 		console.error('Custom fields dropdown not found.');
 		return;
 	}
 	
-	// Iterate through the defaultValues object to restore custom fields
 	$.each(defaultValues, (fieldKey, value) => {
-		// Check if the field is a custom field
 		if (ktIsCustomField(fieldKey)) {
-			// Retrieve the field label or use a fallback label
 			const fieldLabel = customFields[fieldKey] || 'Custom Field';
-			
-			// Generate the custom field with the provided key, label, and value
-			ktGenerateCustomField(fieldKey, fieldLabel, value);
-			
-			// Remove the corresponding option from the dropdown to avoid duplicates
+			ktGenerateCustomField(container, fieldKey, fieldLabel, value);
 			dropdown.find(`option[value="${fieldKey}"]`).remove();
 		}
 	});
@@ -360,10 +335,39 @@ function ktInitializeTypedInput(
 	});
 }
 
-function ktStoreContactFields() {
-	// Iterate over all input fields in the contact fields section
-	$('#contact-fields-section input').each((index, element) => {
+/**
+ * Handles the visibility and population of the contact fields section
+ * based on the selected input type.
+ *
+ * @param {object} container - The container for the contact fields.
+ * @param {object} input - The input element triggering the change event.
+ * @param {string} action - The action endpoint used to populate the contact fields.
+ */
+function ktHandleContactFieldsDisplay(container, input, action) {
+	$(input).on("change", (event, type) => {
+		// Remove previous error messages
+		container.siblings('.kt-error-message').remove();
+		
+		if (type === KT_CONTACT_FIELDS_API_TYPE) {
+			// Show and populate the contact fields section if 'fieldsFromApi' is selected
+			container.show();
+			ktPopulateContactFields(container, this.fieldsData, `/klicktipp/contact-fields/${action}`);
+		} else {
+			// Hide the contact fields section for other input types
+			container.hide();
+		}
+	});
+}
+
+/**
+ * Collects all field values from the provided container and stores them in the fields object.
+ *
+ * @param {object} container - The container element that holds the input fields.
+ * @param {Object} fields - The object where the collected field values will be stored.
+ */
+function ktSaveContactFieldValues(container, fields) {
+	container.find('input').each((index, element) => {
 		const fieldId = $(element).attr('id').replace('node-input-', '');
-		this.fieldsData[fieldId] = $(element).val();
+		fields[fieldId] = $(element).val();
 	});
 }

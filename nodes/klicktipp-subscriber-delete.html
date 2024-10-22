@@ -58,8 +58,9 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber delete', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
+			prefix: { },
 			klicktipp: { type: 'klicktipp-config', required: true },
 			subscriberId: {
 				required: true,
@@ -73,10 +74,11 @@
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
 			return this.name || 'Subscriber Delete';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
 		},

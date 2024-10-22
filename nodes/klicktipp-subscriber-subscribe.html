@@ -85,7 +85,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp subscriber subscribe', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
@@ -132,48 +132,33 @@
 		label: function () {
 			return this.name || 'Subscriber Subscribe';
 		},
+		labelStyle: "klicktipp_label_style",
 		oneditprepare: function() {
-			const tagDropdown = $('#node-input-tagId');
-			const listIdDropdown = $('#node-input-listId');
-			const contactListContainer = $('#contact-fields-section');
-			const fieldsInput = $("#node-input-fields");
+			// Declare common variables at the node level so both functions can access them
+			this.tagDropdown = $('#node-input-tagId');
+			this.listIdDropdown = $('#node-input-listId');
+			this.contactListContainer = $('#contact-fields-section');
+			this.fieldsInput = $("#node-input-fields");
 
-			const customContactFieldsType = {
-				value: "fieldsFromApi",
-				label: "Contact fields list",
-				icon: "fa fa-cog",
-				hasValue: false
-			}
-
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscriber-subscribe-node');
-			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-processes/subscriber-subscribe-node');
+			ktPopulateDropdown(this.tagDropdown, this.tagId, '/klicktipp/tags/subscriber-subscribe-node');
+			ktPopulateDropdown(this.listIdDropdown, this.listId, '/klicktipp/subscription-processes/subscriber-subscribe-node');
 
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', customContactFieldsType]);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			$(fieldsInput).on("change", (event, type) => {
-				if (type === "fieldsFromApi") {
-					// Show the contact fields section and populate the fields from the API
-					contactListContainer.show();
-					ktPopulateContactFields(contactListContainer, this.fieldsData,'/klicktipp/contact-fields/subscriber-subscribe-node');
-				} else {
-					// Hide the contact fields section for other types
-					contactListContainer.hide();
-				}
-			});
+			ktHandleContactFieldsDisplay(this.contactListContainer, this.fieldsInput, 'subscriber-subscribe-node');
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
-			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
-			this.listId = Number($('#node-input-listId').val()); // Save the selected listId
+			this.fields = {};
+			// Use the previously set common variables
+			this.tagId = Number(this.tagDropdown.val()); // Save the selected tagId
+			this.listId = Number(this.listIdDropdown.val()); // Save the selected listId
 
 			// Collect all field values and store them in this.fields
-			this.fields = {};
-			$('#contact-fields-section input').each((index, element) => {
-				const fieldId = $(element).attr('id').replace('node-input-', '');
-				this.fields[fieldId] = $(element).val();
-			});
+
+			ktSaveContactFieldValues(this.contactListContainer, this.fields);
 		}
 	});
 </script>

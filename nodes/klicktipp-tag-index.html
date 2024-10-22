@@ -40,7 +40,7 @@
 <script type="text/javascript">
 	RED.nodes.registerType('klicktipp tag index', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
@@ -51,5 +51,6 @@
 		label: function () {
 			return this.name || 'Tag Index';
 		},
+		labelStyle: "klicktipp_label_style",
 	});
 </script>
