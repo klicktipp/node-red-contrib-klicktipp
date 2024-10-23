@@ -14,14 +14,14 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched subscription processes',
-				'Failed to fetch subscription processes',
+				'Fetched opt-in processes',
+				'Failed to fetch opt-in processes',
 				(response) => {
 					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch subscription processes', error.message);
+			handleError(this, msg, 'Failed to fetch opt-in processes', error.message);
 		}
 	};
 

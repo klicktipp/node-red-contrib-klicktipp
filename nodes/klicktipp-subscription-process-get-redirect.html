@@ -4,13 +4,11 @@
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID (Required)</span></label>
-        <select id="node-input-listId">
-            <!-- List ID will be populated here -->
-        </select>
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
+        <select id="node-input-listId"></select>
     </div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
 	    <input type="hidden" id="node-input-emailType">
 	</div>
@@ -29,7 +27,7 @@
 	<dd>
 	   Expected object with the following properties
 	   <ul>
-		   <li><code>listId</code> - (Required) the ID of a subscription process</li>
+		   <li><code>listId</code> - (Required) the ID of a opt-in process</li>
 		   <li><code>email</code> - (Required) the subscriber's email address</li>
 	   </ul>
 	</dd>
@@ -41,7 +39,7 @@
 		<dd>
 			On success:
 			<ul>
-				<li>The URL to which the subscriber will be redirected for the specified subscription process.</li>
+				<li>The URL to which the subscriber will be redirected for the specified opt-in process.</li>
 			</ul>
 		</dd>
 		<dd>

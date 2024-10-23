@@ -4,10 +4,8 @@
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
-        <select id="node-input-listId">
-            <!-- List ID will be populated here -->
-        </select>
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
+        <select id="node-input-listId"></select>
     </div>
 	<div class="form-row">
 	   <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -24,7 +22,7 @@
 	<dd>
 	   An object that must contain the following:
 	   <ul>
-		   <li><code>listId</code> - (Required) the ID of a subscription process</li>
+		   <li><code>listId</code> - (Required) the ID of a opt-in process</li>
 	   </ul>
 	</dd>
 	</dl>
@@ -35,7 +33,7 @@
 		<dd>
 			On success:
 			<ul>
-				<li>An object representing the subscription process.</li>
+				<li>An object representing the opt-in process.</li>
 			</ul>
 		</dd>
 		<dd>
@@ -51,8 +49,8 @@
 
 	<h3>Node Status</h3>
 	<ul>
-	   <li><strong>Green (dot)</strong> - Subscription processes fetched successfully.</li>
-	   <li><strong>Red (ring)</strong> - Failed to fetch subscription processes due to an error.</li>
+	   <li><strong>Green (dot)</strong> - Opt-in processes fetched successfully.</li>
+	   <li><strong>Red (ring)</strong> - Failed to fetch opt-in processes due to an error.</li>
 	</ul>
 </script>
 

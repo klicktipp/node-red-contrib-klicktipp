@@ -4,17 +4,17 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
 	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS number</span></label>
 	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
 	     <input type="hidden" id="node-input-smsNumberType">
 	</div>
 	<div class="form-row">
-        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Subscription process ID</span></label>
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
         <select id="node-input-listId">
             <!-- List ID will be populated here -->
         </select>
@@ -26,8 +26,8 @@
         </select>
     </div>
 	<div class="form-row">
-	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Contact fields</span></label>
-	    <input type="text" id="node-input-fields" placeholder="Contact fields">
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data fields</span></label>
+	    <input type="text" id="node-input-fields" placeholder="Data fields">
 	    <input type="hidden" id="node-input-fieldsType">
 	</div>
 	<div id="contact-fields-section" class="form-row" style="display: none"></div>
@@ -48,7 +48,7 @@
 	        <ul>
 	            <li><code>email</code> - (Required) the subscriber's email address</li>
 	            <li><code>smsNumber</code> -(Optional) the subscriber's mobile number</li>
-	            <li><code>listId</code> - (Optional) the ID of a subscription process</li>
+	            <li><code>listId</code> - (Optional) the ID of a opt-in process</li>
 	            <li><code>tagId</code> - (Optional) the ID of a manual tag or SmartLink</li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.), structured as returned by the field_index node</li>
 	        </ul>

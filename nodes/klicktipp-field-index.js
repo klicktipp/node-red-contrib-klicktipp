@@ -14,8 +14,8 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched contact fields',
-				'Failed to fetch contact fields',
+				'Fetched data fields',
+				'Failed to fetch data fields',
 				(response) => {
 					msg.payload = response.data;
 				},
