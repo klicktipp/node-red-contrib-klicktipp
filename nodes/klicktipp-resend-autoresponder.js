@@ -39,8 +39,9 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			const { email = '', autoresponder = '' } = msg?.payload;
+			
+			const email = config.email || msg.payload.email;
+			const autoresponder = config.autoresponder || msg.payload.autoresponder;
 
 			if (!email || !autoresponder) {
 				return handleError(node, msg, 'Missing email or autoresponder ID', 'Invalid input');

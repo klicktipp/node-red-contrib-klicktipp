@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const validateSession = require('./utils/validateSession');
 const getSessionData = require('./utils/getSessionData');
 const prepareUpdateSubscriberData = require('./utils/prepareUpdateSubscriberData');
+const extractUpdateSubscriberFields = require('./utils/extractUpdateSubscriberFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -41,13 +42,13 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
+			
 			const {
-				subscriberId = '',
-				fields = {},
-				newEmail = '',
-				newSmsNumber = '',
-			} = msg?.payload || {};
+				subscriberId,
+				fields,
+				newEmail,
+				newSmsNumber
+			} = extractUpdateSubscriberFields(config, msg.payload);
 
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');

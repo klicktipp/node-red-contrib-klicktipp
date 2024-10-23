@@ -36,8 +36,8 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			const subscriberId = msg?.payload?.subscriberId || '';
+			
+			const subscriberId = config.subscriberId || msg?.payload?.subscriberId;
 
 			if (!subscriberId) {
 				handleError(node, msg, 'Missing subscriber ID');

@@ -4,6 +4,14 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
+		<label for="node-input-tagName"><i class="fa fa-tags""></i> <span>Name</span></label>
+		<input type="text" id="node-input-tagName" placeholder="Enter name (required)">
+	</div>
+	<div class="form-row">
+		<label for="node-input-tagDescription"><i class="fa fa-tags""></i> <span>Description</span></label>
+		<input type="text" id="node-input-tagDescription" placeholder="Enter description (optional)">
+	</div>
+	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
@@ -71,6 +79,9 @@
 		color: '#F2F2F2',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
+			//tagName is used to avoid conflict with the Node-RED core name property
+			tagName: { value: '' },
+			tagDescription: { value: '' },
 			name: { value: '' },
 		},
 		inputs: 1,

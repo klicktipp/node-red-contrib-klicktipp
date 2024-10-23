@@ -37,7 +37,7 @@ module.exports = function (RED) {
 				return node.send(msg);
 			}
 
-			const tagId = msg?.payload?.tagId || '';
+			const tagId = config.tagId || msg?.payload?.tagId;
 
 			if (!tagId) {
 				handleError(node, msg, 'Missing tag ID');

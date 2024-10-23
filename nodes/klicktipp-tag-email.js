@@ -40,8 +40,9 @@ module.exports = function (RED) {
 			if (!validateSession(msg, node)) {
 				return node.send(msg);
 			}
-
-			let { email = '', tagIds = [] } = msg?.payload;
+			
+			const email = config.email || msg?.payload?.email;
+			let tagIds = config.tagId || msg?.payload?.tagIds;
 
 			// Ensure tagIds is an array, even if a single tagId is provided
 			if (typeof tagIds === 'number') {
