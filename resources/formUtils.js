@@ -22,7 +22,7 @@ const KT_CONTACT_FIELDS_API_TYPE = "fieldsFromApi"
 
 const KT_CUSTOM_CONTACT_FIELDS_TYPE = {
 	value: KT_CONTACT_FIELDS_API_TYPE,
-	label: "Contact fields list",
+	label: "Data fields list",
 	icon: "fa fa-cog",
 	hasValue: false
 }
@@ -54,53 +54,13 @@ function ktIsCustomField(fieldKey) {
 }
 
 /**
- * Populates a dropdown with items fetched from a given action URL.
- *
- * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
- * @param {(string|string[])} selectedItemId - The ID or array of IDs of the current item(s) to pre-select in the dropdown.
- * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
- */
-function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
-	const $spinner = ktCreateSpinner();
-	
-	$dropdown.before($spinner);
-	$spinner.show();
-	$dropdown.hide();
-	
-	$.getJSON(actionUrl)
-		.done((items) => {
-			$dropdown.empty();
-			
-			if (ktIsValidItemsObject(items)) {
-				$.each(items, (id, name) => {
-					const optionLabel = ktGetOptionLabel(name, actionUrl);
-					$dropdown.append(ktCreateOptionElement(id, optionLabel));
-				});
-				
-				ktPreselectItems($dropdown, selectedItemId);
-				$dropdown.show();
-			} else {
-				ktShowError($dropdown, 'No valid items found');
-			}
-		})
-		.fail((jqXHR) => {
-			const errorMessage = ktGetErrorMessage(jqXHR);
-			console.error('Error:', errorMessage);
-			ktShowError($dropdown, `Error: ${errorMessage}`);
-		})
-		.always(() => {
-			$spinner.hide();
-		});
-}
-
-/**
  * Checks if the fetched items object is valid.
  *
- * @param {object} items - The items object to check.
- * @returns {boolean} - True if the items object is valid, false otherwise.
+ * @param {object} item - The item to check.
+ * @returns {boolean} - True if the item object is valid, false otherwise.
  */
-function ktIsValidItemsObject(items) {
-	return items && typeof items === 'object';
+function ktIsObject(item) {
+	return item && typeof item === 'object';
 }
 
 /**
@@ -124,29 +84,6 @@ function ktGetOptionLabel(name, actionUrl) {
 }
 
 /**
- * Creates an option element for the dropdown.
- *
- * @param {string} id - The ID for the option.
- * @param {string} text - The display text for the option.
- * @returns {object} - The jQuery-wrapped option element.
- */
-function ktCreateOptionElement(id, text) {
-	return $('<option>', { value: id, text });
-}
-
-/**
- * Pre-selects the given item(s) in the dropdown.
- *
- * @param {object} $dropdown - The jQuery-wrapped dropdown element.
- * @param {(string|string[])} selectedItemId - The ID or array of IDs to select.
- */
-function ktPreselectItems($dropdown, selectedItemId) {
-	if (selectedItemId) {
-		$dropdown.val(Array.isArray(selectedItemId) ? selectedItemId : [selectedItemId]);
-	}
-}
-
-/**
  * Displays an error message before the dropdown element.
  *
  * @param {object} $element - The jQuery-wrapped element.
@@ -164,6 +101,58 @@ function ktShowError($element, message) {
  */
 function ktGetErrorMessage(jqXHR) {
 	return jqXHR?.responseJSON?.error || 'Failed to load items';
+}
+
+/**
+ * Pre-selects the given item(s) in the dropdown.
+ *
+ * @param {object} $dropdown - The jQuery-wrapped dropdown element.
+ * @param {(string|string[])} selectedItemId - The ID or array of IDs to select.
+ */
+function ktPreselectItems($dropdown, selectedItemId) {
+	if (selectedItemId) {
+		$dropdown.val(Array.isArray(selectedItemId) ? selectedItemId : [selectedItemId]);
+	}
+}
+
+/**
+ * Populates a dropdown with items fetched from a given action URL.
+ *
+ * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
+ * @param {(string|string[])} selectedItemId - The ID or array of IDs of the current item(s) to pre-select in the dropdown.
+ * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
+ */
+function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
+	const $spinner = ktCreateSpinner();
+	
+	$dropdown.before($spinner);
+	$spinner.show();
+	$dropdown.hide();
+	
+	$.getJSON(actionUrl)
+		.done((items) => {
+			$dropdown.empty();
+			
+			if (ktIsObject(items)) {
+				$.each(items, (id, name) => {
+					const optionLabel = ktGetOptionLabel(name, actionUrl);
+					$dropdown.append($('<option>', { value: id, text }));
+				});
+				
+				ktPreselectItems($dropdown, selectedItemId);
+				$dropdown.show();
+			} else {
+				ktShowError($dropdown, 'No valid items found');
+			}
+		})
+		.fail((jqXHR) => {
+			const errorMessage = ktGetErrorMessage(jqXHR);
+			console.error('Error:', errorMessage);
+			ktShowError($dropdown, `Error: ${errorMessage}`);
+		})
+		.always(() => {
+			$spinner.hide();
+		});
 }
 
 /**
@@ -189,7 +178,7 @@ function ktPopulateContactFields($container, defaultValues = {}, action) {
 			const standardFields = {};
 			const customFields = {};
 			
-			if (ktIsValidItemsObject(items)) {
+			if (ktIsObject(items)) {
 				$.each(items, (key, label) => {
 					if (ktIsCustomField(key)) {
 						customFields[key] = label;
@@ -219,18 +208,16 @@ function ktPopulateContactFields($container, defaultValues = {}, action) {
 /**
  * Generates and appends standard form fields to the contact fields section.
  *
- * @param {object} container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
+ * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} fields - An object where keys represent field IDs and values are the field labels.
  * @param {object} [defaultValues={}] - Optional object with default values for the form fields, keyed by field IDs.
  */
-function ktGenerateFormFields(container, fields, defaultValues = {}) {
-	if (!container.length) {
-		console.error('Container not found for form fields.');
+function ktGenerateFormFields($container, fields, defaultValues = {}) {
+	if (!$container.length) {
 		return;
 	}
 	
-	if (!fields || typeof fields !== 'object') {
-		console.error('Invalid fields provided.');
+	if (!ktIsObject(fields)) {
 		return;
 	}
 	
@@ -251,7 +238,7 @@ function ktGenerateFormFields(container, fields, defaultValues = {}) {
         >
       </div>
     `;
-		container.append(formRow);
+		$container.append(formRow);
 	});
 }
 
@@ -360,34 +347,58 @@ function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = 
 		return;
 	}
 	
-	const formRow = `
-    <div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">
-      <label for="node-input-${fieldKey}">
-        <i class="fa fa-question-circle"></i> ${fieldLabel}
-      </label>
-      <input
-        type="text"
-        id="node-input-${fieldKey}"
-        placeholder="Enter ${fieldLabel.toLowerCase()} (optional)"
-        value="${defaultValue}"
-      >
-      <button
-        type="button"
-        class="remove-custom-field-btn btn btn-sm btn-danger"
-        data-field-key="${fieldKey}"
-        data-field-label="${fieldLabel}"
-      >
-        <i class="fa fa-minus"></i>
-      </button>
-    </div>
-  `;
+	// Create and append the custom field row
+	const $formRow = ktCreateFormRow(fieldKey, fieldLabel, defaultValue);
+	$container.append($formRow);
 	
-	$container.append(formRow);
-	
-	$(`#form-row-${fieldKey} .remove-custom-field-btn`).on('click', function () {
-		$(`#form-row-${fieldKey}`).remove();
-		$('#custom-fields-dropdown').append($('<option>', { value: fieldKey, text: fieldLabel }));
+	// Add functionality to the remove button
+	$formRow.find('.remove-custom-field-btn').on('click', () => {
+		ktHandleRemoveCustomField($formRow, fieldKey, fieldLabel);
 	});
+}
+
+/**
+ * Creates a form row for the custom field with the input and remove button.
+ *
+ * @param {string} fieldKey - The unique key/ID for the custom field.
+ * @param {string} fieldLabel - The label to display for the custom field.
+ * @param {string} defaultValue - The default value for the custom field input.
+ * @returns {object} - A jQuery-wrapped form row element.
+ */
+function ktCreateFormRow(fieldKey, fieldLabel, defaultValue) {
+	return $(`
+		<div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">
+		  <label for="node-input-${fieldKey}">
+		    <i class="fa fa-question-circle"></i> ${fieldLabel}
+		  </label>
+		  <input
+		    type="text"
+		    id="node-input-${fieldKey}"
+		    placeholder="Enter ${fieldLabel.toLowerCase()} (optional)"
+		    value="${defaultValue}"
+		  >
+		  <button
+		    type="button"
+		    class="remove-custom-field-btn btn btn-sm btn-danger"
+		    data-field-key="${fieldKey}"
+		    data-field-label="${fieldLabel}"
+		  >
+		    <i class="fa fa-minus"></i>
+		  </button>
+		</div>
+	`);
+}
+
+/**
+ * Handles the removal of a custom field.
+ *
+ * @param {object} $formRow - The jQuery-wrapped form row element containing the custom field.
+ * @param {string} fieldKey - The unique key/ID for the custom field.
+ * @param {string} fieldLabel - The label to display for the custom field.
+ */
+function ktHandleRemoveCustomField($formRow, fieldKey, fieldLabel) {
+	$formRow.remove();
+	$('#custom-fields-dropdown').append($('<option>', { value: fieldKey, text: fieldLabel }));
 }
 
 /**
