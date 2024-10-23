@@ -85,7 +85,7 @@ module.exports = function (RED) {
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/tags/subscriber-tag-node',
+			endpoint: `/klicktipp/tags/${node.id}`,
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',

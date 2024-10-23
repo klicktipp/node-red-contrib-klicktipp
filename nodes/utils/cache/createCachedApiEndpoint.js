@@ -1,3 +1,5 @@
+const getCacheLevel = require("./getCacheLevel");
+
 /**
  * Creates a cached API endpoint in Node-RED.
  *
@@ -28,38 +30,48 @@ function createCachedApiEndpoint(RED, node, klicktippConfig, options) {
 		RED.auth.needsPermission(options.permission),
 		async (req, res) => {
 			try {
-				const context = node.context()[options.cacheContext || 'flow'];
 				const { cacheKey, cacheTimestampKey, cacheDurationMs = 10 * 60 * 1000 } = options;
-				const { username, password } = klicktippConfig || {};
-
+				const { username = '', password = '' } = klicktippConfig || {};
+				
+				const fullCacheKey = `${cacheKey}_${node.id}`;
+				
 				if (!username || !password) {
 					return res.status(400).json({ error: 'Missing KlickTipp credentials' });
 				}
-
-				// Check if cached data is still valid
-				const cachedData = context.get(cacheKey);
-				const cacheTimestamp = context.get(cacheTimestampKey);
+				
+				const cacheContextLevel = options.cacheContext || 'node'; // 'node', 'flow', 'global'
+				const cacheContext = getCacheLevel(node, cacheContextLevel);
+				
+				if (!cacheContext) {
+					console.log(`Unable to access '${cacheContextLevel}' context`);
+					return res.status(400).json({ error: (`Unable to access '${cacheContextLevel}' context`) });
+				}
+				
+				// Use the cache context to get and set values
+				let cachedData = cacheContext.get(fullCacheKey) || null;
+				let cacheTimestamp = cacheContext.get(cacheTimestampKey) || null;
+				
 				const isCacheValid =
 					cachedData && cacheTimestamp && Date.now() - cacheTimestamp < cacheDurationMs;
-
+				
 				if (isCacheValid) {
 					console.log('Serving from cache');
 					return res.json(cachedData);
 				}
-
+				
 				// Fetch new data using credentials
 				const data = await options.fetchFunction(username, password);
-
+				
 				// Cache the new data
-				context.set(cacheKey, data);
-				context.set(cacheTimestampKey, Date.now());
-
+				cacheContext.set(fullCacheKey, data);
+				cacheContext.set(cacheTimestampKey, Date.now());
+				
 				res.json(data);
 			} catch (error) {
 				console.error('Error fetching data:', error);
 				res.status(500).json({ error: 'Failed to fetch data', message: error.message });
 			}
-		},
+		}
 	);
 }
 

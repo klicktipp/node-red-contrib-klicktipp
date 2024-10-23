@@ -41,7 +41,7 @@ module.exports = function (RED) {
 
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/contact-fields/subscriber-signin-node',
+			endpoint: `/klicktipp/contact-fields/${node.id}`,
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',

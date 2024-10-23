@@ -61,12 +61,12 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-
+		console.log({klicktippConfig});
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/contact-fields/subscriber-subscribe-node',
+			endpoint: `/klicktipp/contact-fields/${node.id}`,
 			permission: 'klicktipp.read',
-			cacheContext: 'flow',
+			cacheContext: 'node',
 			cacheKey: 'subscribeNodeContactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
@@ -75,9 +75,9 @@ module.exports = function (RED) {
 
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/tags/subscriber-subscribe-node',
+			endpoint: `/klicktipp/tags/${node.id}`,
 			permission: 'klicktipp.read',
-			cacheContext: 'flow',
+			cacheContext: 'node',
 			cacheKey: 'subscribeNodeTagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
@@ -86,9 +86,9 @@ module.exports = function (RED) {
 
 		// Get the subscription process list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: '/klicktipp/subscription-processes/subscriber-subscribe-node',
+			endpoint: `/klicktipp/subscription-processes/${node.id}`,
 			permission: 'klicktipp.read',
-			cacheContext: 'flow',
+			cacheContext: 'node',
 			cacheKey: 'subscribeNodeCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes

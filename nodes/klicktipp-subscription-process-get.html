@@ -76,7 +76,7 @@
 		paletteLabel: 'Opt-in process get',
 		oneditprepare: function() {
 			const listIdDropdown = $('#node-input-listId');
-			ktPopulateDropdown(listIdDropdown, this.listId, '/klicktipp/subscription-process/get-process-node');
+			ktPopulateDropdown(listIdDropdown, this.listId, `/klicktipp/subscription-process/${this.id}`);
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {

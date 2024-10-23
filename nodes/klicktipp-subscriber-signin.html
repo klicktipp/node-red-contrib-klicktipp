@@ -131,7 +131,7 @@
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'subscriber-signin-node', this.fieldsData);
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData);
 		},
 		oneditsave: function() {
 			// Collect all field from API vales and store them in this.fieldsData

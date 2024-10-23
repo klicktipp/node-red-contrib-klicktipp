@@ -78,7 +78,7 @@
 		paletteLabel: 'Subscriber tagged',
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscriber-tagged-node');
+			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
 		},
 		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
