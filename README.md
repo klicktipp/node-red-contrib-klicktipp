@@ -11,14 +11,13 @@ For more detailed information on the KlickTipp API, including available function
 
 - [Installation](#installation)
 - [Nodes Overview](#nodes-overview)
-    - [KlickTipp Config](#klicktipp-config)
-    - [KlickTipp Login](#klicktipp-login)
-    - [KlickTipp Logout](#klicktipp-logout)
-    - [Subscription Process Nodes](#subscription-process-nodes)
-    - [Tag Nodes](#tag-nodes)
-    - [Subscriber Nodes](#subscriber-nodes)
-    - [Sign-in/Sign-off Nodes](#sign-in-and-sign-off-nodes)
-    - [Subscriber custom fields](#field-index-node)
+    - [KlickTipp config](#klicktipp-config)
+    - [Opt-in process](#opt-in-process-nodes)
+    - [Tag](#tag-nodes)
+    - [Subscriber](#subscriber-nodes)
+    - [Sign-out/Sign-off/Sign-in](#sign-out-sign-off-and-sign-in-nodes)
+    - [Data fields](#field-index-node)
+    - [Resend autoresponder](#resend-autoresponder-node)
 - [Credentials](#credentials)
 - [Error Handling](#error-handling)
 - [License](#license)
@@ -43,54 +42,55 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 - **Node Name:** `klicktipp-config`
 - **Description:** This is a configuration node used to store your KlickTipp API credentials (username and password). You will use this node to authenticate other KlickTipp nodes.
 
-### Subscription Process Nodes
+### Opt-in process nodes
 
 - **Node Names:**
-  - `klicktipp subscription process index`
-  - `klicktipp subscription process get`
-  - `klicktipp subscription process redirect`
-- **Description:** These nodes are used to manage and interact with subscription processes (also referred to as lists) in KlickTipp.
-  - `index`: Fetches all available subscription processes.
-  - `get`: Fetches a specific subscription process by ID.
-  - `redirect`: Retrieves the redirection URL for a given subscription process and subscriber.
+  - `Opt-in process index`
+  - `Opt-in process get`
+  - `Opt-in process redirect URL`
+- **Description:** These nodes are used to manage and interact with opt-in processes in KlickTipp.
 
-### Tag Nodes
+### Tag nodes
 
 - **Node Names:**
-  - `klicktipp tag index`
-  - `klicktipp tag get`
-  - `klicktipp tag create`
-  - `klicktipp tag update`
-  - `klicktipp tag delete`
-  - `klicktipp tag email`
-  - `klicktipp untag email`
-- **Description:** These nodes allow you to manage and interact with tags within KlickTipp. You can create, update, and delete tags, as well as tag or untag subscribers by their email addresses.
+  - `Tag index`
+  - `Tag get`
+  - `Tag create`
+  - `Tag update`
+  - `Tag delete`
+- **Description:** These nodes allow you to manage and interact with tags within KlickTipp. You can create, update, and delete tags.
 
-### Subscriber Nodes
+### Subscriber nodes
 
 - **Node Names:**
-  - `klicktipp subscribe`
-  - `klicktipp unsubscribe`
-  - `klicktipp subscriber index`
-  - `klicktipp subscriber get`
-  - `klicktipp subscriber search`
-  - `klicktipp subscriber tagged`
-  - `klicktipp subscriber update`
-  - `klicktipp subscriber delete`
-  - `klicktipp resend autoresponder`
-- **Description:** These nodes allow you to manage subscribers, including retrieving, searching, updating, deleting subscriber data, and resend autoresponder for the subscribers email address.
+  - `Subscriber index`
+  - `Subscriber search`
+  - `Subscriber tagged`
+  - `Subscriber get`
+  - `Subscriber subscribe`
+  - `Subscriber update`
+  - `Subscriber tag`
+  - `Subscriber untag`
+  - `Subscriber unsubscribe`
+  - `Subscriber delete`
+- **Description:** These nodes allow you to manage subscribers, including retrieving, searching, updating, deleting subscriber data.
 
-### Sign-in and Sign-off Nodes
+### Sign-out Sign-off and Sign-in nodes
 
 - **Node Names:**
-  - `klicktipp signin`
-  - `klicktipp signout`
-  - `klicktipp signoff`
+  - `Subscriber signout`
+  - `Subscriber signoff`
+  - `Subscriber signin`
 - **Description:** These nodes allow you to sign in or sign off a subscriber using their email or SMS number and an API key. You can also untag subscribers with these nodes.
 
-### Field Index Node
-- **Node Name**: `klicktipp field index`
-- **Description:**  Retrieves all available contact fields for the subscriber. This includes information like first name, last name, email, phone numbers, and other relevant contact details.
+### Field index node
+- **Node Name**: `Field index`
+- **Description:**  Retrieves all available data fields for the subscriber.
+---
+
+### Resend autoresponder node
+- **Node Name**: `Resend autoresponder`
+- **Description:**  Resend an autoresponder to an email address.
 ---
 
 ## Credentials
