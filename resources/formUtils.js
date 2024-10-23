@@ -136,7 +136,7 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 			if (ktIsObject(items)) {
 				$.each(items, (id, name) => {
 					const optionLabel = ktGetOptionLabel(name, actionUrl);
-					$dropdown.append($('<option>', { value: id, text }));
+					$dropdown.append($('<option>', { value: id, text: optionLabel }));
 				});
 				
 				ktPreselectItems($dropdown, selectedItemId);
@@ -330,7 +330,7 @@ function ktHandleAddCustomField($container, $dropdown) {
 	}
 	
 	// Generate the selected custom field and remove it from the dropdown
-	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel);
+	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel, '', $dropdown);
 	$dropdown.find(`option[value="${selectedFieldKey}"]`).remove();
 }
 
@@ -341,8 +341,9 @@ function ktHandleAddCustomField($container, $dropdown) {
  * @param {string} fieldKey - The unique key/ID for the custom field.
  * @param {string} fieldLabel - The label to display for the custom field.
  * @param {string} [defaultValue=''] - Optional default value for the custom field input.
+ * @param $dropdown
  */
-function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = '') {
+function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = '', $dropdown) {
 	if (!$container.length) {
 		return;
 	}
@@ -353,7 +354,7 @@ function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = 
 	
 	// Add functionality to the remove button
 	$formRow.find('.remove-custom-field-btn').on('click', () => {
-		ktHandleRemoveCustomField($formRow, fieldKey, fieldLabel);
+		ktHandleRemoveCustomField($dropdown, $formRow, fieldKey, fieldLabel);
 	});
 }
 
@@ -392,13 +393,14 @@ function ktCreateFormRow(fieldKey, fieldLabel, defaultValue) {
 /**
  * Handles the removal of a custom field.
  *
+ * @param $dropdown
  * @param {object} $formRow - The jQuery-wrapped form row element containing the custom field.
  * @param {string} fieldKey - The unique key/ID for the custom field.
  * @param {string} fieldLabel - The label to display for the custom field.
  */
-function ktHandleRemoveCustomField($formRow, fieldKey, fieldLabel) {
+function ktHandleRemoveCustomField($dropdown, $formRow, fieldKey, fieldLabel) {
 	$formRow.remove();
-	$('#custom-fields-dropdown').append($('<option>', { value: fieldKey, text: fieldLabel }));
+	$dropdown.append($('<option>', { value: fieldKey, text: fieldLabel }));
 }
 
 /**
@@ -417,7 +419,7 @@ function ktRestoreCustomFields($container, dropdown, customFields, defaultValues
 	$.each(defaultValues, (fieldKey, value) => {
 		if (ktIsCustomField(fieldKey)) {
 			const fieldLabel = customFields[fieldKey] || 'Custom Field';
-			ktGenerateCustomField($container, fieldKey, fieldLabel, value);
+			ktGenerateCustomField($container, fieldKey, fieldLabel, value, dropdown);
 			dropdown.find(`option[value="${fieldKey}"]`).remove();
 		}
 	});
@@ -458,8 +460,9 @@ function ktInitializeTypedInput(
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
  * @param {object} input - The input element triggering the change event.
  * @param {string} action - The action endpoint used to populate the contact fields.
+ * @param fieldsData
  */
-function ktHandleContactFieldsDisplay($container, input, action) {
+function ktHandleContactFieldsDisplay($container, input, action, fieldsData) {
 	$(input).on("change", (event, type) => {
 		// Remove previous error messages
 		$container.siblings('.kt-error-message').remove();
@@ -467,7 +470,7 @@ function ktHandleContactFieldsDisplay($container, input, action) {
 		if (type === KT_CONTACT_FIELDS_API_TYPE) {
 			// Show and populate the contact fields section if 'fieldsFromApi' is selected
 			$container.show();
-			ktPopulateContactFields($container, this.fieldsData, `/klicktipp/contact-fields/${action}`);
+			ktPopulateContactFields($container, fieldsData, `/klicktipp/contact-fields/${action}`);
 		} else {
 			// Hide the contact fields section for other input types
 			$container.hide();
@@ -479,11 +482,25 @@ function ktHandleContactFieldsDisplay($container, input, action) {
  * Collects all field values from the provided container and stores them in the fields object.
  *
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
- * @param {Object} fields - The object where the collected field values will be stored.
  */
-function ktSaveContactFieldValues($container, fields) {
-	$container.find('input').each((index, element) => {
-		const fieldId = $(element).attr('id').replace('node-input-', '');
-		fields[fieldId] = $(element).val();
+function ktSaveContactFieldValues($container ) {
+	// Ensure the container is valid
+	if (!$container || !$container.length) {
+		return {};
+	}
+	
+	let fields = {};
+	
+	// Collect values from all input, select, and textarea elements
+	$container.find('input, select, textarea').each((index, element) => {
+		const $element = $(element);
+		const fieldId = $element.attr('id') ? $element.attr('id').replace('node-input-', '') : null;
+		
+		// Proceed only if fieldId is valid
+		if (fieldId) {
+			fields[fieldId] = $element.val().trim(); // Trim whitespace from values
+		}
 	});
+
+	return fields;
 }

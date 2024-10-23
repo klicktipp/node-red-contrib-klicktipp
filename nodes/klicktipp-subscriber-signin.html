@@ -131,12 +131,11 @@
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'subscriber-signin-node');
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'subscriber-signin-node', this.fieldsData);
 		},
 		oneditsave: function() {
-			this.fields = {};
-			// Collect all field values and store them in this.fields
-			ktSaveContactFieldValues(this.contactListContainer, this.fields);
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
 		}
 	});
 </script>

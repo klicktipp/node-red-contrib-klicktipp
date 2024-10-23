@@ -139,7 +139,7 @@
 			this.tagDropdown = $('#node-input-tagId');
 			this.listIdDropdown = $('#node-input-listId');
 			this.contactListContainer = $('#contact-fields-section');
-			this.fieldsInput = $("#node-input-fields");
+			const fieldsInput = $("#node-input-fields");
 
 			ktPopulateDropdown(this.tagDropdown, this.tagId, '/klicktipp/tags/subscriber-subscribe-node');
 			ktPopulateDropdown(this.listIdDropdown, this.listId, '/klicktipp/subscription-processes/subscriber-subscribe-node');
@@ -148,18 +148,15 @@
 			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			ktHandleContactFieldsDisplay(this.contactListContainer, this.fieldsInput, 'subscriber-subscribe-node');
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'subscriber-subscribe-node', this.fieldsData);
 		},
-		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
-			this.fields = {};
 			// Use the previously set common variables
 			this.tagId = Number(this.tagDropdown.val()); // Save the selected tagId
 			this.listId = Number(this.listIdDropdown.val()); // Save the selected listId
 
-			// Collect all field values and store them in this.fields
-
-			ktSaveContactFieldValues(this.contactListContainer, this.fields);
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
 		}
 	});
 </script>

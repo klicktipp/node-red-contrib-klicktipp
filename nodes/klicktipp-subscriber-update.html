@@ -136,13 +136,11 @@
 			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'update-subscriber-node');
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, 'update-subscriber-node', this.fieldsData);
 		},
 		oneditsave: function() {
-			this.fields = {};
-
-			// Collect all field values and store them in this.fields
-			ktSaveContactFieldValues(this.contactListContainer, this.fields);
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
 		}
 	});
 </script>
