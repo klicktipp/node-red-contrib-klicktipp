@@ -66,5 +66,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp subscriber search', KlickTippSubscriberSearchNode);
+	RED.nodes.registerType('klicktipp-subscriber-search', KlickTippSubscriberSearchNode);
 };

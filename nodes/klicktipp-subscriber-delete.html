@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber delete">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-delete">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -14,7 +14,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber delete">
+<script type="text/x-red" data-help-name="klicktipp-subscriber-delete">
 	<p>Deletes a subscriber.</p>
 
 	<h3>Inputs</h3>
@@ -56,7 +56,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber delete', {
+	RED.nodes.registerType('klicktipp-subscriber-delete', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -79,6 +79,7 @@
 			return this.name || 'Subscriber delete';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber delete',
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
 		},

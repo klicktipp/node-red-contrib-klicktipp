@@ -49,7 +49,7 @@ module.exports = function (RED) {
 	}
 
 	RED.nodes.registerType(
-		'klicktipp subscription process index',
+		'klicktipp-subscription-process-index',
 		KlickTippSubscriptionProcessIndexNode,
 	);
 };

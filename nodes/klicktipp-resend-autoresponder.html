@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp resend autoresponder">
+<script type="text/x-red" data-template-name="klicktipp-resend-autoresponder">
 	<div class="form-row">
 	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -19,7 +19,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp resend autoresponder">
+<script type="text/x-red" data-help-name="klicktipp-resend-autoresponder">
 	<p>Resends a follow-up email to a subscriber.</p>
 
    <h3>Inputs</h3>
@@ -62,7 +62,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp resend autoresponder', {
+	RED.nodes.registerType('klicktipp-resend-autoresponder', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -88,9 +88,10 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Resend Autoresponder';
+			return this.name || 'Resend autoresponder';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Resend autoresponder',
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderTypeId", 'num', ['num']);

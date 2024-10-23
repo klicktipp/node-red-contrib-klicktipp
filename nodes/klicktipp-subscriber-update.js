@@ -109,5 +109,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp subscriber update', KlickTippSubscriberUpdateNode);
+	RED.nodes.registerType('klicktipp-subscriber-update', KlickTippSubscriberUpdateNode);
 };

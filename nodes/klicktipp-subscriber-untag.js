@@ -90,5 +90,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp subscriber untag', KlickTippSubscriberUntagNode);
+	RED.nodes.registerType('klicktipp-subscriber-untag', KlickTippSubscriberUntagNode);
 };

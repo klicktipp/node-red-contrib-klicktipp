@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp field index">
+<script type="text/x-red" data-template-name="klicktipp-field-index">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -9,7 +9,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp field index">
+<script type="text/x-red" data-help-name="klicktipp-field-index">
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>
@@ -38,7 +38,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp field index', {
+	RED.nodes.registerType('klicktipp-field-index', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -52,5 +52,6 @@
 			return this.name || 'Field index';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Field index'
 	});
 </script>

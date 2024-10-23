@@ -46,5 +46,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp tag index', KlickTippTagIndexNode);
+	RED.nodes.registerType('klicktipp-tag-index', KlickTippTagIndexNode);
 };

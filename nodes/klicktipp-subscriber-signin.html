@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber signin">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-signin">
 	<div class="form-row">
 	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -30,7 +30,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber signin">
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signin">
 	<p>Adds or updates a subscriber using an API key. The subscriber can be identified by their email address or SMS number, with optional fields.</p>
 
 	<h3>Inputs</h3>
@@ -69,7 +69,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber signin', {
+	RED.nodes.registerType('klicktipp-subscriber-signin', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -120,6 +120,7 @@
 			return this.name || 'Subscriber signin';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber signin',
 		oneditprepare: function() {
 			this.contactListContainer = $('#contact-fields-section');
 			const fieldsInput = $("#node-input-fields");

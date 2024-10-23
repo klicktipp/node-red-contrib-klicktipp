@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp tag delete">
+<script type="text/x-red" data-template-name="klicktipp-tag-delete">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -15,7 +15,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp tag delete">
+<script type="text/x-red" data-help-name="klicktipp-tag-delete">
 	<p>Deletes a manual tag or SmartLink.</p>
 
 	<h3>Inputs</h3>
@@ -57,7 +57,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp tag delete', {
+	RED.nodes.registerType('klicktipp-tag-delete', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -75,6 +75,7 @@
 			return this.name || 'Tag delete';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Tag delete',
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/delete-tag-node');

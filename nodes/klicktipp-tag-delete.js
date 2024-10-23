@@ -76,5 +76,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp tag delete', KlickTippTagDeleteNode);
+	RED.nodes.registerType('klicktipp-tag-delete', KlickTippTagDeleteNode);
 };

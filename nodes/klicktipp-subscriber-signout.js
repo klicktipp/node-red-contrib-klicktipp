@@ -60,5 +60,5 @@ module.exports = function (RED) {
 		});
 	}
 
-	RED.nodes.registerType('klicktipp subscriber signout', KlickTippSubscriberSignoutNode);
+	RED.nodes.registerType('klicktipp-subscriber-signout', KlickTippSubscriberSignoutNode);
 };

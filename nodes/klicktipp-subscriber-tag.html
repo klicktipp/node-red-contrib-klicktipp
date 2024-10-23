@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber tag">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-tag">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -18,7 +18,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber tag">
+<script type="text/x-red" data-help-name="klicktipp-subscriber-tag">
 	<p>Tags a subscriber with a manual tag or SmartLink.</p>
 
 	<h3>Inputs</h3>
@@ -64,7 +64,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber tag', {
+	RED.nodes.registerType('klicktipp-subscriber-tag', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -89,6 +89,7 @@
 			return this.name || 'Subscriber tag';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber tag',
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/subscriber-tag-node');

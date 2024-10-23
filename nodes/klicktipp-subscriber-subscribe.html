@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber subscribe">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-subscribe">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -37,7 +37,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber subscribe">
+<script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
 	<p>Adds or updates a subscriber. The subscriber can be identified by their email address or SMS number, with an optional opt-in process, tag, and fields.</p>
 
 	<h3>Inputs</h3>
@@ -83,7 +83,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber subscribe', {
+	RED.nodes.registerType('klicktipp-subscriber-subscribe', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -133,6 +133,7 @@
 			return this.name || 'Subscriber subscribe';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber subscribe',
 		oneditprepare: function() {
 			// Declare common variables at the node level so both functions can access them
 			this.tagDropdown = $('#node-input-tagId');

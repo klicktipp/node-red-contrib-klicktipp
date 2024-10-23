@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp tag get">
+<script type="text/x-red" data-template-name="klicktipp-tag-get">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -15,7 +15,7 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp tag get">
+<script type="text/x-red" data-help-name="klicktipp-tag-get">
 	<p>Returns the name and description of a tag.</p>
 
 	<h3>Inputs</h3>
@@ -57,7 +57,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp tag get', {
+	RED.nodes.registerType('klicktipp-tag-get', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -75,6 +75,7 @@
 			return this.name || 'Tag get';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Tag get',
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, '/klicktipp/tags/get-tag-node');

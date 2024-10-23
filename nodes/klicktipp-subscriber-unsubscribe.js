@@ -68,5 +68,5 @@ module.exports = function (RED) {
 		const node = this;
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
-	RED.nodes.registerType('klicktipp subscriber unsubscribe', KlickTippSubscriberUnsubscribeNode);
+	RED.nodes.registerType('klicktipp-subscriber-unsubscribe', KlickTippSubscriberUnsubscribeNode);
 };

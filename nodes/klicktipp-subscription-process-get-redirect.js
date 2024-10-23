@@ -96,7 +96,7 @@ module.exports = function (RED) {
 	}
 
 	RED.nodes.registerType(
-		'klicktipp subscription process redirect',
+		'klicktipp-subscription-process-get-redirect',
 		KlickTippSubscriptionProcessRedirectNode,
 	);
 };

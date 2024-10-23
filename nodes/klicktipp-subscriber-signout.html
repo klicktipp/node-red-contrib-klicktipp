@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber signout">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-signout">
 	<div class="form-row">
 	       <label for="node-input-apiKey"><i class="fa fa-key"></i> <span>API Key</span></label>
 	       <input type="text" id="node-input-apiKey" placeholder="Enter your API key">
@@ -15,7 +15,7 @@
 	   </div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber signout">
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signout">
 	<p>Removes the manual tag or SmartLink defined in the API key from a subscriber.</p>
 
    <h3>Inputs</h3>
@@ -58,7 +58,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber signout', {
+	RED.nodes.registerType('klicktipp-subscriber-signout', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -87,6 +87,7 @@
 			return this.name || 'Subscriber signout';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber signout',
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);

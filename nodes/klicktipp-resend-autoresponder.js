@@ -81,5 +81,5 @@ module.exports = function (RED) {
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp resend autoresponder', KlickTippResendAutoresponderNode);
+	RED.nodes.registerType('klicktipp-resend-autoresponder', KlickTippResendAutoresponderNode);
 };

@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber signoff">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-signoff">
 	<div class="form-row">
 	       <label for="node-input-apiKey"><i class="fa fa-key"></i> <span>API Key</span></label>
 	       <input type="text" id="node-input-apiKey" placeholder="Enter your API key">
@@ -15,7 +15,7 @@
 	   </div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber signoff">
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signoff">
 	<p>Unsubscribes a subscriber using an API key.</p>
 
    <h3>Inputs</h3>
@@ -58,7 +58,7 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber signoff', {
+	RED.nodes.registerType('klicktipp-subscriber-signoff', {
 		category: 'KlickTipp',
 		color: '#1B2C3D',
 		defaults: {
@@ -87,6 +87,7 @@
 			return this.name || 'Subscriber signoff';
 		},
 		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber signoff',
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
