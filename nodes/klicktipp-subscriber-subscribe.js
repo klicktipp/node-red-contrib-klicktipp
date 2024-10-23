@@ -61,7 +61,7 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		console.log({klicktippConfig});
+
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: `/klicktipp/contact-fields/${node.id}`,
