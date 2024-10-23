@@ -4,12 +4,18 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		const subscriberId = await evaluatePropertyAsync(RED, config.subscriberId, config.subscriberIdType, node, msg);
+		const subscriberId = await evaluatePropertyAsync(
+			RED,
+			config.subscriberId,
+			config.subscriberIdType,
+			node,
+			msg,
+		);
 
 		if (!subscriberId) {
 			handleError(node, msg, 'Missing subscriber ID', 'Invalid input');

@@ -6,7 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -14,7 +14,7 @@ module.exports = function (RED) {
 		const node = this;
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 		let tagIds = config.tagId;
-		
+
 		if (!email) {
 			handleError(node, msg, 'Missing email', 'Invalid input');
 			return node.send(msg);
@@ -81,7 +81,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberTagNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {

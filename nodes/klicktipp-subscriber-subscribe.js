@@ -7,18 +7,24 @@ const prepareSubscriptionData = require('./utils/transformers/prepareCreateSubsc
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
-const getContactFields = require("./utils/getContactFields");
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
+const getContactFields = require('./utils/getContactFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 		const { listId, tagId } = config;
-		
+
 		const fields = await getContactFields(RED, config, node, msg);
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const smsNumber = await evaluatePropertyAsync(RED, config.smsNumber, config.smsNumberType, node, msg);
+		const smsNumber = await evaluatePropertyAsync(
+			RED,
+			config.smsNumber,
+			config.smsNumberType,
+			node,
+			msg,
+		);
 
 		if (!email) {
 			handleError(node, msg, 'Missing email', 'Invalid input');
@@ -64,7 +70,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscribeNodeContactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
 		});
 
 		// Get the tag list for display in Node UI
@@ -75,7 +81,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscribeNodeTagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
 
 		// Get the subscription process list for display in Node UI
@@ -86,7 +92,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscribeNodeCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
 		});
 
 		createKlickTippSessionNode(RED, node, coreFunction)(config);

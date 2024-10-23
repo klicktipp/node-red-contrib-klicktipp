@@ -7,17 +7,35 @@ const prepareUpdateSubscriberData = require('./utils/transformers/prepareUpdateS
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		
+
 		const { fields } = config;
-		const newEmail = await evaluatePropertyAsync(RED, config.newEmail, config.newEmailType, node, msg);
-		const newSmsNumber = await evaluatePropertyAsync(RED, config.newSmsNumber, config.newSmsNumberType, node, msg);
-		const subscriberId = await evaluatePropertyAsync(RED, config.subscriberId, config.subscriberIdType, node, msg);
+		const newEmail = await evaluatePropertyAsync(
+			RED,
+			config.newEmail,
+			config.newEmailType,
+			node,
+			msg,
+		);
+		const newSmsNumber = await evaluatePropertyAsync(
+			RED,
+			config.newSmsNumber,
+			config.newSmsNumberType,
+			node,
+			msg,
+		);
+		const subscriberId = await evaluatePropertyAsync(
+			RED,
+			config.subscriberId,
+			config.subscriberIdType,
+			node,
+			msg,
+		);
 
 		if (!subscriberId) {
 			handleError(node, msg, 'Missing subscriber ID');
@@ -76,7 +94,7 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: '/klicktipp/contact-fields/update-subscriber-node',
@@ -85,7 +103,7 @@ module.exports = function (RED) {
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
 		});
 
 		createKlickTippSessionNode(RED, node, coreFunction)(config);

@@ -22,7 +22,7 @@ function createCachedApiEndpoint(RED, node, klicktippConfig, options) {
 	if (!klicktippConfig) {
 		return;
 	}
-	
+
 	RED.httpAdmin.get(
 		options.endpoint,
 		RED.auth.needsPermission(options.permission),
@@ -31,34 +31,35 @@ function createCachedApiEndpoint(RED, node, klicktippConfig, options) {
 				const context = node.context()[options.cacheContext || 'flow'];
 				const { cacheKey, cacheTimestampKey, cacheDurationMs = 10 * 60 * 1000 } = options;
 				const { username, password } = klicktippConfig || {};
-				
+
 				if (!username || !password) {
 					return res.status(400).json({ error: 'Missing KlickTipp credentials' });
 				}
-				
+
 				// Check if cached data is still valid
 				const cachedData = context.get(cacheKey);
 				const cacheTimestamp = context.get(cacheTimestampKey);
-				const isCacheValid = cachedData && cacheTimestamp && Date.now() - cacheTimestamp < cacheDurationMs;
-				
+				const isCacheValid =
+					cachedData && cacheTimestamp && Date.now() - cacheTimestamp < cacheDurationMs;
+
 				if (isCacheValid) {
 					console.log('Serving from cache');
 					return res.json(cachedData);
 				}
-				
+
 				// Fetch new data using credentials
 				const data = await options.fetchFunction(username, password);
-				
+
 				// Cache the new data
 				context.set(cacheKey, data);
 				context.set(cacheTimestampKey, Date.now());
-				
+
 				res.json(data);
 			} catch (error) {
 				console.error('Error fetching data:', error);
 				res.status(500).json({ error: 'Failed to fetch data', message: error.message });
 			}
-		}
+		},
 	);
 }
 

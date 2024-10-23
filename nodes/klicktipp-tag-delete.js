@@ -61,7 +61,7 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: '/klicktipp/tags/delete-tag-node',
@@ -70,7 +70,7 @@ module.exports = function (RED) {
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
 
 		createKlickTippSessionNode(RED, node, coreFunction)(config);

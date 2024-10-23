@@ -73,7 +73,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
 		});
 
 		createKlickTippSessionNode(RED, node, coreFunction)(config);

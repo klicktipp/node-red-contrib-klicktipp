@@ -6,8 +6,8 @@ const makeRequest = require('./utils/makeRequest');
 const prepareApiKeySubscriptionData = require('./utils/transformers/prepareApiKeySubscriptionData');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
-const getContactFields = require("./utils/getContactFields");
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
+const getContactFields = require('./utils/getContactFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -37,35 +37,47 @@ module.exports = function (RED) {
 	function KlickTippSubscriberSigninNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);  // Get specific config node here
-		
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp); // Get specific config node here
+
 		// Get the contact field list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig,{
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: '/klicktipp/contact-fields/subscriber-signin-node',
 			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
 		});
-		
+
 		node.on('input', async function (msg) {
 			try {
 				const fields = await getContactFields(RED, config, node, msg);
 				const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-				const smsNumber = await evaluatePropertyAsync(RED, config.smsNumber, config.smsNumberType, node, msg);
-				const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
-				
+				const smsNumber = await evaluatePropertyAsync(
+					RED,
+					config.smsNumber,
+					config.smsNumberType,
+					node,
+					msg,
+				);
+				const apiKey = await evaluatePropertyAsync(
+					RED,
+					config.apiKey,
+					config.apiKeyType,
+					node,
+					msg,
+				);
+
 				if (!apiKey || (!email && !smsNumber)) {
 					handleError(node, msg, 'Missing API key or email/SMS number');
 					return node.send(msg);
 				}
-				
+
 				const data = prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields);
-				
+
 				const response = await makeRequest('/subscriber/signin', 'POST', qs.stringify(data));
-				
+
 				handleResponse(
 					node,
 					msg,
@@ -79,7 +91,7 @@ module.exports = function (RED) {
 			} catch (error) {
 				handleError(node, msg, 'Failed to subscribe', error.message);
 			}
-			
+
 			node.send(msg);
 		});
 	}

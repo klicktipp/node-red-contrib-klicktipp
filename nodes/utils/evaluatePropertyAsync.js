@@ -14,19 +14,13 @@
  */
 function evaluatePropertyAsync(RED, property, propertyType, node, msg) {
 	return new Promise((resolve, reject) => {
-		RED.util.evaluateNodeProperty(
-			property,
-			propertyType,
-			node,
-			msg,
-			(error, result) => {
-				if (error) {
-					reject(error);
-				} else {
-					resolve(result);
-				}
+		RED.util.evaluateNodeProperty(property, propertyType, node, msg, (error, result) => {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(result);
 			}
-		);
+		});
 	});
 }
 

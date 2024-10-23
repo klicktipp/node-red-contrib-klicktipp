@@ -6,16 +6,16 @@ const makeRequest = require('./utils/makeRequest');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const qs = require('qs');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		
+
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 		const listId = config.listId;
-		
+
 		if (!listId) {
 			handleError(node, msg, 'Missing list ID ', 'Invalid input');
 			return node.send(msg);
@@ -80,7 +80,7 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-		
+
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: '/klicktipp/subscription-process/get-redirect-node',
@@ -89,7 +89,7 @@ module.exports = function (RED) {
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
 			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list')
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
 		});
 
 		createKlickTippSessionNode(RED, node, coreFunction)(config);

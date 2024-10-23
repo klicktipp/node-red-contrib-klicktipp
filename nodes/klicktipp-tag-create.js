@@ -5,7 +5,7 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const clearCache = require('./utils/cache/clearCache');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require("./utils/evaluatePropertyAsync");
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -13,7 +13,13 @@ module.exports = function (RED) {
 		const node = this;
 		//tagName is used to avoid conflict with the Node-RED core name property
 		const name = await evaluatePropertyAsync(RED, config.tagName, config.tagNameType, node, msg);
-		const text = await evaluatePropertyAsync(RED, config.tagDescription, config.tagDescriptionType, node, msg);
+		const text = await evaluatePropertyAsync(
+			RED,
+			config.tagDescription,
+			config.tagDescriptionType,
+			node,
+			msg,
+		);
 
 		if (!name) {
 			handleError(node, msg, 'Missing tag name');
