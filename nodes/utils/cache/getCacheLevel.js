@@ -7,17 +7,28 @@
  * @returns {object} The appropriate cache context object (node, flow, or global).
  */
 function getCacheLevel(node, cacheContextLevel) {
+	let cacheContext;
+	
 	switch (cacheContextLevel) {
 		case 'flow':
-			return node.context().flow;
+			cacheContext = node.context().flow;
+			break;
 		case 'global':
-			return node.context().global;
+			cacheContext = node.context().global;
+			break;
 		case 'node':
 		default:
-			// Default to 'node' context if an invalid or no context level is provided
-			console.warn(`Invalid or unspecified cacheContext '${cacheContextLevel}' provided. Defaulting to 'node' context.`);
-			return node.context();
+			cacheContext = node.context();
+			break;
 	}
+	
+	// Return the cache context or log an error if it's invalid
+	if (!cacheContext) {
+		console.warn(`Invalid cache context '${cacheContextLevel}' provided. Defaulting to 'node' context.`);
+		cacheContext = node.context();
+	}
+	
+	return cacheContext;
 }
 
 module.exports = getCacheLevel;
