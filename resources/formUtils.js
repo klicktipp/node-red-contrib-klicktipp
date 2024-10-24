@@ -29,6 +29,8 @@ const KT_CUSTOM_CONTACT_FIELDS_TYPE = {
 
 const PREDEFINED_OPT_IN_PROCESS_NAME = 'Predefined double opt-in process';
 
+const SUBSCRIPTION_PROCESS = 'subscription-process';
+
 /**
  * Creates a spinner element using jQuery.
  *
@@ -67,8 +69,8 @@ function ktIsObject(item) {
  * Generates the label to display in the dropdown option.
  *
  * If the `name` is empty or consists only of whitespace, a predefined label is returned for subscription process nodes.
- * Specifically, if the `actionUrl` corresponds to the URL for retrieving subscription process nodes
- * (`/klicktipp/subscription-process/get-process-node`), it returns a predefined name for the opt-in process.
+ * Specifically, if the `actionUrl` corresponds to the URL for retrieving subscription process
+ * (`/klicktipp/subscription-process`), it returns a predefined name for the opt-in process.
  * Otherwise, it returns "N/A".
  *
  * @param {string} name - The name of the item.
@@ -78,7 +80,7 @@ function ktIsObject(item) {
 function ktGetOptionLabel(name, actionUrl) {
 	return name && name.trim() !== ''
 		? name
-		: (actionUrl === '/klicktipp/subscription-process/get-process-node'
+		: (actionUrl.includes(SUBSCRIPTION_PROCESS)
 			? PREDEFINED_OPT_IN_PROCESS_NAME
 			: 'N/A');
 }
