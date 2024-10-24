@@ -65,7 +65,6 @@ module.exports = function (RED) {
 		// Get the contact field list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: `/klicktipp/contact-fields/${node.id}`,
-			permission: 'klicktipp.read',
 			cacheContext: 'node',
 			cacheKey: 'subscribeNodeContactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
@@ -76,7 +75,6 @@ module.exports = function (RED) {
 		// Get the tag list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: `/klicktipp/tags/${node.id}`,
-			permission: 'klicktipp.read',
 			cacheContext: 'node',
 			cacheKey: 'subscribeNodeTagCache',
 			cacheTimestampKey: 'cacheTimestamp',
@@ -87,7 +85,6 @@ module.exports = function (RED) {
 		// Get the subscription process list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: `/klicktipp/subscription-processes/${node.id}`,
-			permission: 'klicktipp.read',
 			cacheContext: 'node',
 			cacheKey: 'subscribeNodeCache',
 			cacheTimestampKey: 'cacheTimestamp',

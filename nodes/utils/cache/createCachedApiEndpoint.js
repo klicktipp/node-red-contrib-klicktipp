@@ -12,7 +12,6 @@ const getCacheLevel = require("./getCacheLevel");
  * @param {object} klicktippConfig - The Node-RED node configuration object.
  * @param {object} options - Configuration options for the caching endpoint.
  * @param {string} options.endpoint - The API endpoint to be registered.
- * @param {string} options.permission - The permission required to access this endpoint.
  * @param {string} [options.cacheContext='flow'] - The context level where the cache is stored (e.g., 'flow' or 'global').
  * @param {string} options.cacheKey - The key used to store the cached data.
  * @param {string} options.cacheTimestampKey - The key used to store the timestamp of when the data was cached.
@@ -27,7 +26,6 @@ function createCachedApiEndpoint(RED, node, klicktippConfig, options) {
 
 	RED.httpAdmin.get(
 		options.endpoint,
-		RED.auth.needsPermission(options.permission),
 		async (req, res) => {
 			try {
 				const { cacheKey, cacheTimestampKey, cacheDurationMs = 10 * 60 * 1000 } = options;

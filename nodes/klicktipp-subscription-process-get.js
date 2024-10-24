@@ -68,7 +68,6 @@ module.exports = function (RED) {
 		// Get the subscription process list for display in Node UI
 		createCachedApiEndpoint(RED, node, klicktippConfig, {
 			endpoint: `/klicktipp/subscription-process/${node.id}`,
-			permission: 'klicktipp.read',
 			cacheContext: 'flow',
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
