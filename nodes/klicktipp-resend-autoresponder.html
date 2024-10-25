@@ -97,24 +97,6 @@
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderTypeId", 'num', ['num']);
-
-			var values = $('#node-input-klicktipp').map(function() {
-				return $(this).val();
-			}).get();
-
-			console.log({values})
-
-			// Check if a klicktipp-config node exists
-			if (!$("#node-input-klicktipp").val()) {
-				var configs = RED.nodes.filterNodes(function(node) {
-					return node.type === "klicktipp-config";
-				});
-				console.log(RED.nodes);
-				if (configs.length > 0) {
-					// Assign the first available klicktipp-config node
-					$("#node-input-klicktipp").val(configs[0].id);
-				}
-			}
 		},
 	});
 </script>
