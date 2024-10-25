@@ -29,7 +29,7 @@ function createKlickTippSessionNode(RED, node, coreFunction) {
 			try {
 				// Login
 				const loginResponse = await makeRequest('/account/login', 'POST', { username, password });
-				if (loginResponse && loginResponse.data && loginResponse.data.sessid) {
+				if (loginResponse?.data?.sessid) {
 					sessionData = {
 						sessionId: loginResponse.data.sessid,
 						sessionName: loginResponse.data.session_name,
