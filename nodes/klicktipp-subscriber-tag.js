@@ -20,14 +20,16 @@ module.exports = function (RED) {
 			handleError(node, msg, 'Missing email', 'Invalid input');
 			return node.send(msg);
 		}
-
-		if (!Array.isArray(tagIds)) {
-			return handleError(node, msg, 'Missing tag IDs', 'Invalid input');
-		}
-
-		// Ensure tagIds is an array, even if a single tagId is provided
-		if (typeof tagIds === 'number') {
-			tagIds = [tagIds];
+		// Ensure tagIds is an array, even if a single value, and convert all to numbers
+		tagIds = (Array.isArray(tagIds) ? tagIds : [tagIds]).map(tagId => Number(tagId));
+		
+		// Remove any invalid or NaN entries
+		tagIds = tagIds.filter(tagId => !isNaN(tagId));
+		
+		// Validate that we have valid tag IDs to proceed
+		if (tagIds.length === 0) {
+			handleError(node, msg, 'Missing or invalid tag IDs', 'Invalid input');
+			return node.send(msg);
 		}
 
 		try {
