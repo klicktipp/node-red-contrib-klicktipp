@@ -131,8 +131,15 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 	$spinner.show();
 	$dropdown.hide();
 	
-	// Clear previous options but keep the default option
-	$dropdown.find("option:not([value=''])").remove();
+	// Always reinsert the placeholder option at the top
+	$dropdown.empty().append(
+		$('<option>', {
+			value: '',
+			text: 'Select an option (optional)',
+			disabled: true,
+			selected: !selectedItemId // Select by default if no item is pre-selected
+		})
+	);
 	
 	$.getJSON(actionUrl)
 		.done((items) => {
