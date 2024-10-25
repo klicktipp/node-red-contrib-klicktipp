@@ -1,4 +1,4 @@
-const getCacheLevel = require("./getCacheLevel");
+const getCacheLevel = require('./getCacheLevel');
 
 /**
  * Creates a cached API endpoint in Node-RED.
@@ -24,53 +24,50 @@ function createCachedApiEndpoint(RED, node, klicktippConfig, options) {
 		return;
 	}
 
-	RED.httpAdmin.get(
-		options.endpoint,
-		async (req, res) => {
-			try {
-				const { cacheKey, cacheTimestampKey, cacheDurationMs = 10 * 60 * 1000 } = options;
-				const { username = '', password = '' } = klicktippConfig || {};
-				
-				const fullCacheKey = `${cacheKey}_${node.id}`;
-				
-				if (!username || !password) {
-					return res.status(400).json({ error: 'Missing KlickTipp credentials' });
-				}
-				
-				const cacheContextLevel = options.cacheContext || 'node'; // 'node', 'flow', 'global'
-				const cacheContext = getCacheLevel(node, cacheContextLevel);
-				
-				if (!cacheContext) {
-					console.log(`Unable to access '${cacheContextLevel}' context`);
-					return res.status(400).json({ error: (`Unable to access '${cacheContextLevel}' context`) });
-				}
-				
-				// Use the cache context to get and set values
-				let cachedData = cacheContext.get(fullCacheKey) || null;
-				let cacheTimestamp = cacheContext.get(cacheTimestampKey) || null;
-				
-				const isCacheValid =
-					cachedData && cacheTimestamp && Date.now() - cacheTimestamp < cacheDurationMs;
-				
-				if (isCacheValid) {
-					console.log('Serving from cache');
-					return res.json(cachedData);
-				}
-				
-				// Fetch new data using credentials
-				const data = await options.fetchFunction(username, password);
-				
-				// Cache the new data
-				cacheContext.set(fullCacheKey, data);
-				cacheContext.set(cacheTimestampKey, Date.now());
-				
-				res.json(data);
-			} catch (error) {
-				console.error('Error fetching data:', error);
-				res.status(500).json({ error: 'Failed to fetch data', message: error.message });
+	RED.httpAdmin.get(options.endpoint, async (req, res) => {
+		try {
+			const { cacheKey, cacheTimestampKey, cacheDurationMs = 10 * 60 * 1000 } = options;
+			const { username = '', password = '' } = klicktippConfig || {};
+
+			const fullCacheKey = `${cacheKey}_${node.id}`;
+
+			if (!username || !password) {
+				return res.status(400).json({ error: 'Missing KlickTipp credentials' });
 			}
+
+			const cacheContextLevel = options.cacheContext || 'node'; // 'node', 'flow', 'global'
+			const cacheContext = getCacheLevel(node, cacheContextLevel);
+
+			if (!cacheContext) {
+				console.log(`Unable to access '${cacheContextLevel}' context`);
+				return res.status(400).json({ error: `Unable to access '${cacheContextLevel}' context` });
+			}
+
+			// Use the cache context to get and set values
+			let cachedData = cacheContext.get(fullCacheKey) || null;
+			let cacheTimestamp = cacheContext.get(cacheTimestampKey) || null;
+
+			const isCacheValid =
+				cachedData && cacheTimestamp && Date.now() - cacheTimestamp < cacheDurationMs;
+
+			if (isCacheValid) {
+				console.log('Serving from cache');
+				return res.json(cachedData);
+			}
+
+			// Fetch new data using credentials
+			const data = await options.fetchFunction(username, password);
+
+			// Cache the new data
+			cacheContext.set(fullCacheKey, data);
+			cacheContext.set(cacheTimestampKey, Date.now());
+
+			res.json(data);
+		} catch (error) {
+			console.error('Error fetching data:', error);
+			res.status(500).json({ error: 'Failed to fetch data', message: error.message });
 		}
-	);
+	});
 }
 
 module.exports = createCachedApiEndpoint;

@@ -8,7 +8,7 @@
  */
 function getCacheLevel(node, cacheContextLevel) {
 	let cacheContext;
-	
+
 	switch (cacheContextLevel) {
 		case 'flow':
 			cacheContext = node.context().flow;
@@ -21,13 +21,15 @@ function getCacheLevel(node, cacheContextLevel) {
 			cacheContext = node.context();
 			break;
 	}
-	
+
 	// Return the cache context or log an error if it's invalid
 	if (!cacheContext) {
-		console.warn(`Invalid cache context '${cacheContextLevel}' provided. Defaulting to 'node' context.`);
+		console.warn(
+			`Invalid cache context '${cacheContextLevel}' provided. Defaulting to 'node' context.`,
+		);
 		cacheContext = node.context();
 	}
-	
+
 	return cacheContext;
 }
 
