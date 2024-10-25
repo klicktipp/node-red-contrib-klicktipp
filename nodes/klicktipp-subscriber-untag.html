@@ -10,7 +10,9 @@
 	</div>
     <div class="form-row">
         <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
-        <select id="node-input-tagId"></select>
+        <select id="node-input-tagId">
+        	<option value="">-- Select Tag (Required) --</option>
+        </select>
     </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -75,7 +77,7 @@
 				value: 'msg',
 			},
 			tagId: {
-				value: 0,
+				value: '',
 				validate: RED.validators.number(),
 				required: true
 			},

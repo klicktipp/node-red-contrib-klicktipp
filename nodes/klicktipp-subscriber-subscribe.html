@@ -16,13 +16,13 @@
 	<div class="form-row">
         <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
         <select id="node-input-listId">
-            <!-- List ID will be populated here -->
+            <option value="">-- Select Opt-in Process (Optional) --</option>
         </select>
     </div>
     <div class="form-row">
         <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
         <select id="node-input-tagId">
-            <!-- Tags will be populated here -->
+            <option value="">-- Select Tag (Optional) --</option>
         </select>
     </div>
 	<div class="form-row">
@@ -106,11 +106,15 @@
 			},
 			listId: {
 				value: '',
-				validate: RED.validators.number()
+				validate: function(value) {
+					return value === '' || RED.validators.number()(value); // Allows empty value
+				}
 			},
 			tagId: {
-				value: 0,
-				validate: RED.validators.number()
+				value: '',
+				validate: function(value) {
+					return value === '' || RED.validators.number()(value); // Allows empty value
+				}
 			},
 			fields: {
 				value: 'payload.fields',
