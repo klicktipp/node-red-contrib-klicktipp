@@ -64,11 +64,11 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			subscriberId: {
 				required: true,
-				value: 0,
+				value: 'payload.subscriberId',
 				validate: RED.validators.typedInput('subscriberIdType')
 			},
 			subscriberIdType: {
-				value: 'num'
+				value: 'msg'
 			},
 			name: { value: '' },
 		},

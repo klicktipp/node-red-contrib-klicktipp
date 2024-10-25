@@ -28,8 +28,8 @@
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-	            <li><code>name</code> - (Required) the name of the manual tag</li>
-	            <li><code>text</code> - (Optional) the description of the manual tag</li>
+	            <li><code>tagName</code> - (Required) the name of the manual tag</li>
+	            <li><code>tagDescription</code> - (Optional) the description of the manual tag</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -69,21 +69,23 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			//tagName is used to avoid conflict with the Node-RED core name property
 			tagName: {
-				value: '',
+				value: 'payload.tagName',
 				required: true,
 				validate: RED.validators.typedInput('tagNameType')
 			},
 			tagNameType: {
-				value: 'str'
+				value: 'msg'
 			},
 			tagDescription: {
-				value: '',
+				value: 'payload.tagDescription',
 				validate: RED.validators.typedInput('tagDescriptionType')
 			},
 			tagDescriptionType: {
-				value: 'str'
+				value: 'msg'
 			},
-			name: { value: '' },
+			name: {
+				value: ''
+			},
 		},
 		inputs: 1,
 		outputs: 1,

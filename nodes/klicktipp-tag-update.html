@@ -35,8 +35,8 @@
 	        Expected object with the following properties:
 	        <ul>
 	            <li><code>tagId</code> - (Required) the ID of the tag</li>
-	            <li><code>name</code> - (Optional) the new name of the manual tag</li>
-	            <li><code>text</code> - (Optional) the new description of the manual tag</li>
+	            <li><code>tagName</code> - (Optional) the new name of the manual tag</li>
+	            <li><code>tagDescription</code> - (Optional) the new description of the manual tag</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -75,15 +75,15 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			tagName: {
-				value: '',
+				value: 'payload.tagName',
 				required: true,
 				validate: RED.validators.typedInput('tagNameType')
 			},
 			tagNameType: {
-				value: 'str'
+				value: 'msg'
 			},
 			tagDescription: {
-				value: '',
+				value: 'payload.tagDescription',
 				required: true,
 				validate: RED.validators.typedInput('tagDescriptionType')
 			},

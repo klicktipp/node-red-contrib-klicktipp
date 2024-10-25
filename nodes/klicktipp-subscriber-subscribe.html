@@ -89,32 +89,31 @@
 		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
-			name: { value: '' },
 			email: {
-				value: '',
+				value: 'payload.email',
 				required: true,
 				validate: RED.validators.typedInput('emailType')
 			},
 			emailType: {
-				value: 'str'
+				value: 'msg'
 			},
 			smsNumber: {
-				value: '',
+				value: 'payload.smsNumber',
 				validate: RED.validators.typedInput('smsNumberType')
 			},
 			smsNumberType: {
-				value: 'str'
+				value: 'msg'
 			},
 			listId: {
 				value: '',
 				validate: RED.validators.number()
 			},
 			tagId: {
-				value: '',
+				value: 0,
 				validate: RED.validators.number()
 			},
 			fields: {
-				value: '',
+				value: 'payload.fields',
 				validate: function(v) {
 					// Allow empty values
 					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
@@ -125,6 +124,9 @@
 			},
 			fieldsData: {
 				value: {}
+			},
+			name: {
+				value: ''
 			},
 		},
 		inputs: 1,

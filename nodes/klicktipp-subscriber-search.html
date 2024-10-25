@@ -62,12 +62,12 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
-				value: '',
+				value: 'payload.email',
 				required: true,
 				validate: RED.validators.typedInput('emailType')
 			},
 			emailType: {
-				value: 'str'
+				value: 'msg'
 			},
 			name: { value: '' },
 		},

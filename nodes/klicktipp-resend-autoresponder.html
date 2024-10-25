@@ -67,21 +67,23 @@
 		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
-			name: { value: '' },
 			email: {
-				value: '',
+				value: 'payload.email',
 				required: true,
 				validate: RED.validators.typedInput('emailType')
 			},
 			emailType: {
-				value: 'str'
+				value: 'msg'
 			},
 			autoresponderId: {
-				value: 0,
+				value: 'payload.autoresponderId',
 				validate: RED.validators.typedInput('autoresponderType')
 			},
 			autoresponderIdType: {
-				value: 'num'
+				value: 'msg'
+			},
+			name: {
+				value: ''
 			},
 		},
 		inputs: 1,
