@@ -14,7 +14,7 @@ module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		let tagIds = config.tagId;
+		let tagIds = config.tagId || [];
 
 		if (!email) {
 			handleError(node, msg, 'Missing email', 'Invalid input');
