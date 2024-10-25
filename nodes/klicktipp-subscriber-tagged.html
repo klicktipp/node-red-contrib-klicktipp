@@ -64,10 +64,12 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			tagId: {
-				value: '',
+				value: 0,
 				validate: RED.validators.number()
 			},
-			name: { value: '' },
+			name: {
+				value: ''
+			},
 		},
 		inputs: 1,
 		outputs: 1,

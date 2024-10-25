@@ -76,31 +76,31 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			apiKey: {
-				value: '',
+				value: 'payload.apiKey',
 				required: true,
 				validate: RED.validators.typedInput('apiKeyType')
 			},
 			apiKeyType: {
-				value: 'str'
+				value: 'msg'
 			},
 			email: {
-				value: '',
+				value: 'payload.email',
 				required: true,
 				validate: RED.validators.typedInput('emailType')
 			},
 			emailType: {
-				value: 'str'
+				value: 'msg'
 			},
 			smsNumber: {
-				value: '',
+				value: 'payload.smsNumber',
 				required: true,
 				validate: RED.validators.typedInput('smsNumberType')
 			},
 			smsNumberType: {
-				value: 'str'
+				value: 'msg'
 			},
 			fields: {
-				value: '',
+				value: 'payload.fields',
 				validate: function(v) {
 					// Allow empty values
 					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
@@ -112,7 +112,9 @@
 			fieldsData: {
 				value: {}
 			},
-			name: { value: '' },
+			name: {
+				value: ''
+			},
 		},
 		inputs: 1,
 		outputs: 1,

@@ -67,21 +67,23 @@
 		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
-			name: { value: '' },
 			email: {
-				value: '',
+				value: 'payload.email',
 				required: true,
 				validate: RED.validators.typedInput('emailType')
 			},
 			emailType: {
-				value: 'str'
+				value: 'msg'
 			},
 			autoresponderId: {
-				value: 0,
+				value: 'payload.autoresponderId',
 				validate: RED.validators.typedInput('autoresponderType')
 			},
 			autoresponderIdType: {
-				value: 'num'
+				value: 'msg'
+			},
+			name: {
+				value: ''
 			},
 		},
 		inputs: 1,
@@ -95,6 +97,24 @@
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderTypeId", 'num', ['num']);
+
+			var values = $('#node-input-klicktipp').map(function() {
+				return $(this).val();
+			}).get();
+
+			console.log({values})
+
+			// Check if a klicktipp-config node exists
+			if (!$("#node-input-klicktipp").val()) {
+				var configs = RED.nodes.filterNodes(function(node) {
+					return node.type === "klicktipp-config";
+				});
+				console.log(RED.nodes);
+				if (configs.length > 0) {
+					// Assign the first available klicktipp-config node
+					$("#node-input-klicktipp").val(configs[0].id);
+				}
+			}
 		},
 	});
 </script>

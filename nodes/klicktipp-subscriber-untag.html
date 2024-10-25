@@ -10,9 +10,7 @@
 	</div>
     <div class="form-row">
         <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
-        <select id="node-input-tagId">
-            <!-- Tags will be populated here -->
-        </select>
+        <select id="node-input-tagId"></select>
     </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -69,19 +67,21 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
-				value: '',
+				value: 'payload.email',
 				required: true,
 				validate: RED.validators.typedInput('emailType')
 			},
 			emailType: {
-				value: 'str'
+				value: 'msg',
 			},
 			tagId: {
-				value: '',
+				value: 0,
 				validate: RED.validators.number(),
 				required: true
 			},
-			name: { value: '' },
+			name: {
+				value: ''
+			},
 		},
 		inputs: 1,
 		outputs: 1,
@@ -92,12 +92,12 @@
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber untag',
 		oneditprepare: function() {
-			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			this.tagDropdown = $('#node-input-tagId');
+			ktPopulateDropdown(this.tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},
-		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
-			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
+			this.tagId = Number(this.tagDropdown.val()); // Save the selected tagId
 		}
 	});
 </script>
