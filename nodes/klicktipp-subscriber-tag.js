@@ -7,26 +7,29 @@ const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint')
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		let tagIds = config.tagId;
+		let tagIds = config.tagId || [];
 
 		if (!email) {
 			handleError(node, msg, 'Missing email', 'Invalid input');
 			return node.send(msg);
 		}
-
-		if (!Array.isArray(tagIds)) {
-			return handleError(node, msg, 'Missing tag IDs', 'Invalid input');
-		}
-
-		// Ensure tagIds is an array, even if a single tagId is provided
-		if (typeof tagIds === 'number') {
-			tagIds = [tagIds];
+		// Ensure tagIds is an array, even if a single value, and convert all to numbers
+		tagIds = (Array.isArray(tagIds) ? tagIds : [tagIds]).map(tagId => Number(tagId));
+		
+		// Remove any invalid or NaN entries
+		tagIds = tagIds.filter(tagId => !isNaN(tagId));
+		
+		// Validate that we have valid tag IDs to proceed
+		if (tagIds.length === 0) {
+			handleError(node, msg, 'Missing or invalid tag IDs', 'Invalid input');
+			return node.send(msg);
 		}
 
 		try {
@@ -89,7 +92,7 @@ module.exports = function (RED) {
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
 

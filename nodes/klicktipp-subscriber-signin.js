@@ -8,6 +8,7 @@ const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint')
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const getContactFields = require('./utils/getContactFields');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -45,7 +46,7 @@ module.exports = function (RED) {
 			cacheContext: 'flow',
 			cacheKey: 'contactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
 		});
 

@@ -15,8 +15,8 @@ function prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields) {
 	};
 
 	// Add optional SMS number if provided
-	if (smsNumber.trim()) {
-		data.smsnumber = smsNumber;
+	if (smsNumber) {
+		data.smsnumber = smsNumber.trim();
 	}
 
 	// Add fields only if it's not an empty object

@@ -14,8 +14,8 @@ function prepareCreateSubscriberData(email, smsNumber = '', listId = 0, tagId = 
 	};
 
 	// Add optional fields only if they contain valid values
-	if (smsNumber.trim()) {
-		data.smsnumber = smsNumber;
+	if (smsNumber) {
+		data.smsnumber = smsNumber.trim();
 	}
 
 	if (listId > 0) {
