@@ -135,8 +135,8 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 	$dropdown.empty().append(
 		$('<option>', {
 			value: '',
-			text: 'Select an option (optional)',
-			disabled: true,
+			text: 'Select an option',
+			disabled: false,
 			selected: !selectedItemId // Select by default if no item is pre-selected
 		})
 	);
