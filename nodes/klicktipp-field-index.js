@@ -3,11 +3,28 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg) {
+		try {
+			const response = await makeRequest('/field', 'GET', {}, msg.sessionData);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched data fields',
+				'Failed to fetch data fields',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to subscribe', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippFieldIndexNode - A Node-RED node to retrieve all contact fields for the logged-in user.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -27,37 +44,8 @@ module.exports = function (RED) {
 	function KlickTippFieldIndexNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					'/field',
-					'GET',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched contact fields',
-					'Failed to fetch contact fields',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch contact fields', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp field index', KlickTippFieldIndexNode);
+	RED.nodes.registerType('klicktipp-field-index', KlickTippFieldIndexNode);
 };

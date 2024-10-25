@@ -3,12 +3,61 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const clearCache = require('./utils/cache/clearCache');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
-
 module.exports = function (RED) {
+	const coreFunction = async function (msg, config) {
+		const node = this;
+
+		const tagId = config?.tagId;
+		const name = await evaluatePropertyAsync(RED, config.tagName, config.tagNameType, node, msg);
+		const text = await evaluatePropertyAsync(
+			RED,
+			config.tagDescription,
+			config.tagDescriptionType,
+			node,
+			msg,
+		);
+
+		if (!tagId) {
+			handleError(node, msg, 'Missing tag ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		if (name === '' && text === '') {
+			handleError(node, msg, 'Nothing to update', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const updatedTagData = {
+				...(name && { name }), // Only include 'name' if it has a value
+				...(text && { text }), // Only include 'text' if it has a value
+			};
+
+			const response = await makeRequest(
+				`/tag/${encodeURIComponent(tagId)}`,
+				'PUT',
+				qs.stringify(updatedTagData),
+				msg.sessionData,
+			);
+
+			handleResponse(node, msg, response, 'Tag updated', 'Failed to update tag', () => {
+				msg.payload = { success: true };
+
+				// Clear the cache after a successful update
+				clearCache(node, 'tagCache');
+			});
+		} catch (error) {
+			handleError(node, msg, 'Failed to update tag', error.message);
+		}
+	};
 
 	/**
 	 * KlickTippTagUpdateNode - A Node-RED node to update a manual tag.
@@ -17,7 +66,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `tagId`: (Required) The ID of the tag to be updated.
 	 *   - `name`: (Optional) The new tag name. If not provided, it will remain unchanged.
 	 *   - `text`: (Optional) The new tag description. If not provided, it will remain unchanged.
@@ -35,45 +84,20 @@ module.exports = function (RED) {
 	function KlickTippTagUpdateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 
-		node.on('input', async function (msg) {
-			const tagId = config.tagId || msg?.payload?.tagId;
-			//tagName is used to avoid conflict with the Node-RED core name property
-			const name = config.tagName || msg?.payload?.name;
-			const text = config.tagDescription || msg?.payload?.text;
-
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			if (!tagId || (name === '' && text === '')) {
-				handleError(node, msg, 'Missing tag ID or nothing to update');
-				return node.send(msg);
-			}
-
-			try {
-				const updatedTagData = {
-					...(name && { name }), // Only include 'name' if it has a value
-					...(text && { text }), // Only include 'text' if it has a value
-				};
-
-				const response = await makeRequest(
-					`/tag/${encodeURIComponent(tagId)}`,
-					'PUT',
-					qs.stringify(updatedTagData),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(node, msg, response, 'Tag updated', 'Failed to update tag', () => {
-					msg.payload = { success: true };
-				});
-			} catch (error) {
-				handleError(node, msg, 'Failed to update tag', error.message);
-			}
-
-			node.send(msg);
+		// Get the contact field list for display in Node UI
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: `/klicktipp/tags/${node.id}`,
+			cacheContext: 'flow',
+			cacheKey: 'tagCache',
+			cacheTimestampKey: 'cacheTimestamp',
+			cacheDurationMs: CACHE_DURATION_MS,
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
+
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp tag update', KlickTippTagUpdateNode);
+	RED.nodes.registerType('klicktipp-tag-update', KlickTippTagUpdateNode);
 };

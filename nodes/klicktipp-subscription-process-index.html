@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscription process index">
+<script type="text/x-red" data-template-name="klicktipp-subscription-process-index">
 	<div class="form-row">
 		<label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 		<input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -9,30 +9,15 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscription process index">
-	<p>Fetches all subscription processes (lists) from the KlickTipp API for the logged-in user.</p>
-
-	<h3>Details</h3>
-	<p>
-		This node fetches a list of all subscription processes (lists) available to the logged-in user via the KlickTipp API.
-	</p>
-	<p>
-		Upon success, the output will contain an associative array, where the keys represent list IDs and the values are the corresponding subscription process names.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
-
+<script type="text/x-red" data-help-name="klicktipp-subscription-process-index">
+	<p>Returns an associative array <code>[double_optin_process_id] => [double_optin_process_name]</code> of all opt-in processes.</p>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>
 		<dd>
 			On success:
 			<ul>
-				<li>An associative array where each key is the list ID, and the value is the subscription process name.</li>
+				<li>An associative array where each key is the list ID, and the value is the opt-in process name.</li>
 			</ul>
 		</dd>
 		<dd>
@@ -48,24 +33,26 @@
 
 	  <h3>Node Status</h3>
 	  <ul>
-	   <li><strong>Green (dot)</strong> - Subscription processes fetched successfully.</li>
-	   <li><strong>Red (ring)</strong> - Failed to fetch subscription processes due to an error.</li>
+	   <li><strong>Green (dot)</strong> - Opt-in processes fetched successfully.</li>
+	   <li><strong>Red (ring)</strong> - Failed to fetch opt-in processes due to an error.</li>
 	  </ul>
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscription process index', {
+	RED.nodes.registerType('klicktipp-subscription-process-index', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Subscription Process Index';
+			return this.name || 'Opt-in process index';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Opt-in process index',
 	});
 </script>

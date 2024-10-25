@@ -1,5 +1,3 @@
-const validContactFieldList = require('../constants/validContactFieldList');
-
 /**
  * Prepares the subscription data object for API requests by filtering and including only valid contact fields.
  *
@@ -10,22 +8,20 @@ const validContactFieldList = require('../constants/validContactFieldList');
  * @returns {Object} The prepared subscription data object containing the API key, email, and optionally, SMS number and filtered fields.
  */
 function prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields) {
-	// Filter fields to include only valid keys
-	const filteredFields = Object.fromEntries(
-		Object.entries(fields).filter(([key]) => validContactFieldList.includes(key)),
-	);
-
+	// Construct the initial data object with required fields
 	const data = {
 		apikey: apiKey,
 		email,
 	};
 
+	// Add optional SMS number if provided
 	if (smsNumber) {
-		data.smsnumber = smsNumber;
+		data.smsnumber = smsNumber.trim();
 	}
 
-	if (filteredFields) {
-		data.fields = filteredFields;
+	// Add fields only if it's not an empty object
+	if (Object.keys(fields).length > 0) {
+		data.fields = fields;
 	}
 
 	return data;

@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp field index">
+<script type="text/x-red" data-template-name="klicktipp-field-index">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -9,30 +9,15 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp field index">
-	<p>Retrieves all contact fields for the subscriber in KlickTipp.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node retrieves all contact fields associated with the user's KlickTipp account.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
-	<p>
-		On success, the list of contact fields is returned in <code>msg.payload</code>.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will be <code>{ success: false }</code>,and the error message will be stored in <code>msg.error</code>.
-	</p>
-
+<script type="text/x-red" data-help-name="klicktipp-field-index">
+	<p>Returns an associative array <code>[field_id] => [field_name]</code> of all data fields.</p>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
 		   On success:
 		   <ul>
-			   <li>A list of contact fields retrieved from the API.</li>
+			   <li>A list of data fields retrieved from the API.</li>
 		   </ul>
 	   	</dd>
 	   	<dd>
@@ -48,24 +33,26 @@
 
 	<h3>Node Status</h3>
 	<ul>
-	    <li><strong>Green (dot)</strong> - Successfully fetched the contact fields.</li>
-	    <li><strong>Red (ring)</strong> - Failed to fetch contact fields (e.g., invalid session data or API error).</li>
+	    <li><strong>Green (dot)</strong> - Successfully fetched the data fields.</li>
+	    <li><strong>Red (ring)</strong> - Failed to fetch data fields (e.g., invalid session data or API error).</li>
 	</ul>
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp field index', {
+	RED.nodes.registerType('klicktipp-field-index', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Field Index';
+			return this.name || 'Field index';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Field index'
 	});
 </script>

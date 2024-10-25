@@ -1,5 +1,3 @@
-const validContactFieldList = require('../constants/validContactFieldList');
-
 /**
  * Prepares the data object for updating a subscriber by filtering valid fields and including optional new email and SMS number.
  *
@@ -9,21 +7,16 @@ const validContactFieldList = require('../constants/validContactFieldList');
  * @returns {Object} The prepared update subscriber data object containing the new email, and optionally, the new SMS number and filtered fields.
  */
 function prepareUpdateSubscriberData(newEmail, newSmsNumber = '', fields = {}) {
-	// Filter fields to include only valid keys
-	const filteredFields = Object.fromEntries(
-		Object.entries(fields).filter(([key]) => validContactFieldList.includes(key)),
-	);
+	const data = { newEmail };
 
-	const data = {
-		newEmail: newEmail,
-	};
-
+	// Add optional SMS number if provided
 	if (newSmsNumber) {
-		data.newSmsNumber = newSmsNumber;
+		data.smsnumber = newSmsNumber.trim();
 	}
 
-	if (filteredFields) {
-		data.fields = filteredFields;
+	// Add fields only if it's not an empty object
+	if (Object.keys(fields).length > 0) {
+		data.fields = fields;
 	}
 
 	return data;

@@ -3,11 +3,43 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const { CACHE_DURATION_MS } = require('./utils/constants');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const listId = config.listId || msg?.payload?.listId;
+
+		if (!listId) {
+			handleError(this, msg, 'Missing list ID');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				`/list/${encodeURIComponent(listId)}`,
+				'GET',
+				{},
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched opt-in process',
+				'Failed to fetch opt-in process',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to fetch opt-in process', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippSubscriptionProcessGetNode - A Node-RED node to get a specific subscription process by its ID for a logged-in user.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -15,7 +47,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `listId`: (Required) The ID of the subscription process (list) to retrieve.
 	 *
 	 * Outputs:
@@ -32,44 +64,20 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			const listId = config.listId || msg?.payload?.listId;
-
-			if (!listId) {
-				handleError(node, msg, 'Missing list ID');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					`/list/${encodeURIComponent(listId)}`,
-					'GET',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched subscription process',
-					'Failed to fetch subscription process',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch subscription process', error.message);
-			}
-
-			node.send(msg);
+		// Get the subscription process list for display in Node UI
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: `/klicktipp/subscription-process/${node.id}`,
+			cacheContext: 'flow',
+			cacheKey: 'subscriptionProcessCache',
+			cacheTimestampKey: 'cacheTimestamp',
+			cacheDurationMs: CACHE_DURATION_MS,
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
 		});
+
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp subscription process get', KlickTippSubscriptionProcessGetNode);
+	RED.nodes.registerType('klicktipp-subscription-process-get', KlickTippSubscriptionProcessGetNode);
 };

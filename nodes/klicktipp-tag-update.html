@@ -1,19 +1,23 @@
-<script type="text/x-red" data-template-name="klicktipp tag update">
+<script type="text/x-red" data-template-name="klicktipp-tag-update">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-	<div class="form-row">
-	    <label for="node-input-tagId"><i class="fa fa-tag""></i> <span>Tag ID</span></label>
-	    <input type="text" id="node-input-tagId" placeholder="Enter tag ID">
-	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
+        <select id="node-input-tagId">
+            <!-- Tags will be populated here -->
+        </select>
+    </div>
 	<div class="form-row">
 		<label for="node-input-tagName"><i class="fa fa-tags""></i> <span>Name</span></label>
 		<input type="text" id="node-input-tagName" placeholder="Enter name (required)">
+		<input type="hidden" id="node-input-tagNameType">
 	</div>
 	<div class="form-row">
 		<label for="node-input-tagDescription"><i class="fa fa-tags""></i> <span>Description</span></label>
 		<input type="text" id="node-input-tagDescription" placeholder="Enter description (optional)">
+		<input type="hidden" id="node-input-tagDescriptionType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -21,33 +25,18 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp tag update">
-	<p>Updates an existing manual tag in the KlickTipp API.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node updates an existing manual tag in the KlickTipp system. It requires the <code>tagId</code> in <code>msg.payload</code>.
-	    The <code>name</code> and <code>text</code> fields are optional and can be provided to update the tag's name and description.
-	</p>
-	<p>
-	    On success, it returns <code>msg.payload.success</code> as <code>{ success: true }</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp-tag-update">
+	<p>Updates a manual tag or SmartLink.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties:
 	        <ul>
-	            <li><code>tagId</code> - (Required) The ID of the tag to update.</li>
-	            <li><code>name</code> - (Optional) The new name for the tag.</li>
-	            <li><code>text</code> - (Optional) The new description for the tag.</li>
+	            <li><code>tagId</code> - (Required) the ID of the tag</li>
+	            <li><code>name</code> - (Optional) the new name of the manual tag</li>
+	            <li><code>text</code> - (Optional) the new description of the manual tag</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -80,25 +69,49 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp tag update', {
+	RED.nodes.registerType('klicktipp-tag-update', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
-			name: { value: '' },
-			tagId: {
+			tagName: {
 				value: '',
+				required: true,
+				validate: RED.validators.typedInput('tagNameType')
+			},
+			tagNameType: {
+				value: 'str'
+			},
+			tagDescription: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('tagDescriptionType')
+			},
+			tagDescriptionType: {
+				value: 'str'
+			},
+			tagId: {
+				value: 0,
 				validate: RED.validators.number()
 			},
-			//tagName is used to avoid conflict with the Node-RED core name property
-			tagName: { value: '' },
-			tagDescription: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Tag Update';
+			return this.name || 'Tag update';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Tag update',
+		oneditprepare: function() {
+			const tagDropdown = $('#node-input-tagId');
+			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			// Initialize typedInput for both tagName and tagDescription with default values
+			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType", 'str', ['str']);
+		},
+		oneditsave: function() {
+			this.tagId = Number($('#node-input-tagId').val());
+		}
 	});
 </script>

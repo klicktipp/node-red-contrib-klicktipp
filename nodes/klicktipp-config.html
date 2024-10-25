@@ -1,5 +1,20 @@
 <script src="resources/@klicktipp/node-red-contrib-klicktipp/formUtils.js"></script>
 
+<style>
+	.klicktipp_label_style {
+		fill: #fff;
+	}
+
+	/* Common rule for KlickTipp nodes in the Node-RED palette */
+	.red-ui-palette-node[data-palette-type^="klicktipp"] .red-ui-palette-label {
+		color: #fff;
+	}
+
+	.red-ui-palette-node[data-palette-type^="klicktipp"] .red-ui-palette-icon-container {
+		border-right-color: #fff;
+	}
+</style>
+
 <script type="text/x-red" data-template-name="klicktipp-config">
 	<div class="form-row">
 	    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>

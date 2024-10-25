@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber index">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-index">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -9,22 +9,8 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber index">
-	<p>Fetches a list of all active subscribers in KlickTipp.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node retrieves a list of all active subscribers in KlickTipp.
-	</p>
-	<p>
-	    If the request is successful, the output message will contain an array of subscriber IDs in <code>msg.payload</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp-subscriber-index">
+	<p>Returns an associative array <code>[id] => [subscriber_id]</code> of all active subscribers. Use the <code>Subscriber get</code> node to retrieve detailed information about a subscriber.</p>
 
 	<h3>Outputs</h3>
 	<dl class="message-properties">
@@ -54,18 +40,20 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber index', {
+	RED.nodes.registerType('klicktipp-subscriber-index', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Subscriber Index';
+			return this.name || 'Subscriber index';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber index',
 	});
 </script>

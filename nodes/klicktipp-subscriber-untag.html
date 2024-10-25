@@ -1,48 +1,36 @@
-<script type="text/x-red" data-template-name="klicktipp untag email">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-untag">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
-	<div class="form-row">
-	    <label for="node-input-tagId"><i class="fa fa-tag""></i> <span>Tag ID</span></label>
-	    <input type="text" id="node-input-tagId" placeholder="Enter tag ID">
-	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
+        <select id="node-input-tagId">
+            <!-- Tags will be populated here -->
+        </select>
+    </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp untag email">
-	<p>Removes a tag from a subscriber (identified by their email) in KlickTipp.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node removes a tag from a subscriber in KlickTipp using their email and the tag ID. The email and tag ID must be provided in
-	    <code>msg.payload.email</code> and <code>msg.payload.tagId</code>.
-	</p>
-	<p>
-	    If the operation is successful, <code>msg.payload</code> will contain code>{ success: true }</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp-subscriber-untag">
+	<p>Removes a manual tag or SmartLink from a subscriber.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties:
 	        <ul>
-	            <li><code>email</code> - (Required) The email address of the subscriber to untag.</li>
-	            <li><code>tagId</code> - (Required) The ID of the tag to be removed from the subscriber.</li>
+	            <li><code>email</code> - (Required) the subscriber's email address</li>
+	            <li><code>tagId</code> - (Required) the ID of a manual tag or SmartLink</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -75,26 +63,41 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp untag email', {
+	RED.nodes.registerType('klicktipp-subscriber-untag', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: validateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
 			},
 			tagId: {
 				value: '',
-				validate: RED.validators.number()
+				validate: RED.validators.number(),
+				required: true
 			},
 			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Untag Email';
+			return this.name || 'Subscriber untag';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber untag',
+		oneditprepare: function() {
+			const tagDropdown = $('#node-input-tagId');
+			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+		},
+		// When the node editor is saved, capture the selected tagId
+		oneditsave: function() {
+			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
+		}
 	});
 </script>

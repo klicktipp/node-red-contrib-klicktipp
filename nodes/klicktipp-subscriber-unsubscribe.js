@@ -3,11 +3,44 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const qs = require('qs');
 
 module.exports = function (RED) {
+	const coreFunction = async function (msg, config) {
+		const node = this;
+
+		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+
+		if (!email) {
+			handleError(node, msg, 'Missing email', 'Invalid input');
+			return node.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				'/subscriber/unsubscribe',
+				'POST',
+				qs.stringify({ email }),
+				msg.sessionData,
+			);
+
+			// Handle the response
+			handleResponse(
+				node,
+				msg,
+				response,
+				'Unsubscribed successfully',
+				'Failed to unsubscribe',
+				() => {
+					msg.payload = { success: true };
+				},
+			);
+		} catch (error) {
+			handleError(node, msg, 'Failed to unsubscribe', error.message);
+		}
+	};
 
 	/**
 	 * KlickTippUnsubscribeNode - A Node-RED node to unsubscribe an email.
@@ -16,7 +49,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `email`: (Required) The email address of the subscriber to unsubscribe.
 	 *
 	 * Outputs:
@@ -30,46 +63,10 @@ module.exports = function (RED) {
 	 * - If the email is missing, the node outputs `msg.error` and returns `success: false`.
 	 * - If the API request fails, the node outputs `msg.error` and returns `success: false`.
 	 */
-	function KlickTippUnsubscribeNode(config) {
+	function KlickTippSubscriberUnsubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			const email = config.email || msg?.payload?.email;
-
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			if (!email) {
-				return handleError(node, msg, 'Missing email');
-			}
-
-			try {
-				const response = await makeRequest(
-					'/subscriber/unsubscribe',
-					'POST',
-					qs.stringify({ email }),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				// Handle the response
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Unsubscribed successfully',
-					'Failed to unsubscribe',
-					() => {
-						msg.payload = { success: true };
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to unsubscribe', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
-	RED.nodes.registerType('klicktipp unsubscribe', KlickTippUnsubscribeNode);
+	RED.nodes.registerType('klicktipp-subscriber-unsubscribe', KlickTippSubscriberUnsubscribeNode);
 };

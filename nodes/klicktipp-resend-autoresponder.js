@@ -3,12 +3,56 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const qs = require('qs');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const node = this;
+
+		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
+		const autoresponderId = await evaluatePropertyAsync(
+			RED,
+			config.autoresponderId,
+			config.autoresponderIdType,
+			node,
+			msg,
+		);
+
+		if (!email) {
+			handleError(node, msg, 'Missing email', 'Invalid input');
+			return this.send(msg);
+		}
+
+		if (!autoresponderId) {
+			handleError(node, msg, 'Missing autoresponder ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				'/subscriber/resend',
+				'POST',
+				qs.stringify({ email, autoresponder: autoresponderId }),
+				msg.sessionData,
+			);
+
+			// Handle the response
+			handleResponse(
+				node,
+				msg,
+				response,
+				'Autoresponder resent successfully',
+				'Failed to resend autoresponder',
+				() => {
+					msg.payload = { success: true };
+				},
+			);
+		} catch (error) {
+			handleError(node, msg, 'Failed to resend autoresponder', error.message);
+		}
+	};
 	/**
 	 * KlickTippResendAutoresponderNode - A Node-RED node to resend an autoresponder to an email address.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -16,7 +60,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `email`: (Required) The email address of the subscriber.
 	 *   - `autoresponder`: (Required) The ID of the autoresponder to resend.
 	 *
@@ -34,45 +78,8 @@ module.exports = function (RED) {
 	function KlickTippResendAutoresponderNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-			
-			const email = config.email || msg.payload.email;
-			const autoresponder = config.autoresponder || msg.payload.autoresponder;
-
-			if (!email || !autoresponder) {
-				return handleError(node, msg, 'Missing email or autoresponder ID', 'Invalid input');
-			}
-
-			try {
-				const response = await makeRequest(
-					'/subscriber/resend',
-					'POST',
-					qs.stringify({ email, autoresponder }),
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				// Handle the response
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Autoresponder resent successfully',
-					'Failed to resend autoresponder',
-					() => {
-						msg.payload = { success: true };
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to resend autoresponder', error.message);
-			}
-
-			node.send(msg);
-		});
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp resend autoresponder', KlickTippResendAutoresponderNode);
+	RED.nodes.registerType('klicktipp-resend-autoresponder', KlickTippResendAutoresponderNode);
 };

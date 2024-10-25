@@ -1,11 +1,12 @@
-<script type="text/x-red" data-template-name="klicktipp unsubscribe">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-unsubscribe">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -13,31 +14,16 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp unsubscribe">
-	<p>Unsubscribes a user from a KlickTipp list using their email address.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node unsubscribes a user from a KlickTipp list.
-	    The email to unsubscribe must be provided in <code>msg.payload.email</code>.
-	</p>
-	<p>
-	    If the operation is successful, the output message will contain <code>msg.payload.success = true</code>.
-	</p>
-	<p>
-	    On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp-subscriber-unsubscribe">
+	<p>Unsubscribes a subscriber.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties:
 	        <ul>
-	            <li><code>email</code> - (Required) The email address of the user to unsubscribe.</li>
+	            <li><code>email</code> - (Required) the subscriber's email address</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -70,22 +56,31 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp unsubscribe', {
+	RED.nodes.registerType('klicktipp-subscriber-unsubscribe', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: validateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
 			},
 			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Unsubscribe';
+			return this.name || 'Subscriber unsubscribe';
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber unsubscribe',
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},
 	});
 </script>

@@ -3,11 +3,43 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const validateSession = require('./utils/validateSession');
-const getSessionData = require('./utils/getSessionData');
+const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
+const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 
 module.exports = function (RED) {
-	
+	const coreFunction = async function (msg, config) {
+		const tagId = config.tagId || msg?.payload?.tagId;
+
+		if (!tagId) {
+			handleError(this, msg, 'Missing tag ID', 'Invalid input');
+			return this.send(msg);
+		}
+
+		try {
+			const response = await makeRequest(
+				`/tag/${encodeURIComponent(tagId)}`,
+				'GET',
+				{},
+				msg.sessionData,
+			);
+
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched tag definition',
+				'Failed to fetch tag definition',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			handleError(this, msg, 'Failed to fetch tag definition', error.message);
+		}
+	};
+
 	/**
 	 * KlickTippTagGetNode - A Node-RED node to get the definition of a specific tag.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -15,7 +47,7 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
-	 * - `msg.payload`: An object that must contain:
+	 * - `msg.payload`: Expected object with the following properties
 	 *   - `tagId`: (Required) The ID of the tag to retrieve.
 	 *
 	 * Outputs:
@@ -32,44 +64,20 @@ module.exports = function (RED) {
 	function KlickTippTagGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
+		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
 
-		node.on('input', async function (msg) {
-			if (!validateSession(msg, node)) {
-				return node.send(msg);
-			}
-
-			const tagId = config.tagId || msg?.payload?.tagId;
-
-			if (!tagId) {
-				handleError(node, msg, 'Missing tag ID');
-				return node.send(msg);
-			}
-
-			try {
-				const response = await makeRequest(
-					`/tag/${encodeURIComponent(tagId)}`,
-					'GET',
-					{},
-					getSessionData(msg.sessionDataKey, node),
-				);
-
-				handleResponse(
-					node,
-					msg,
-					response,
-					'Fetched tag definition',
-					'Failed to fetch tag definition',
-					(response) => {
-						msg.payload = response.data;
-					},
-				);
-			} catch (error) {
-				handleError(node, msg, 'Failed to fetch tag definition', error.message);
-			}
-
-			node.send(msg);
+		// Get the tag list for display in Node UI
+		createCachedApiEndpoint(RED, node, klicktippConfig, {
+			endpoint: `/klicktipp/tags/${node.id}`,
+			cacheContext: 'flow',
+			cacheKey: 'tagCache',
+			cacheTimestampKey: 'cacheTimestamp',
+			cacheDurationMs: CACHE_DURATION_MS,
+			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
+
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp tag get', KlickTippTagGetNode);
+	RED.nodes.registerType('klicktipp-tag-get', KlickTippTagGetNode);
 };

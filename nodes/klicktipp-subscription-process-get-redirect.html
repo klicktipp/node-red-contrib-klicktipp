@@ -1,15 +1,16 @@
-<script type="text/x-red" data-template-name="klicktipp subscription process redirect">
+<script type="text/x-red" data-template-name="klicktipp-subscription-process-get-redirect">
 	<div class="form-row">
 	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-		<label for="node-input-listId"><i class="fa fa-tags""></i> <span>List ID</span></label>
-		<input type="text" id="node-input-listId" placeholder="Enter list ID (required)">
-	</div>
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
+        <select id="node-input-listId"></select>
+    </div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
 	   <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -17,32 +18,17 @@
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscription process redirect">
-	<p>Fetches the redirection URL for a specific subscription process in the KlickTipp API.</p>
-
-	<h3>Details</h3>
-	<p>
-		This node fetches the redirection URL for a specific subscription process (list) in the KlickTipp API.
-		The <code>listId</code> (subscription process ID) and <code>email</code> must be provided in <code>msg.payload</code>.
-	</p>
-	<p>
-		On success, <code>msg.payload</code> is the URL to which the subscriber will be redirected for the specified subscription process.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-		It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp-subscription-process-get-redirect">
+	<p>Returns the URL of the opt-in confirmation page for a subscriber's opt-in process.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	<dt>msg.payload <span class="property-type">object</span></dt>
 	<dd>
-	   An object that must contain:
+	   Expected object with the following properties:
 	   <ul>
-		   <li><code>listId</code> - (Required) The ID of the subscription process (list) for which to retrieve the redirection URL.</li>
-		   <li><code>email</code> - (Required) The email address associated with the subscription process.</li>
+		   <li><code>listId</code> - (Required) the ID of a opt-in process</li>
+		   <li><code>email</code> - (Required) the subscriber's email address</li>
 	   </ul>
 	</dd>
 	</dl>
@@ -53,7 +39,7 @@
 		<dd>
 			On success:
 			<ul>
-				<li>The URL to which the subscriber will be redirected for the specified subscription process.</li>
+				<li>The URL to which the subscriber will be redirected for the specified opt-in process.</li>
 			</ul>
 		</dd>
 		<dd>
@@ -75,26 +61,42 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscription process redirect', {
+	RED.nodes.registerType('klicktipp-subscription-process-get-redirect', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: {
 				value: '',
-				validate: validateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
 			},
 			listId: {
 				value: '',
+				required: true,
 				validate: RED.validators.number()
 			},
 			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Subscription Process Redirect';
+			return this.name || 'Opt-in process redirect URL';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Opt-in process redirect URL',
+		oneditprepare: function() {
+			const listIdDropdown = $('#node-input-listId');
+			ktPopulateDropdown(listIdDropdown, this.listId, `/klicktipp/subscription-process/${this.id}`);
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+		},
+		// When the node editor is saved, capture the selected tagId
+		oneditsave: function() {
+			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
+		}
 	});
 </script>

@@ -1,0 +1,141 @@
+<script type="text/x-red" data-template-name="klicktipp-subscriber-signin">
+	<div class="form-row">
+	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-apiKey"><i class="fa fa-key"></i> <span>API Key</span></label>
+	    <input type="text" id="node-input-apiKey" placeholder="Enter your API key">
+	    <input type="hidden" id="node-input-apiKeyType">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS number</span></label>
+	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
+	    <input type="hidden" id="node-input-smsNumberType">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data fields</span></label>
+	    <input type="text" id="node-input-fields" placeholder="Data fields">
+	    <input type="hidden" id="node-input-fieldsType">
+	</div>
+	<div id="contact-fields-section" class="form-row" style="display: none"></div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signin">
+	<p>Adds or updates a subscriber using an API key. The subscriber can be identified by their email address or SMS number, with optional fields.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Expected object with the following properties:
+		   <ul>
+			   <li><code>apiKey</code> - (Required) the API key for authentication</li>
+			   <li><code>email</code> - (Required) the subscriber's email address</li>
+			   <li><code>smsNumber</code> - (Optional) the subscriber's mobile number</li>
+			   <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
+			   structured as returned by the <code>Field index</code> node</li>
+		   </ul>
+	   </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   <ul>
+			   <li>On success: Contains the response data, including the redirection URL.</li>
+			   <li>On failure: Will contain <code>{ success: false }</code>.</li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	   <li><strong>Green (dot)</strong> - Subscription was successful.</li>
+	   <li><strong>Red (ring)</strong> - Subscription failed (e.g., missing API key, missing email/SMS number, or API error).</li>
+	</ul>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscriber-signin', {
+		category: 'KlickTipp',
+		color: '#1B2C3D',
+		defaults: {
+			klicktipp: { type: 'klicktipp-config', required: true },
+			apiKey: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('apiKeyType')
+			},
+			apiKeyType: {
+				value: 'str'
+			},
+			email: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
+			},
+			smsNumber: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			smsNumberType: {
+				value: 'str'
+			},
+			fields: {
+				value: '',
+				validate: function(v) {
+					// Allow empty values
+					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
+				}
+			},
+			fieldsType: {
+				value: 'msg'
+			},
+			fieldsData: {
+				value: {}
+			},
+			name: { value: '' },
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || 'Subscriber signin';
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber signin',
+		oneditprepare: function() {
+			this.contactListContainer = $('#contact-fields-section');
+			const fieldsInput = $("#node-input-fields");
+
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData);
+		},
+		oneditsave: function() {
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
+		}
+	});
+</script>

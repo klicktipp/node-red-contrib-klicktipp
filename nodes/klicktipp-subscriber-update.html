@@ -1,4 +1,4 @@
-<script type="text/x-red" data-template-name="klicktipp subscriber update">
+<script type="text/x-red" data-template-name="klicktipp-subscriber-update">
 	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
@@ -6,115 +6,44 @@
 	<div class="form-row">
 	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Subscriber ID</span></label>
 	    <input type="text" id="node-input-subscriberId" placeholder="Enter Subscriber ID (required)">
+	    <input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>Email</span></label>
+	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>Email address</span></label>
 	    <input type="text" id="node-input-newEmail" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-newEmailType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-newSmsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+	    <label for="node-input-newSmsNumber"><i class="fa fa-mobile"></i> <span>SMS number</span></label>
 	    <input type="text" id="node-input-newSmsNumber" placeholder="Enter SMS number (optional)">
+	    <input type="hidden" id="node-input-newSmsNumberType">
 	</div>
-	<!-- Toggle for Address section -->
 	<div class="form-row">
-    	<label for="toggle-contact-fields-section"><i class="fa fa-list"></i> <span>Fields</span></label>
-    	<input type="checkbox" id="toggle-contact-fields-section">
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data fields</span></label>
+	    <input type="text" id="node-input-fields" placeholder="Data fields">
+	    <input type="hidden" id="node-input-fieldsType">
 	</div>
-	<div id="contact-fields-section" style="display: none;">
-		<div class="form-row">
-			<label for="node-input-fieldFirstName"><i class="fa fa-user"></i> First Name</label>
-			<input type="text" id="node-input-fieldFirstName" placeholder="Enter first name (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldLastName"><i class="fa fa-user"></i> Last Name</label>
-			<input type="text" id="node-input-fieldLastName" placeholder="Enter last name (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldStreet1"><i class="fa fa-home"></i> Street 1</label>
-			<input type="text" id="node-input-fieldStreet1" placeholder="Enter street address 1 (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldStreet2"><i class="fa fa-home"></i> Street 2</label>
-			<input type="text" id="node-input-fieldStreet2" placeholder="Enter street address 2 (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldCity"><i class="fa fa-home"></i> City</label>
-			<input type="text" id="node-input-fieldCity" placeholder="Enter city (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldState"><i class="fa fa-globe"></i> State</label>
-			<input type="text" id="node-input-fieldState" placeholder="Enter state (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldZip"><i class="fa fa-envelope"></i> Zip</label>
-			<input type="text" id="node-input-fieldZip" placeholder="Enter zip code (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldCountry"><i class="fa fa-globe"></i> Country</label>
-			<input type="text" id="node-input-fieldCountry" placeholder="Enter country (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldPrivatePhone"><i class="fa fa-phone"></i> Private Phone</label>
-			<input type="text" id="node-input-fieldPrivatePhone" placeholder="Enter private phone number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldMobilePhone"><i class="fa fa-mobile"></i> Mobile Phone</label>
-			<input type="text" id="node-input-fieldMobilePhone" placeholder="Enter mobile phone number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldPhone"><i class="fa fa-phone"></i> Phone</label>
-			<input type="text" id="node-input-fieldPhone" placeholder="Enter phone number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldFax"><i class="fa fa-fax"></i> Fax</label>
-			<input type="text" id="node-input-fieldFax" placeholder="Enter fax number (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldWebsite"><i class="fa fa-globe"></i> Website</label>
-			<input type="text" id="node-input-fieldWebsite" placeholder="Enter website URL (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldBirthday"><i class="fa fa-birthday-cake"></i> Birthday</label>
-			<input type="text" id="node-input-fieldBirthday" placeholder="Enter birthday (optional)">
-		</div>
-		<div class="form-row">
-			<label for="node-input-fieldLeadValue"><i class="fa fa-usd"></i> Lead Value</label>
-			<input type="text" id="node-input-fieldLeadValue" placeholder="Enter lead value (optional)">
-		</div>
-	</div>
+	<div id="contact-fields-section" class="form-row" style="display: none"></div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 </script>
 
-<script type="text/x-red" data-help-name="klicktipp subscriber update">
-	<p>Update a subscriber in KlickTipp by their subscriber ID.</p>
-
-	<h3>Details</h3>
-	<p>
-	    This node updates a subscriber in KlickTipp using their subscriber ID. The subscriber ID must be provided in <code>msg.payload.subscriberId</code>.
-	</p>
-	<p>
-	    If the operation is successful, the output message will contain <code>msg.payload.success = true</code>.
-	</p>
-	<p>
-		On failure, <code>msg.payload</code> will contain <code>{ success: false }</code>, and an error message will be returned in <code>msg.error</code>.
-	</p>
-	<p>
-	    It requires valid session information. The session key for retrieving session data is passed automatically from the <strong>KlickTipp Login</strong> node.
-	</p>
+<script type="text/x-red" data-help-name="klicktipp-subscriber-update">
+	<p>Updates the data fields, email address, or SMS number of a subscriber.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
-	        An object that must contain:
+	        Expected object with the following properties:
 	        <ul>
-	            <li><code>subscriberId</code> - (Required) The ID of the subscriber to be updated.</li>
-	            <li><code>fields</code> - (Optional) An object representing fields to update for the subscriber.</li>
-	            <li><code>newEmail</code> - (Optional) The new email address for the subscriber.</li>
-	            <li><code>newSmsNumber</code> - (Optional) The new SMS number for the subscriber.</li>
+	            <li><code>subscriberId</code> - (Required) the subscriber's ID</li>
+	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
+	            structured as returned by the <code>Field index</code> node</li>
+	            <li><code>newEmail</code> - (Optional) the subscriber's new email address</li>
+	            <li><code>newSmsNumber</code> - (Optional) the subscriber's new mobile number</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -147,45 +76,72 @@
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('klicktipp subscriber update', {
+	RED.nodes.registerType('klicktipp-subscriber-update', {
 		category: 'KlickTipp',
-		color: '#F2F2F2',
+		color: '#1B2C3D',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
 			subscriberId: {
-				value: '',
-				validate: RED.validators.number()
+				required: true,
+				value: 0,
+				validate: RED.validators.typedInput('subscriberIdType')
+			},
+			subscriberIdType: {
+				value: 'num'
 			},
 			newEmail: {
 				value: '',
-				validate: validateEmail
+				required: true,
+				validate: RED.validators.typedInput('emailType')
 			},
-			newSmsNumber: { value: '' },
-			fieldFirstName: { value: '' },
-			fieldLastName: { value: '' },
-			fieldStreet1: { value: '' },
-			fieldStreet2: { value: '' },
-			fieldCity: { value: '' },
-			fieldState: { value: '' },
-			fieldZip: { value: '' },
-			fieldCountry: { value: '' },
-			fieldPrivatePhone: { value: '' },
-			fieldMobilePhone: { value: '' },
-			fieldPhone: { value: '' },
-			fieldFax: { value: '' },
-			fieldWebsite: { value: '' },
-			fieldBirthday: { value: 0 },
-			fieldLeadValue: { value: 0 },
+			newEmailType: {
+				value: 'str'
+			},
+			newSmsNumber: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			newSmsNumberType: {
+				value: 'str'
+			},
+			fields: {
+				value: '',
+				validate: function(v) {
+					// Allow empty values
+					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
+				}
+			},
+			fieldsType: {
+				value: 'msg'
+			},
+			fieldsData: {
+				value: {}
+			},
 		},
 		inputs: 1,
 		outputs: 1,
-		icon: 'klicktipp.png',
+		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'KlickTipp Subscriber Update';
+			return this.name || 'Subscriber update';
 		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber update',
 		oneditprepare: function() {
-			toggleContactFields();
+			this.contactListContainer = $('#contact-fields-section');
+			const fieldsInput = $("#node-input-fields");
+
+			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
+			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData);
+		},
+		oneditsave: function() {
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
 		}
 	});
 </script>

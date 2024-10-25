@@ -1,0 +1,161 @@
+<script type="text/x-red" data-template-name="klicktipp-subscriber-subscribe">
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-emailType">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS number</span></label>
+	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
+	     <input type="hidden" id="node-input-smsNumberType">
+	</div>
+	<div class="form-row">
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
+        <select id="node-input-listId">
+            <!-- List ID will be populated here -->
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
+        <select id="node-input-tagId">
+            <!-- Tags will be populated here -->
+        </select>
+    </div>
+	<div class="form-row">
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data fields</span></label>
+	    <input type="text" id="node-input-fields" placeholder="Data fields">
+	    <input type="hidden" id="node-input-fieldsType">
+	</div>
+	<div id="contact-fields-section" class="form-row" style="display: none"></div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
+	<p>Adds or updates a subscriber. The subscriber can be identified by their email address or SMS number, with an optional opt-in process, tag, and fields.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Expected object with the following properties:
+	        <ul>
+	            <li><code>email</code> - (Required) the subscriber's email address</li>
+	            <li><code>smsNumber</code> -(Optional) the subscriber's mobile number</li>
+	            <li><code>listId</code> - (Optional) the ID of a opt-in process</li>
+	            <li><code>tagId</code> - (Optional) the ID of a manual tag or SmartLink</li>
+	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
+	            structured as returned by the <code>Field index</code> node</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	   <dl class="message-properties">
+	       <dt>msg.payload <span class="property-type">object</span></dt>
+	       <dd>
+	           On success:
+	           <ul>
+	               <li>An object representing the subscriber that was created.</li>
+	           </ul>
+	       </dd>
+	       <dd>
+	           On failure:
+	           <ul>
+	               <li><code>{ success: false }</code></li>
+	           </ul>
+	       </dd>
+
+	       <dt>msg.error <span class="property-type">string</span></dt>
+	       <dd>An error message explaining why the request failed.</dd>
+	   </dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Subscription was successful.</li>
+	    <li><strong>Red (ring)</strong> - Subscription failed (e.g., missing required data or API error).</li>
+	</ul>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscriber-subscribe', {
+		category: 'KlickTipp',
+		color: '#1B2C3D',
+		defaults: {
+			klicktipp: { type: 'klicktipp-config', required: true },
+			name: { value: '' },
+			email: {
+				value: '',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'str'
+			},
+			smsNumber: {
+				value: '',
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			smsNumberType: {
+				value: 'str'
+			},
+			listId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+			tagId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+			fields: {
+				value: '',
+				validate: function(v) {
+					// Allow empty values
+					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
+				}
+			},
+			fieldsType: {
+				value: 'msg'
+			},
+			fieldsData: {
+				value: {}
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || 'Subscriber subscribe';
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Subscriber subscribe',
+		oneditprepare: function() {
+			this.tagDropdown = $('#node-input-tagId');
+			this.listIdDropdown = $('#node-input-listId');
+			this.contactListContainer = $('#contact-fields-section');
+			const fieldsInput = $("#node-input-fields");
+
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+
+			ktPopulateDropdown(this.tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			ktPopulateDropdown(this.listIdDropdown, this.listId, `/klicktipp/subscription-processes/${this.id}`);
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData);
+		},
+		oneditsave: function() {
+			// Use the previously set common variables
+			this.tagId = Number(this.tagDropdown.val()); // Save the selected tagId
+			this.listId = Number(this.listIdDropdown.val()); // Save the selected listId
+
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
+		}
+	});
+</script>
