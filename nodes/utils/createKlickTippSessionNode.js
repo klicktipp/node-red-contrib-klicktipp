@@ -27,17 +27,21 @@ function createKlickTippSessionNode(RED, node, coreFunction) {
 			let sessionData;
 
 			try {
-				// Login
-				const loginResponse = await makeRequest('/account/login', 'POST', { username, password });
-				if (loginResponse?.data?.sessid) {
-					sessionData = {
-						sessionId: loginResponse.data.sessid,
-						sessionName: loginResponse.data.session_name,
-					};
-
-					msg.sessionData = sessionData;
-				} else {
-					handleError(node, msg, 'Login failed');
+				// Login wrapped in try/catch for specific error handling
+				try {
+					const loginResponse = await makeRequest('/account/login', 'POST', { username, password });
+					if (loginResponse?.data?.sessid) {
+						sessionData = {
+							sessionId: loginResponse.data.sessid,
+							sessionName: loginResponse.data.session_name,
+						};
+						msg.sessionData = sessionData;
+					} else {
+						handleError(node, msg, 'Invalid credentials or session ID missing');
+						return node.send(msg);
+					}
+				} catch (loginError) {
+					handleError(node, msg, 'Login request failed', loginError.message);
 					return node.send(msg);
 				}
 
