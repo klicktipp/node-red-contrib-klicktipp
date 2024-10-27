@@ -97,21 +97,6 @@
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderTypeId", 'num', ['num']);
-
-			var configs = [];
-			RED.nodes.eachConfig(function(node) {
-				if (node.type === "klicktipp-config") {
-					configs.push(node);
-				}
-			});
-
-			// Get the first available config if it exists
-			const firstAvailableConfig = configs.length > 0 ? configs[0] : null;
-
-			// Set the value of #node-input-klicktipp to the first available config ID if it doesn't already have a value
-			if (firstAvailableConfig) {
-				$("#node-input-klicktipp").val(firstAvailableConfig.id);
-			}
 		},
 	});
 </script>
