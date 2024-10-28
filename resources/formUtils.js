@@ -131,10 +131,18 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 	$spinner.show();
 	$dropdown.hide();
 	
+	// Always reinsert the placeholder option at the top
+	$dropdown.empty().append(
+		$('<option>', {
+			value: '',
+			text: 'Select an option',
+			disabled: false,
+			selected: !selectedItemId // Select by default if no item is pre-selected
+		})
+	);
+	
 	$.getJSON(actionUrl)
 		.done((items) => {
-			$dropdown.empty();
-			
 			if (ktIsObject(items)) {
 				$.each(items, (id, name) => {
 					const optionLabel = ktGetOptionLabel(name, actionUrl);
@@ -142,18 +150,19 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 				});
 				
 				ktPreselectItems($dropdown, selectedItemId);
-				$dropdown.show();
 			} else {
-				ktShowError($dropdown, 'No valid items found');
+				// Display an error message option if no valid items are found
+				$dropdown.append($('<option>', { value: '', text: 'Error: No valid items found', disabled: true }));
 			}
 		})
 		.fail((jqXHR) => {
-			const errorMessage = ktGetErrorMessage(jqXHR);
+			const errorMessage = `Error: ${ktGetErrorMessage(jqXHR)}`;
 			console.error('Error:', errorMessage);
-			ktShowError($dropdown, `Error: ${errorMessage}`);
+			$dropdown.append($('<option>', { value: '', text: errorMessage, disabled: true }));
 		})
 		.always(() => {
 			$spinner.hide();
+			$dropdown.show();
 		});
 }
 

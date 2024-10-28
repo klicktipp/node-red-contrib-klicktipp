@@ -10,15 +10,22 @@ const getCacheLevel = require('./getCacheLevel'); // Assuming getCacheLevel is i
  * @param {string} [cacheTimestampKey='cacheTimestamp'] - The key used to store the cache timestamp (optional, default is 'cacheTimestamp').
  * @param {string} [cacheContextLevel='flow'] - The context level where the cache is stored ('node', 'flow', or 'global'). Defaults to 'flow'.
  */
-function clearCache(node, cacheKey, cacheTimestampKey = 'cacheTimestamp', cacheContextLevel = 'flow') {
+function clearCache(
+	node,
+	cacheKey,
+	cacheTimestampKey = 'cacheTimestamp',
+	cacheContextLevel = 'flow',
+) {
 	// Get the correct cache context (node, flow, or global) using getCacheLevel
 	const cacheContext = getCacheLevel(node, cacheContextLevel);
-	
+
 	if (!cacheContext) {
-		console.warn(`Invalid cache context '${cacheContextLevel}' provided. Defaulting to 'node' context.`);
+		console.warn(
+			`Invalid cache context '${cacheContextLevel}' provided. Defaulting to 'node' context.`,
+		);
 		return;
 	}
-	
+
 	// Clear the cache and timestamp
 	cacheContext.set(cacheKey, null);
 	cacheContext.set(cacheTimestampKey, null);

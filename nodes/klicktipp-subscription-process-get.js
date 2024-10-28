@@ -5,6 +5,7 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
@@ -12,7 +13,7 @@ module.exports = function (RED) {
 		const listId = config.listId || msg?.payload?.listId;
 
 		if (!listId) {
-			handleError(this, msg, 'Missing list ID');
+			handleError(this, msg, 'Missing opt-in ID');
 			return this.send(msg);
 		}
 
@@ -71,7 +72,7 @@ module.exports = function (RED) {
 			cacheContext: 'flow',
 			cacheKey: 'subscriptionProcessCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
 		});
 

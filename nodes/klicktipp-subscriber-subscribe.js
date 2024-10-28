@@ -9,6 +9,7 @@ const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const getContactFields = require('./utils/getContactFields');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -68,7 +69,7 @@ module.exports = function (RED) {
 			cacheContext: 'node',
 			cacheKey: 'subscribeNodeContactFieldsCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
 		});
 
@@ -78,7 +79,7 @@ module.exports = function (RED) {
 			cacheContext: 'node',
 			cacheKey: 'subscribeNodeTagCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
 
@@ -88,7 +89,7 @@ module.exports = function (RED) {
 			cacheContext: 'node',
 			cacheKey: 'subscribeNodeCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
 		});
 

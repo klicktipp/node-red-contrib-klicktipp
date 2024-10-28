@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -71,7 +72,7 @@ module.exports = function (RED) {
 			cacheContext: 'flow',
 			cacheKey: 'tagCache',
 			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: 10 * 60 * 1000, // 10 minutes
+			cacheDurationMs: CACHE_DURATION_MS,
 			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
 		});
 
