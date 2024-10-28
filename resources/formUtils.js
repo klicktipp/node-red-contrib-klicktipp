@@ -520,7 +520,7 @@ function ktPopulateConfig(node) {
 		return;
 	}
 	
-	// Find the first 'klicktipp-config' node
+	// Find 'klicktipp-config' configs
 	RED.nodes.eachConfig(function(config) {
 		if (config.type === "klicktipp-config") {
 			configs.push(config);
