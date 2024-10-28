@@ -13,7 +13,7 @@ module.exports = function (RED) {
 		const listId = config.listId || msg?.payload?.listId;
 
 		if (!listId) {
-			handleError(this, msg, 'Missing list ID');
+			handleError(this, msg, 'Missing opt-in ID');
 			return this.send(msg);
 		}
 
