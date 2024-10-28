@@ -52,6 +52,9 @@
 		label: function () {
 			return this.name || 'Opt-in process index';
 		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Opt-in process index',
 	});

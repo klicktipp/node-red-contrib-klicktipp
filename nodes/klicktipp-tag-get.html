@@ -78,6 +78,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Tag get',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);

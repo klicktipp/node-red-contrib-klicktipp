@@ -79,6 +79,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber search',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},

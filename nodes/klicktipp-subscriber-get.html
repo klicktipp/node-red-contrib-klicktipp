@@ -79,6 +79,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber get',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
 		},

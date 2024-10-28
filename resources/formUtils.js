@@ -506,3 +506,38 @@ function ktSaveContactFieldValues($container ) {
 
 	return fields;
 }
+
+/**
+ * Populates the specified property of the node with the first available KlickTipp configuration node.
+ *
+ * @param {Object} node - The Node-RED node object where the configuration will be set.
+ */
+function ktPopulateConfig(node) {
+	const configs = []
+	
+	if (!node) {
+		console.warn("ktPopulateConfig: No node provided.");
+		return;
+	}
+	
+	// Find the first 'klicktipp-config' node
+	RED.nodes.eachConfig(function(config) {
+		if (config.type === "klicktipp-config") {
+			configs.push(config);
+		}
+	});
+	
+	// Sort the configs alphabetically by name
+	configs.sort((a, b) => {
+		const nameA = a.name.toLowerCase();
+		const nameB = b.name.toLowerCase();
+		if (nameA < nameB) return -1;
+		if (nameA > nameB) return 1;
+		return 0;
+	});
+	
+	// Automatically set the config ID if a 'klicktipp-config' node was found
+	if (configs.length > 0) {
+		node.klicktipp = configs[0].id; // Set the first one from the sorted array
+	}
+}

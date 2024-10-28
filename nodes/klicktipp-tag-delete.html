@@ -78,11 +78,13 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Tag delete',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
 		},
-		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
 		}

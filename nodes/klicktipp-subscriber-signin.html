@@ -124,6 +124,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber signin',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			this.contactListContainer = $('#contact-fields-section');
 			const fieldsInput = $("#node-input-fields");

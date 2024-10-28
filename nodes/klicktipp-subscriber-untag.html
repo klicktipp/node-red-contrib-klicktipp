@@ -91,6 +91,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber untag',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			this.tagDropdown = $('#node-input-tagId');
 			ktPopulateDropdown(this.tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);

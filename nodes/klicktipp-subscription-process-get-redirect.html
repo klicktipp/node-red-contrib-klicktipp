@@ -91,6 +91,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Opt-in process redirect URL',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			const listIdDropdown = $('#node-input-listId');
 			ktPopulateDropdown(listIdDropdown, this.listId, `/klicktipp/subscription-process/${this.id}`);

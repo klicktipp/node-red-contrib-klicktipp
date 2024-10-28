@@ -95,6 +95,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Tag create',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType", 'str', ['str']);

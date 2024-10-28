@@ -53,6 +53,9 @@
 			return this.name || 'Field index';
 		},
 		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Field index'
+		paletteLabel: 'Field index',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 	});
 </script>

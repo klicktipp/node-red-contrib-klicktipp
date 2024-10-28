@@ -137,6 +137,9 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber subscribe',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			this.tagDropdown = $('#node-input-tagId');
 			this.listIdDropdown = $('#node-input-listId');
