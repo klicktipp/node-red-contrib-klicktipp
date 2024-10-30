@@ -6,6 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const clearCache = require('./utils/cache/clearCache');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
+const CACHE_KEYS = require("./utils/cache/cacheKeys");
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -41,7 +42,7 @@ module.exports = function (RED) {
 				msg.payload = response.data;
 
 				// Clear the cache after a successful delete
-				clearCache('/tag_cache');
+				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
 			handleError(node, msg, 'Failed to create tag', error.message);

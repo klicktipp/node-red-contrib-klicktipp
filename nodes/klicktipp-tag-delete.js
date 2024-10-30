@@ -5,6 +5,7 @@ const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const clearCache = require('./utils/cache/clearCache');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const CACHE_KEYS = require("./utils/cache/cacheKeys");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -27,7 +28,7 @@ module.exports = function (RED) {
 				msg.payload = { success: true };
 
 				// Clear the cache after a successful delete
-				clearCache(this, 'tagCache');
+				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
 			handleError(this, msg, 'Failed to delete tag', error.message);

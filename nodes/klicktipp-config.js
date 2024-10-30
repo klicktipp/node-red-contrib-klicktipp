@@ -2,6 +2,7 @@
 
 const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
 const fetchKlickTippData = require("./utils/fetchKlickTippData");
+const CACHE_KEYS = require("./utils/cache/cacheKeys");
 
 module.exports = function (RED) {
 	// Configuration node for storing API credentials
@@ -20,10 +21,10 @@ module.exports = function (RED) {
 	});
 	
 	// Helper function to register endpoints with caching
-	const registerKlickTippEndpoint = (endpointPath, apiPath) => {
+	const registerKlickTippEndpoint = (endpointPath, apiPath, cacheKey) => {
 		createCachedApiEndpoint(RED, {
 			endpoint: endpointPath,
-			cacheKey: `${apiPath}_cache`,
+			cacheKey: cacheKey,
 			fetchFunction: async (username, password) => {
 				return await fetchKlickTippData(username, password, apiPath);
 			}
@@ -31,7 +32,8 @@ module.exports = function (RED) {
 	};
 	
 	// Register each endpoint with caching
-	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag');
-	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field');
-	registerKlickTippEndpoint('/klicktipp/subscription-processes/:nodeId', '/list');
+	// Register each endpoint with caching, using centralized cache keys
+	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag', CACHE_KEYS.TAGS);
+	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field', CACHE_KEYS.FIELDS);
+	registerKlickTippEndpoint('/klicktipp/subscription-processes/:nodeId', '/list', CACHE_KEYS.OPT_IN_PROCESSES);
 };

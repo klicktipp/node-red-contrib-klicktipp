@@ -1,4 +1,5 @@
-const cache = require('./cache'); // Import the shared cache instance
+const cache = require('./cache');
+const CACHE_KEYS = require("./cacheKeys"); // Import the shared cache instance
 
 /**
  * Creates a cached API endpoint in Node-RED.
