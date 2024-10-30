@@ -4,12 +4,9 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const prepareSubscriptionData = require('./utils/transformers/prepareCreateSubscriberData');
-const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const getContactFields = require('./utils/getContactFields');
-const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -61,38 +58,6 @@ module.exports = function (RED) {
 	function KlickTippSubscriberSubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-
-		// Get the contact field list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/contact-fields/${node.id}`,
-			cacheContext: 'node',
-			cacheKey: 'subscribeNodeContactFieldsCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
-		});
-
-		// Get the tag list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/tags/${node.id}`,
-			cacheContext: 'node',
-			cacheKey: 'subscribeNodeTagCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
-		});
-
-		// Get the subscription process list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/subscription-processes/${node.id}`,
-			cacheContext: 'node',
-			cacheKey: 'subscribeNodeCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
-		});
-
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 

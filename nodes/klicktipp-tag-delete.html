@@ -81,7 +81,7 @@
 		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			ktPopulateDropdown(tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 		},
 		oneditsave: function() {
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId

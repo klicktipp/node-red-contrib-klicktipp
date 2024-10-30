@@ -16,9 +16,7 @@ const makeRequest = require('./makeRequest');
  *
  */
 async function fetchKlickTippData(username, password, endpoint) {
-	try {
-		console.log(`Fetching data from KlickTipp API for endpoint ${endpoint}`);
-
+	// try {
 		// Login to KlickTipp API
 		const loginResponse = await makeRequest('/account/login', 'POST', {
 			username,
@@ -42,9 +40,10 @@ async function fetchKlickTippData(username, password, endpoint) {
 		await makeRequest('/account/logout', 'POST', {}, sessionData);
 
 		return response.data; // Return the fetched data
-	} catch (error) {
-		console.error(`Failed to fetch data from ${endpoint}`, error);
-	}
+	// } catch (error) {
+	// 	console.error(`Failed to fetch data from ${endpoint}`, error);
+	// 	return error;
+	// }
 }
 
 module.exports = fetchKlickTippData;

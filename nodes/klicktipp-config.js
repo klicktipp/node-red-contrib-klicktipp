@@ -1,5 +1,8 @@
 'use strict';
 
+const createCachedApiEndpoint = require("./utils/cache/createCachedApiEndpoint");
+const fetchKlickTippData = require("./utils/fetchKlickTippData");
+
 module.exports = function (RED) {
 	// Configuration node for storing API credentials
 	function KlickTippConfigNode(n) {
@@ -15,4 +18,20 @@ module.exports = function (RED) {
 			password: { type: 'password' },
 		},
 	});
+	
+	// Helper function to register endpoints with caching
+	const registerKlickTippEndpoint = (endpointPath, apiPath) => {
+		createCachedApiEndpoint(RED, {
+			endpoint: endpointPath,
+			cacheKey: `${apiPath}_cache`,
+			fetchFunction: async (username, password) => {
+				return await fetchKlickTippData(username, password, apiPath);
+			}
+		});
+	};
+	
+	// Register each endpoint with caching
+	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag');
+	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field');
+	registerKlickTippEndpoint('/klicktipp/subscription-processes/:nodeId', '/list');
 };

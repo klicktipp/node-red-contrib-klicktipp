@@ -41,7 +41,7 @@ module.exports = function (RED) {
 				msg.payload = response.data;
 
 				// Clear the cache after a successful delete
-				clearCache(node, 'tagCache');
+				clearCache('/tag_cache');
 			});
 		} catch (error) {
 			handleError(node, msg, 'Failed to create tag', error.message);

@@ -3,9 +3,6 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
-const { CACHE_DURATION_MS } = require('./utils/constants');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
@@ -64,18 +61,6 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-
-		// Get the subscription process list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/subscription-process/${node.id}`,
-			cacheContext: 'flow',
-			cacheKey: 'subscriptionProcessCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/list'),
-		});
-
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 

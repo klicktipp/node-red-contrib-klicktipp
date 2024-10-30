@@ -4,11 +4,8 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const prepareApiKeySubscriptionData = require('./utils/transformers/prepareApiKeySubscriptionData');
-const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
 const getContactFields = require('./utils/getContactFields');
-const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -38,18 +35,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberSigninNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp); // Get specific config node here
-
-		// Get the contact field list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/contact-fields/${node.id}`,
-			cacheContext: 'flow',
-			cacheKey: 'contactFieldsCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/field'),
-		});
-
+		
 		node.on('input', async function (msg) {
 			try {
 				const fields = await getContactFields(RED, config, node, msg);

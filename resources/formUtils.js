@@ -122,9 +122,10 @@ function ktPreselectItems($dropdown, selectedItemId) {
  *
  * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
  * @param {(string|string[])} selectedItemId - The ID or array of IDs of the current item(s) to pre-select in the dropdown.
+ * @param {string} configId
  * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
-function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
+function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 	const $spinner = ktCreateSpinner();
 	
 	$dropdown.before($spinner);
@@ -141,7 +142,14 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 		})
 	);
 	
-	$.getJSON(actionUrl)
+	$.ajax({
+			url: actionUrl,
+			method: 'GET',
+			headers: {
+				'config-id': configId
+			},
+			dataType: 'json'
+		})
 		.done((items) => {
 			if (ktIsObject(items)) {
 				$.each(items, (id, name) => {
