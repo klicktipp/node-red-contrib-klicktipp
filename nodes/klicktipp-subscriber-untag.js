@@ -3,11 +3,8 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
-const { CACHE_DURATION_MS } = require('./utils/constants');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -74,19 +71,6 @@ module.exports = function (RED) {
 	function KlickTippSubscriberUntagNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-
-		// Get the contact field list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/tags/${node.id}`,
-			cacheContext: 'flow',
-			cacheKey: 'tagCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
-		});
-
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 

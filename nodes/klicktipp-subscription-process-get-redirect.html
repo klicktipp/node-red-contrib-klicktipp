@@ -1,6 +1,6 @@
 <script type="text/x-red" data-template-name="klicktipp-subscription-process-get-redirect">
 	<div class="form-row">
-	   <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	   <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
@@ -90,10 +90,13 @@
 			return this.name || 'Opt-in process redirect URL';
 		},
 		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Opt-in process redirect URL',
+		paletteLabel: 'Opt\u2013in process redirect URL',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			const listIdDropdown = $('#node-input-listId');
-			ktPopulateDropdown(listIdDropdown, this.listId, `/klicktipp/subscription-process/${this.id}`);
+			ktPopulateDropdown(listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-process/${this.id}`);
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},
 		// When the node editor is saved, capture the selected tagId

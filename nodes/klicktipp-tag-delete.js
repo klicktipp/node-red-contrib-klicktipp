@@ -3,11 +3,9 @@
 const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
-const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
 const clearCache = require('./utils/cache/clearCache');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
-const { CACHE_DURATION_MS } = require('./utils/constants');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const CACHE_KEYS = require("./utils/cache/cacheKeys");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -30,7 +28,7 @@ module.exports = function (RED) {
 				msg.payload = { success: true };
 
 				// Clear the cache after a successful delete
-				clearCache(this, 'tagCache');
+				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
 			handleError(this, msg, 'Failed to delete tag', error.message);
@@ -61,18 +59,7 @@ module.exports = function (RED) {
 	function KlickTippTagDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		const klicktippConfig = RED.nodes.getNode(config.klicktipp);
-
-		// Get the tag list for display in Node UI
-		createCachedApiEndpoint(RED, node, klicktippConfig, {
-			endpoint: `/klicktipp/tags/${node.id}`,
-			cacheContext: 'flow',
-			cacheKey: 'tagCache',
-			cacheTimestampKey: 'cacheTimestamp',
-			cacheDurationMs: CACHE_DURATION_MS,
-			fetchFunction: (username, password) => fetchKlickTippData(username, password, '/tag'),
-		});
-
+		
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 

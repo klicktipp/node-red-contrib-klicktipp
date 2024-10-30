@@ -1,6 +1,6 @@
 <script type="text/x-red" data-template-name="klicktipp-tag-delete">
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
     <div class="form-row">
@@ -76,11 +76,13 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Tag delete',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			ktPopulateDropdown(tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 		},
-		// When the node editor is saved, capture the selected tagId
 		oneditsave: function() {
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
 		}

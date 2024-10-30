@@ -106,25 +106,14 @@ function ktGetErrorMessage(jqXHR) {
 }
 
 /**
- * Pre-selects the given item(s) in the dropdown.
- *
- * @param {object} $dropdown - The jQuery-wrapped dropdown element.
- * @param {(string|string[])} selectedItemId - The ID or array of IDs to select.
- */
-function ktPreselectItems($dropdown, selectedItemId) {
-	if (selectedItemId) {
-		$dropdown.val(Array.isArray(selectedItemId) ? selectedItemId : [selectedItemId]);
-	}
-}
-
-/**
  * Populates a dropdown with items fetched from a given action URL.
  *
  * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
  * @param {(string|string[])} selectedItemId - The ID or array of IDs of the current item(s) to pre-select in the dropdown.
+ * @param {string} configId - The KlicTipp config ID.
  * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
-function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
+function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 	const $spinner = ktCreateSpinner();
 	
 	$dropdown.before($spinner);
@@ -133,32 +122,45 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
 	
 	// Always reinsert the placeholder option at the top
 	$dropdown.empty().append(
-		$('<option>', {
-			value: '',
-			text: 'Select an option',
-			disabled: false,
-			selected: !selectedItemId // Select by default if no item is pre-selected
-		})
+		new Option('Select an option', '', !selectedItemId)
 	);
 	
-	$.getJSON(actionUrl)
+	$.ajax({
+			url: actionUrl,
+			method: 'GET',
+			headers: {
+				'config-id': configId
+			},
+			dataType: 'json'
+		})
 		.done((items) => {
+			let itemExists = false;
+			
 			if (ktIsObject(items)) {
 				$.each(items, (id, name) => {
 					const optionLabel = ktGetOptionLabel(name, actionUrl);
-					$dropdown.append($('<option>', { value: id, text: optionLabel }));
+					$dropdown.append(new Option(optionLabel, id));
 				});
+					
+				// Check if selectedItemId is an array
+				if (Array.isArray(selectedItemId)) {
+					// If selectedItemId is an array, check if each ID exists in items
+					itemExists = selectedItemId.some(id => items[id] !== undefined);
+				} else {
+					// If selectedItemId is a single ID, check if it exists in items
+					itemExists = items[selectedItemId] !== undefined;
+				}
 				
-				ktPreselectItems($dropdown, selectedItemId);
+				// Set the dropdown value based on selectedItemId; fallback to placeholder if not found
+				$dropdown.val(itemExists ? selectedItemId : '');
 			} else {
-				// Display an error message option if no valid items are found
-				$dropdown.append($('<option>', { value: '', text: 'Error: No valid items found', disabled: true }));
+				$dropdown.append(new Option('Error: No valid items found', '', true, true));
 			}
 		})
 		.fail((jqXHR) => {
 			const errorMessage = `Error: ${ktGetErrorMessage(jqXHR)}`;
 			console.error('Error:', errorMessage);
-			$dropdown.append($('<option>', { value: '', text: errorMessage, disabled: true }));
+			$dropdown.append(new Option(errorMessage, '', true, true));
 		})
 		.always(() => {
 			$spinner.hide();
@@ -171,9 +173,10 @@ function ktPopulateDropdown($dropdown, selectedItemId, actionUrl) {
  *
  * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} [defaultValues={}] - Default values for the fields to pre-fill, where the keys are field IDs and values are the corresponding default values.
- * @param {string} action - The URL to fetch the contact field data in JSON format.
+ * @param {string} configId - The KlicTipp config ID.
+ * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
-function ktPopulateContactFields($container, defaultValues = {}, action) {
+function ktPopulateContactFields($container, defaultValues = {}, configId, actionUrl) {
 	const $spinner = ktCreateSpinner();
 	$container.before($spinner);
 	$spinner.show();
@@ -182,7 +185,14 @@ function ktPopulateContactFields($container, defaultValues = {}, action) {
 	// Clear previous error messages
 	$container.siblings('.kt-error-message').remove();
 	
-	$.getJSON(action)
+	$.ajax({
+			url: actionUrl,
+			method: 'GET',
+			headers: {
+				'config-id': configId
+			},
+			dataType: 'json'
+		})
 		.done((items) => {
 			$container.empty();
 			
@@ -471,9 +481,10 @@ function ktInitializeTypedInput(
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
  * @param {object} input - The input element triggering the change event.
  * @param {string} action - The action endpoint used to populate the contact fields.
- * @param fieldsData
+ * @param {object} fieldsData
+ * @param {string} configId - The KlicTipp config ID.
  */
-function ktHandleContactFieldsDisplay($container, input, action, fieldsData) {
+function ktHandleContactFieldsDisplay($container, input, action, fieldsData, configId) {
 	$(input).on("change", (event, type) => {
 		// Remove previous error messages
 		$container.siblings('.kt-error-message').remove();
@@ -481,7 +492,7 @@ function ktHandleContactFieldsDisplay($container, input, action, fieldsData) {
 		if (type === KT_CONTACT_FIELDS_API_TYPE) {
 			// Show and populate the contact fields section if 'fieldsFromApi' is selected
 			$container.show();
-			ktPopulateContactFields($container, fieldsData, `/klicktipp/contact-fields/${action}`);
+			ktPopulateContactFields($container, fieldsData, configId, `/klicktipp/contact-fields/${action}`);
 		} else {
 			// Hide the contact fields section for other input types
 			$container.hide();
@@ -514,4 +525,39 @@ function ktSaveContactFieldValues($container ) {
 	});
 
 	return fields;
+}
+
+/**
+ * Populates the specified property of the node with the first available KlickTipp configuration node.
+ *
+ * @param {Object} node - The Node-RED node object where the configuration will be set.
+ */
+function ktPopulateConfig(node) {
+	const configs = []
+	
+	if (!node) {
+		console.warn("ktPopulateConfig: No node provided.");
+		return;
+	}
+	
+	// Find 'klicktipp-config' configs
+	RED.nodes.eachConfig(function(config) {
+		if (config.type === "klicktipp-config") {
+			configs.push(config);
+		}
+	});
+	
+	// Sort the configs alphabetically by name
+	configs.sort((a, b) => {
+		const nameA = a.name.toLowerCase();
+		const nameB = b.name.toLowerCase();
+		if (nameA < nameB) return -1;
+		if (nameA > nameB) return 1;
+		return 0;
+	});
+	
+	// Automatically set the config ID if a 'klicktipp-config' node was found
+	if (configs.length > 0) {
+		node.klicktipp = configs[0].id; // Set the first one from the sorted array
+	}
 }

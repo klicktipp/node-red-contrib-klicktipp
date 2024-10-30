@@ -1,6 +1,6 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-tag">
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-user"></i> <span>KlickTipp Config</span></label>
+	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
@@ -92,9 +92,12 @@
 		},
 		labelStyle: "klicktipp_label_style",
 		paletteLabel: 'Subscriber tag',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function() {
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, `/klicktipp/tags/${this.id}`);
+			ktPopulateDropdown(tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},
 		oneditsave: function() {
