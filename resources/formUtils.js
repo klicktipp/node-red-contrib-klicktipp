@@ -106,18 +106,6 @@ function ktGetErrorMessage(jqXHR) {
 }
 
 /**
- * Pre-selects the given item(s) in the dropdown.
- *
- * @param {object} $dropdown - The jQuery-wrapped dropdown element.
- * @param {(string|string[])} selectedItemId - The ID or array of IDs to select.
- */
-function ktPreselectItems($dropdown, selectedItemId) {
-	if (selectedItemId) {
-		$dropdown.val(Array.isArray(selectedItemId) ? selectedItemId : [selectedItemId]);
-	}
-}
-
-/**
  * Populates a dropdown with items fetched from a given action URL.
  *
  * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
@@ -134,12 +122,7 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 	
 	// Always reinsert the placeholder option at the top
 	$dropdown.empty().append(
-		$('<option>', {
-			value: '',
-			text: 'Select an option',
-			disabled: false,
-			selected: !selectedItemId // Select by default if no item is pre-selected
-		})
+		new Option('Select an option', '', !selectedItemId)
 	);
 	
 	$.ajax({
@@ -151,22 +134,33 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 			dataType: 'json'
 		})
 		.done((items) => {
+			let itemExists = false;
+			
 			if (ktIsObject(items)) {
 				$.each(items, (id, name) => {
 					const optionLabel = ktGetOptionLabel(name, actionUrl);
-					$dropdown.append($('<option>', { value: id, text: optionLabel }));
+					$dropdown.append(new Option(optionLabel, id));
 				});
+					
+				// Check if selectedItemId is an array
+				if (Array.isArray(selectedItemId)) {
+					// If selectedItemId is an array, check if each ID exists in items
+					itemExists = selectedItemId.some(id => items[id] !== undefined);
+				} else {
+					// If selectedItemId is a single ID, check if it exists in items
+					itemExists = items[selectedItemId] !== undefined;
+				}
 				
-				ktPreselectItems($dropdown, selectedItemId);
+				// Set the dropdown value based on selectedItemId; fallback to placeholder if not found
+				$dropdown.val(itemExists ? selectedItemId : '');
 			} else {
-				// Display an error message option if no valid items are found
-				$dropdown.append($('<option>', { value: '', text: 'Error: No valid items found', disabled: true }));
+				$dropdown.append(new Option('Error: No valid items found', '', true, true));
 			}
 		})
 		.fail((jqXHR) => {
 			const errorMessage = `Error: ${ktGetErrorMessage(jqXHR)}`;
 			console.error('Error:', errorMessage);
-			$dropdown.append($('<option>', { value: '', text: errorMessage, disabled: true }));
+			$dropdown.append(new Option(errorMessage, '', true, true));
 		})
 		.always(() => {
 			$spinner.hide();
