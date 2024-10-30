@@ -122,7 +122,7 @@ function ktPreselectItems($dropdown, selectedItemId) {
  *
  * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
  * @param {(string|string[])} selectedItemId - The ID or array of IDs of the current item(s) to pre-select in the dropdown.
- * @param {string} configId
+ * @param {string} configId - The KlicTipp config ID.
  * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
 function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
@@ -179,9 +179,10 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
  *
  * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} [defaultValues={}] - Default values for the fields to pre-fill, where the keys are field IDs and values are the corresponding default values.
- * @param {string} action - The URL to fetch the contact field data in JSON format.
+ * @param {string} configId - The KlicTipp config ID.
+ * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
-function ktPopulateContactFields($container, defaultValues = {}, action) {
+function ktPopulateContactFields($container, defaultValues = {}, configId, actionUrl) {
 	const $spinner = ktCreateSpinner();
 	$container.before($spinner);
 	$spinner.show();
@@ -190,7 +191,14 @@ function ktPopulateContactFields($container, defaultValues = {}, action) {
 	// Clear previous error messages
 	$container.siblings('.kt-error-message').remove();
 	
-	$.getJSON(action)
+	$.ajax({
+			url: actionUrl,
+			method: 'GET',
+			headers: {
+				'config-id': configId
+			},
+			dataType: 'json'
+		})
 		.done((items) => {
 			$container.empty();
 			
@@ -479,9 +487,10 @@ function ktInitializeTypedInput(
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
  * @param {object} input - The input element triggering the change event.
  * @param {string} action - The action endpoint used to populate the contact fields.
- * @param fieldsData
+ * @param {object} fieldsData
+ * @param {string} configId - The KlicTipp config ID.
  */
-function ktHandleContactFieldsDisplay($container, input, action, fieldsData) {
+function ktHandleContactFieldsDisplay($container, input, action, fieldsData, configId) {
 	$(input).on("change", (event, type) => {
 		// Remove previous error messages
 		$container.siblings('.kt-error-message').remove();
@@ -489,7 +498,7 @@ function ktHandleContactFieldsDisplay($container, input, action, fieldsData) {
 		if (type === KT_CONTACT_FIELDS_API_TYPE) {
 			// Show and populate the contact fields section if 'fieldsFromApi' is selected
 			$container.show();
-			ktPopulateContactFields($container, fieldsData, `/klicktipp/contact-fields/${action}`);
+			ktPopulateContactFields($container, fieldsData, configId, `/klicktipp/contact-fields/${action}`);
 		} else {
 			// Hide the contact fields section for other input types
 			$container.hide();
