@@ -16,34 +16,29 @@ const makeRequest = require('./makeRequest');
  *
  */
 async function fetchKlickTippData(username, password, endpoint) {
-	// try {
-		// Login to KlickTipp API
-		const loginResponse = await makeRequest('/account/login', 'POST', {
-			username,
-			password,
-		});
+	// Login to KlickTipp API
+	const loginResponse = await makeRequest('/account/login', 'POST', {
+		username,
+		password,
+	});
 
-		if (!loginResponse.data?.sessid || !loginResponse.data?.session_name) {
-			console.log('Login failed');
-			return;
-		}
+	if (!loginResponse.data?.sessid || !loginResponse.data?.session_name) {
+		console.log('Login failed');
+		return;
+	}
 
-		const sessionData = {
-			sessionId: loginResponse.data.sessid,
-			sessionName: loginResponse.data.session_name,
-		};
+	const sessionData = {
+		sessionId: loginResponse.data.sessid,
+		sessionName: loginResponse.data.session_name,
+	};
 
-		// Fetch data from the specified endpoint
-		const response = await makeRequest(endpoint, 'GET', {}, sessionData);
+	// Fetch data from the specified endpoint
+	const response = await makeRequest(endpoint, 'GET', {}, sessionData);
 
-		// Logout from KlickTipp API
-		await makeRequest('/account/logout', 'POST', {}, sessionData);
+	// Logout from KlickTipp API
+	await makeRequest('/account/logout', 'POST', {}, sessionData);
 
-		return response.data; // Return the fetched data
-	// } catch (error) {
-	// 	console.error(`Failed to fetch data from ${endpoint}`, error);
-	// 	return error;
-	// }
+	return response.data; // Return the fetched data
 }
 
 module.exports = fetchKlickTippData;
