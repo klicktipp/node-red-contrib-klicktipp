@@ -26,7 +26,7 @@ function createCachedApiEndpoint(RED, options) {
 			
 			const credentials = RED.nodes.getCredentials(configId);
 			if (!credentials || !credentials.username || !credentials.password) {
-				return res.status(400).json({ error: 'KlickTipp credentials are missing' });
+				return res.status(400).json({ error: `Credentials missing for config ID: ${configId}` });
 			}
 			
 			const { username, password } = credentials;
