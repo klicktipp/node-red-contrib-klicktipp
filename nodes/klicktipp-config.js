@@ -31,7 +31,6 @@ module.exports = function (RED) {
 		});
 	};
 	
-	// Register each endpoint with caching
 	// Register each endpoint with caching, using centralized cache keys
 	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag', CACHE_KEYS.TAGS);
 	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field', CACHE_KEYS.FIELDS);
