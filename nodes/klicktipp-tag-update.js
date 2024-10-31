@@ -6,7 +6,7 @@ const makeRequest = require('./utils/makeRequest');
 const clearCache = require('./utils/cache/clearCache');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
-const CACHE_KEYS = require("./utils/cache/cacheKeys");
+const CACHE_KEYS = require('./utils/cache/cacheKeys');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -82,7 +82,7 @@ module.exports = function (RED) {
 	function KlickTippTagUpdateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 

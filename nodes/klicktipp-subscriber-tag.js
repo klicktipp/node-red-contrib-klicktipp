@@ -18,11 +18,11 @@ module.exports = function (RED) {
 			return node.send(msg);
 		}
 		// Ensure tagIds is an array, even if a single value, and convert all to numbers
-		tagIds = (Array.isArray(tagIds) ? tagIds : [tagIds]).map(tagId => Number(tagId));
-		
+		tagIds = (Array.isArray(tagIds) ? tagIds : [tagIds]).map((tagId) => Number(tagId));
+
 		// Remove any invalid or NaN entries
-		tagIds = tagIds.filter(tagId => !isNaN(tagId));
-		
+		tagIds = tagIds.filter((tagId) => !isNaN(tagId));
+
 		// Validate that we have valid tag IDs to proceed
 		if (tagIds.length === 0) {
 			handleError(node, msg, 'Missing or invalid tag IDs', 'Invalid input');
@@ -81,7 +81,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberTagNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 

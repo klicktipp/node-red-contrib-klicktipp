@@ -61,7 +61,7 @@ module.exports = function (RED) {
 	function KlickTippSubscriberTaggedNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		
+
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
