@@ -11,8 +11,9 @@
   "license": "MIT",
   "homepage": "https://github.com/klicktipp/node-red-contrib-klicktipp#readme",
   "author": {
-    "name": "KlickTipp Inc",
-    "email": "awesome-klicktipp-email@klicktipp.com"
+    "name": "KlickTipp Team",
+    "email": "github@team.klicktipp.com",
+    "url": "https://www.klicktipp.com/"
   },
   "repository": {
     "type": "git",
