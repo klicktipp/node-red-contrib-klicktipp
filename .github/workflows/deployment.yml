@@ -6,11 +6,9 @@ on:
       - "*"
 jobs:
   publish:
+    name: Publish to npm
     runs-on: ubuntu-latest
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
