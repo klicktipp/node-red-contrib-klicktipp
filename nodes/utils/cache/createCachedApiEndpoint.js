@@ -27,19 +27,21 @@ function createCachedApiEndpoint(RED, options) {
 
 			const credentials = RED.nodes.getCredentials(configId);
 			if (!credentials || !credentials.username || !credentials.password) {
-				return res.status(400).json({ error: `Credentials missing for config ID: ${configId}` });
+				return res.status(400).json({ error: `Credentials are missing` });
 			}
+			
+			const fullCacheKey = `${configId}_${cacheKey}`
 
 			const { username, password } = credentials;
 
-			const cachedData = cache.get(cacheKey);
+			const cachedData = cache.get(fullCacheKey);
 			if (cachedData) {
 				console.log('Serving data from cache');
 				return res.json(cachedData);
 			}
 
 			const data = await options.fetchFunction(username, password);
-			cache.set(cacheKey, data);
+			cache.set(fullCacheKey, data);
 
 			res.json(data);
 		} catch (error) {

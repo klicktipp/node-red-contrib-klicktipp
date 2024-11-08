@@ -96,8 +96,9 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
-			ktPopulateDropdown(tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},
 		oneditsave: function() {

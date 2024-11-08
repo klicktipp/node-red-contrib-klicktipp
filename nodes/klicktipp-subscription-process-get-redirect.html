@@ -95,8 +95,9 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
 			const listIdDropdown = $('#node-input-listId');
-			ktPopulateDropdown(listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-process/${this.id}`);
+			ktBindDropdownToInput(klicktippInput, listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
 		},
 		// When the node editor is saved, capture the selected tagId

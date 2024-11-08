@@ -110,7 +110,7 @@ function ktGetErrorMessage(jqXHR) {
  *
  * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
  * @param {(string|string[])} selectedItemId - The ID or array of IDs of the current item(s) to pre-select in the dropdown.
- * @param {string} configId - The KlicTipp config ID.
+ * @param {string} configId - The KlickTipp config ID.
  * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
 function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
@@ -141,7 +141,7 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 					const optionLabel = ktGetOptionLabel(name, actionUrl);
 					$dropdown.append(new Option(optionLabel, id));
 				});
-					
+				
 				// Check if selectedItemId is an array
 				if (Array.isArray(selectedItemId)) {
 					// If selectedItemId is an array, check if each ID exists in items
@@ -560,4 +560,29 @@ function ktPopulateConfig(node) {
 	if (configs.length > 0) {
 		node.klicktipp = configs[0].id; // Set the first one from the sorted array
 	}
+}
+
+/**
+ * Binds a dropdown to an input field, populating the dropdown with items from an action URL whenever the input changes.
+ *
+ * @param {object} $input - The jQuery-wrapped input element to watch for changes.
+ * @param {object} $dropdown - The jQuery-wrapped dropdown element to populate.
+ * @param {string} selectedItemId - The ID of the current item to pre-select in the dropdown.
+ * @param {string} configId - The KlickTipp config ID to be used in the header.
+ * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
+ */
+function ktBindDropdownToInput($input, $dropdown, selectedItemId, configId, actionUrl) {
+	let lastValue = $input.val();
+	ktPopulateDropdown($dropdown, selectedItemId, lastValue, actionUrl);
+	
+	// Event listener for input changes
+	$input.on('change', () => {
+		const newValue = $input.val();
+		if (newValue !== lastValue) {
+			lastValue = newValue;
+			
+			// Populate the dropdown based on the new input value
+			ktPopulateDropdown($dropdown, selectedItemId, newValue, actionUrl);
+		}
+	});
 }

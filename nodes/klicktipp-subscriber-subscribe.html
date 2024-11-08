@@ -141,6 +141,7 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
 			this.tagDropdown = $('#node-input-tagId');
 			this.listIdDropdown = $('#node-input-listId');
 			this.contactListContainer = $('#contact-fields-section');
@@ -150,8 +151,8 @@
 			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			ktPopulateDropdown(this.tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
-			ktPopulateDropdown(this.listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
+			ktBindDropdownToInput(klicktippInput, this.tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			ktBindDropdownToInput(klicktippInput, this.listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
 			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData, this.klicktipp);
 		},
 		oneditsave: function() {
