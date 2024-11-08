@@ -173,7 +173,7 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
  *
  * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} [defaultValues={}] - Default values for the fields to pre-fill, where the keys are field IDs and values are the corresponding default values.
- * @param {string} configId - The KlicTipp config ID.
+ * @param {string} configId - The KlickTipp config ID.
  * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
 function ktPopulateContactFields($container, defaultValues = {}, configId, actionUrl) {
@@ -182,7 +182,8 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 	$spinner.show();
 	$container.hide();
 	
-	// Clear previous error messages
+	// Clear previous content and error messages
+	$container.empty();
 	$container.siblings('.kt-error-message').remove();
 	
 	$.ajax({
@@ -194,8 +195,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 			dataType: 'json'
 		})
 		.done((items) => {
-			$container.empty();
-			
+			// Clear fields on each request to avoid duplicates
 			const standardFields = {};
 			const customFields = {};
 			
@@ -219,6 +219,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 			const errorMessage = ktGetErrorMessage(jqXHR);
 			console.error('Error:', errorMessage);
 			ktShowError($container, `Error: ${errorMessage}`);
+			$container.show();
 		})
 		.always(() => {
 			$spinner.hide();
@@ -476,27 +477,50 @@ function ktInitializeTypedInput(
 
 /**
  * Handles the visibility and population of the contact fields section
- * based on the selected input type.
+ * based on the selected input type and config ID changes.
  *
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
  * @param {object} input - The input element triggering the change event.
+ * @param {object} configInput - The input element where the config ID can be selected.
  * @param {string} action - The action endpoint used to populate the contact fields.
- * @param {object} fieldsData
- * @param {string} configId - The KlicTipp config ID.
+ * @param {object} fieldsData - The data for contact fields.
+ * @param {function} [callback] - Optional callback function to execute after fields are updated.
  */
-function ktHandleContactFieldsDisplay($container, input, action, fieldsData, configId) {
-	$(input).on("change", (event, type) => {
+function ktHandleContactFieldsDisplay($container, input, configInput, action, fieldsData, callback) {
+	const ERROR_MSG_CLASS = 'kt-error-message';
+	const API_ENDPOINT = `/klicktipp/contact-fields/${action}`;
+	
+	// Helper to handle the contact field update logic
+	function updateContactFieldsDisplay(type, configId) {
 		// Remove previous error messages
-		$container.siblings('.kt-error-message').remove();
+		$container.siblings(`.${ERROR_MSG_CLASS}`).remove();
+		
+		// Validate the container and type before proceeding
+		if (!$container || !type || !configId) {
+			console.warn("Invalid container, type, or configId.");
+			return;
+		}
 		
 		if (type === KT_CONTACT_FIELDS_API_TYPE) {
 			// Show and populate the contact fields section if 'fieldsFromApi' is selected
 			$container.show();
-			ktPopulateContactFields($container, fieldsData, configId, `/klicktipp/contact-fields/${action}`);
+			ktPopulateContactFields($container, fieldsData, configId, API_ENDPOINT);
 		} else {
 			// Hide the contact fields section for other input types
 			$container.hide();
 		}
+		
+		// Execute optional callback, if provided
+		if (typeof callback === 'function') {
+			callback(type, configId);
+		}
+	}
+	
+	// Bind change events to input and configInput, updating display as needed
+	$(input).add(configInput).on("change", () => {
+		const fieldsType = $('#node-input-fieldsType').val();
+		const configId = $(configInput).val();
+		updateContactFieldsDisplay(fieldsType, configId);
 	});
 }
 

@@ -128,6 +128,7 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
 			this.contactListContainer = $('#contact-fields-section');
 			const fieldsInput = $("#node-input-fields");
 
@@ -136,7 +137,7 @@
 			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
-			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData, this.klicktipp);
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, klicktippInput, this.id, this.fieldsData);
 		},
 		oneditsave: function() {
 			// Collect all field from API vales and store them in this.fieldsData

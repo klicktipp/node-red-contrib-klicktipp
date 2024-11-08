@@ -153,7 +153,7 @@
 
 			ktBindDropdownToInput(klicktippInput, this.tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 			ktBindDropdownToInput(klicktippInput, this.listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
-			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, this.id, this.fieldsData, this.klicktipp);
+			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, klicktippInput, this.id, this.fieldsData);
 		},
 		oneditsave: function() {
 			// Use the previously set common variables
