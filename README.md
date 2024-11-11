@@ -2,8 +2,12 @@
 
 ## KlickTipp API Integration Nodes for Node-RED
 
+What is the KlickTipp Marketing Suite?
+
+<a href="https://www.klicktipp.com/de?source=nodered" title="E-Mail-Marketing" target="_blank" rel="noopener noreferrer">KlickTipp Marketing Suite</a> is a digital marketing platform that empowers creators and small businesses to generate leads and turn them into passionate customers. It boosts growth with GDPR-compliant tools for email and SMS marketing, marketing automation, landing pages, and conversion rate optimization.
+
 This package provides a set of nodes for interacting with the KlickTipp API, allowing you to manage subscribers, tags, subscription processes, and more directly from Node-RED.
-For more detailed information on the KlickTipp API, including available functions for managing subscribers, tags, fields, and more, please refer to the [official KlickTipp API client documentation](https://www.klicktipp.com/de/support/wissensdatenbank/application-programming-interface-api/).
+For more detailed information on the KlickTipp API, including available functions for managing subscribers, tags, fields, and more, please refer to the <a href="https://www.klicktipp.com/de/support/wissensdatenbank/application-programming-interface-api?source=nodered" target="_blank" rel="noopener" title="E-Mail-Marketing API">official KlickTipp API client documentation</a>.
 
 ---
 
