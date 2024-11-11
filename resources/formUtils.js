@@ -610,3 +610,48 @@ function ktBindDropdownToInput($input, $dropdown, selectedItemId, configId, acti
 		}
 	});
 }
+
+// Helper function to show/hide and populate the contact fields section
+function ktToggleContactFieldsSection(show, contactFieldsSection, fieldsData, klicktippInput, nodeId) {
+	contactFieldsSection.toggle(show);
+	if (show) {
+		ktPopulateContactFields(contactFieldsSection, fieldsData, klicktippInput.val(), `/klicktipp/contact-fields/${nodeId}`);
+	}
+}
+
+// Function to initialize the contact fields section toggle and population logic
+function ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, klicktippInput, fieldsData, nodeId) {
+	// Event listener for fields input changes
+	fieldsInput.on('change', (event, type) => {
+		// Remove any previous error messages
+		contactFieldsSection.siblings('.kt-error-message').remove();
+		
+		// Toggle and populate the contact fields section based on input type
+		ktToggleContactFieldsSection(type === 'fieldsFromApi', contactFieldsSection, fieldsData, klicktippInput, nodeId);
+	});
+}
+
+// Function to initialize a select input with user change detection
+function ktInitializeUserSelectHandler(klicktippInput, fieldsType, contactFieldsSection, fieldsData, nodeId) {
+	let userChangedSelect = false;
+	
+	// Set the flag for user interaction on mousedown
+	klicktippInput.on('mousedown', () => {
+		userChangedSelect = true;
+	});
+	
+	// Handle select changes with differentiation for user vs. programmatic
+	klicktippInput.on('change', () => {
+		if (!userChangedSelect) {
+			// Ignore programmatic changes
+			console.log('Programmatic change detected');
+			return;
+		}
+		
+		// Reset the flag after handling the user change
+		userChangedSelect = false;
+		
+		// Toggle the contact fields section if the fieldsType is 'fieldsFromApi'
+		ktToggleContactFieldsSection(fieldsType === 'fieldsFromApi', contactFieldsSection, fieldsData, klicktippInput, nodeId);
+	});
+}

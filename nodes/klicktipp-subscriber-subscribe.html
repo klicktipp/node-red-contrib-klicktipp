@@ -142,18 +142,27 @@
 		},
 		oneditprepare: function() {
 			const klicktippInput = $('#node-input-klicktipp');
+			const fieldsInput = $('#node-input-fields');
+			const contactFieldsSection = $('#contact-fields-section');
+			const fieldsType = $('#node-input-fieldsType').val();
+
 			this.tagDropdown = $('#node-input-tagId');
 			this.listIdDropdown = $('#node-input-listId');
-			this.contactListContainer = $('#contact-fields-section');
-			const fieldsInput = $("#node-input-fields");
 
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+			// Initialize typed inputs
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-smsNumber', '#node-input-smsNumberType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
 
+			// Bind dropdowns for tags and lists
 			ktBindDropdownToInput(klicktippInput, this.tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 			ktBindDropdownToInput(klicktippInput, this.listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
-			ktHandleContactFieldsDisplay(this.contactListContainer, fieldsInput, klicktippInput, this.id, this.fieldsData);
+
+			// Initialize the contact fields section logic
+			ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, klicktippInput, this.fieldsData, this.id);
+
+			// Initialize the select handler with user change detection
+			ktInitializeUserSelectHandler(klicktippInput, fieldsType, contactFieldsSection, this.fieldsData, this.id)
 		},
 		oneditsave: function() {
 			// Use the previously set common variables
