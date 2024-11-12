@@ -4,7 +4,7 @@
 - **Initial Release**:
   - Launched the node with core functionality, supporting essential operations and configurations.
 
-## Version 1.0.1 (2024-11-11)
+## Version 1.0.1 (2024-11-12)
 - **Improvements**:
   - Improved UI components.
 - **Fixes**:
