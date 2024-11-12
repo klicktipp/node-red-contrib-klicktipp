@@ -143,11 +143,10 @@
 		oneditprepare: function() {
 			const klicktippInput = $('#node-input-klicktipp');
 			const fieldsInput = $('#node-input-fields');
-			const contactFieldsSection = $('#contact-fields-section');
-			const fieldsType = $('#node-input-fieldsType').val();
 
 			this.tagDropdown = $('#node-input-tagId');
 			this.listIdDropdown = $('#node-input-listId');
+			this.contactFieldsSection = $('#contact-fields-section');
 
 			// Initialize typed inputs
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
@@ -159,10 +158,11 @@
 			ktBindDropdownToInput(klicktippInput, this.listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
 
 			// Initialize the contact fields section logic
-			ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, klicktippInput, this.fieldsData, this.id);
+			ktInitializeContactFieldsSection(fieldsInput, this.contactFieldsSection, klicktippInput, this.fieldsData, this.id);
 
 			// Initialize the select handler with user change detection
-			ktInitializeUserSelectHandler(klicktippInput, fieldsType, contactFieldsSection, this.fieldsData, this.id)
+			ktInitializeUserSelectHandler(klicktippInput, '#node-input-fieldsType', this.contactFieldsSection, this.fieldsData, this.id);
+
 		},
 		oneditsave: function() {
 			// Use the previously set common variables
@@ -170,7 +170,7 @@
 			this.listId = Number(this.listIdDropdown.val()); // Save the selected listId
 
 			// Collect all field from API vales and store them in this.fieldsData
-			this.fieldsData = ktSaveContactFieldValues(this.contactListContainer);
+			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		}
 	});
 </script>

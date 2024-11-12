@@ -476,55 +476,6 @@ function ktInitializeTypedInput(
 }
 
 /**
- * Handles the visibility and population of the contact fields section
- * based on the selected input type and config ID changes.
- *
- * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
- * @param {object} input - The input element triggering the change event.
- * @param {object} configInput - The input element where the config ID can be selected.
- * @param {string} action - The action endpoint used to populate the contact fields.
- * @param {object} fieldsData - The data for contact fields.
- * @param {function} [callback] - Optional callback function to execute after fields are updated.
- */
-function ktHandleContactFieldsDisplay($container, input, configInput, action, fieldsData, callback) {
-	const ERROR_MSG_CLASS = 'kt-error-message';
-	const API_ENDPOINT = `/klicktipp/contact-fields/${action}`;
-	
-	// Helper to handle the contact field update logic
-	function updateContactFieldsDisplay(type, configId) {
-		// Remove previous error messages
-		$container.siblings(`.${ERROR_MSG_CLASS}`).remove();
-		
-		// Validate the container and type before proceeding
-		if (!$container || !type || !configId) {
-			console.warn("Invalid container, type, or configId.");
-			return;
-		}
-		
-		if (type === KT_CONTACT_FIELDS_API_TYPE) {
-			// Show and populate the contact fields section if 'fieldsFromApi' is selected
-			$container.show();
-			ktPopulateContactFields($container, fieldsData, configId, API_ENDPOINT);
-		} else {
-			// Hide the contact fields section for other input types
-			$container.hide();
-		}
-		
-		// Execute optional callback, if provided
-		if (typeof callback === 'function') {
-			callback(type, configId);
-		}
-	}
-	
-	// Bind change events to input and configInput, updating display as needed
-	$(input).add(configInput).on("change", () => {
-		const fieldsType = $('#node-input-fieldsType').val();
-		const configId = $(configInput).val();
-		updateContactFieldsDisplay(fieldsType, configId);
-	});
-}
-
-/**
  * Collects all field values from the provided container and stores them in the fields object.
  *
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
@@ -611,15 +562,33 @@ function ktBindDropdownToInput($input, $dropdown, selectedItemId, configId, acti
 	});
 }
 
-// Helper function to show/hide and populate the contact fields section
+/**
+ * Toggles visibility of the contact fields section and populates it if visible.
+ *
+ * @param {boolean} show - Whether to show the contact fields section.
+ * @param {Object} contactFieldsSection - jQuery object representing the contact fields section.
+ * @param {Object} fieldsData - Data for contact fields to populate the section.
+ * @param {Object} klicktippInput - jQuery object representing the input field related to KlickTipp.
+ * @param {string} nodeId - Unique identifier for the node to fetch contact fields data.
+ */
 function ktToggleContactFieldsSection(show, contactFieldsSection, fieldsData, klicktippInput, nodeId) {
-	contactFieldsSection.toggle(show);
 	if (show) {
+		contactFieldsSection.show();
 		ktPopulateContactFields(contactFieldsSection, fieldsData, klicktippInput.val(), `/klicktipp/contact-fields/${nodeId}`);
+	} else {
+		contactFieldsSection.hide();
 	}
 }
 
-// Function to initialize the contact fields section toggle and population logic
+/**
+ * Initializes the logic for toggling and populating the contact fields section based on the input changes.
+ *
+ * @param {Object} fieldsInput - jQuery object for the fields input to detect changes.
+ * @param {Object} contactFieldsSection - jQuery object representing the contact fields section.
+ * @param {Object} klicktippInput - jQuery object representing the input field related to KlickTipp.
+ * @param {Object} fieldsData - Data for contact fields to populate the section.
+ * @param {string} nodeId - Unique identifier for the node to fetch contact fields data.
+ */
 function ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, klicktippInput, fieldsData, nodeId) {
 	// Event listener for fields input changes
 	fieldsInput.on('change', (event, type) => {
@@ -627,12 +596,26 @@ function ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, kli
 		contactFieldsSection.siblings('.kt-error-message').remove();
 		
 		// Toggle and populate the contact fields section based on input type
-		ktToggleContactFieldsSection(type === 'fieldsFromApi', contactFieldsSection, fieldsData, klicktippInput, nodeId);
+		ktToggleContactFieldsSection(
+			type === KT_CONTACT_FIELDS_API_TYPE,
+			contactFieldsSection,
+			fieldsData,
+			klicktippInput,
+			nodeId
+		);
 	});
 }
 
-// Function to initialize a select input with user change detection
-function ktInitializeUserSelectHandler(klicktippInput, fieldsType, contactFieldsSection, fieldsData, nodeId) {
+/**
+ * Initializes a select input with detection for user-triggered changes and updates the contact fields section accordingly.
+ *
+ * @param {Object} klicktippInput - jQuery object for the KlickTipp select input to monitor for user changes.
+ * @param {string} fieldsTypeSelector - Selector for the field type input to determine the current selection type.
+ * @param {Object} contactFieldsSection - jQuery object representing the contact fields section.
+ * @param {Object} fieldsData - Data for contact fields to populate the section.
+ * @param {string} nodeId - Unique identifier for the node to fetch contact fields data.
+ */
+function ktInitializeUserSelectHandler(klicktippInput, fieldsTypeSelector, contactFieldsSection, fieldsData, nodeId) {
 	let userChangedSelect = false;
 	
 	// Set the flag for user interaction on mousedown
@@ -642,16 +625,24 @@ function ktInitializeUserSelectHandler(klicktippInput, fieldsType, contactFields
 	
 	// Handle select changes with differentiation for user vs. programmatic
 	klicktippInput.on('change', () => {
+		// Dynamically fetch the current fieldsType value from the DOM
+		const currentFieldsType = $(fieldsTypeSelector).val();
+		
 		if (!userChangedSelect) {
 			// Ignore programmatic changes
-			console.log('Programmatic change detected');
 			return;
 		}
 		
 		// Reset the flag after handling the user change
 		userChangedSelect = false;
 		
-		// Toggle the contact fields section if the fieldsType is 'fieldsFromApi'
-		ktToggleContactFieldsSection(fieldsType === 'fieldsFromApi', contactFieldsSection, fieldsData, klicktippInput, nodeId);
+		// Toggle the contact fields section if the current fieldsType is 'fieldsFromApi'
+		ktToggleContactFieldsSection(
+			currentFieldsType === KT_CONTACT_FIELDS_API_TYPE,
+			contactFieldsSection,
+			fieldsData,
+			klicktippInput,
+			nodeId
+		);
 	});
 }
