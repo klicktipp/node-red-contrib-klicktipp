@@ -77,7 +77,7 @@
 			},
 			autoresponderId: {
 				value: 'payload.autoresponderId',
-				validate: RED.validators.typedInput('autoresponderType')
+				validate: RED.validators.typedInput('autoresponderIdType')
 			},
 			autoresponderIdType: {
 				value: 'msg'
@@ -99,7 +99,7 @@
 		},
 		oneditprepare: function() {
 			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderTypeId", 'num', ['num']);
+			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderIdType", 'num', ['num']);
 		},
 	});
 </script>
