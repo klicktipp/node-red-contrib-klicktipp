@@ -4,6 +4,7 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const objectToIdValueArray = require('./utils/objectToIdValueArray');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -17,7 +18,8 @@ module.exports = function (RED) {
 				'Fetched opt-in processes',
 				'Failed to fetch opt-in processes',
 				(response) => {
-					msg.payload = response.data;
+					const transformedData = objectToIdValueArray(response.data);
+					msg.payload = transformedData;
 				},
 			);
 		} catch (error) {

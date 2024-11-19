@@ -14,8 +14,8 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tagged">
-	<p>Returns an associative array <code>[subscriber_id] => [subscription_timestamp]</code> of subscribers
-	who have been tagged with a specific tag. Use the <code>Subscriber get</code> node to retrieve detailed information about a subscriber.</p>
+	<p>Returns an associative array in the format <code>{ subscriber_id: subscription_timestamp }</code>, where each key represents the unique ID of a tagged subscriber,
+	and the value is the timestamp when the subscription occurred. Use the <code>Subscriber Get</code> node to retrieve detailed information about a subscriber.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">

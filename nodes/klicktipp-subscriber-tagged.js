@@ -4,10 +4,12 @@ const handleResponse = require('./utils/handleResponse');
 const handleError = require('./utils/handleError');
 const makeRequest = require('./utils/makeRequest');
 const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
+const objectToIdValueArray = require('./utils/objectToIdValueArray');
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
+		const node = this;
 		const tagId = config.tagId || msg?.payload?.tagId;
 
 		if (!tagId) {
@@ -30,7 +32,14 @@ module.exports = function (RED) {
 				'Subscribers tagged retrieved',
 				'Failed to retrieve tagged subscribers',
 				(response) => {
-					msg.payload = response.data;
+					const transformedData = objectToIdValueArray(response.data);
+
+					const formattedData = transformedData.map(({ id, value }) => ({
+						id,
+						timestamp: value,
+					}));
+
+					msg.payload = formattedData;
 				},
 			);
 		} catch (error) {

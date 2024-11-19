@@ -47,8 +47,8 @@ module.exports = function (RED) {
 				response,
 				'Email tagged successfully',
 				'Failed to tag email',
-				(response) => {
-					msg.payload = response.data;
+				() => {
+					msg.payload = { success: true };
 				},
 			);
 		} catch (error) {

@@ -39,7 +39,11 @@ module.exports = function (RED) {
 			const response = await makeRequest('/tag', 'POST', qs.stringify(data), msg.sessionData);
 
 			handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
-				msg.payload = response.data;
+				const enhancedData = {
+					id: response?.data?.[0] || null,
+				};
+
+				msg.payload = enhancedData;
 
 				// Clear the cache after a successful delete
 				clearCache(CACHE_KEYS.TAGS);

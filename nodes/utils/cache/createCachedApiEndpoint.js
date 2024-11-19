@@ -30,7 +30,7 @@ function createCachedApiEndpoint(RED, options) {
 				return res.status(400).json({ error: `Credentials are missing` });
 			}
 			
-			const fullCacheKey = `${configId}_${cacheKey}`
+			const fullCacheKey = `${configId}_${cacheKey}`;
 
 			const { username, password } = credentials;
 

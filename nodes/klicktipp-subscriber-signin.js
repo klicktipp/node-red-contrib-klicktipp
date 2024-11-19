@@ -71,7 +71,11 @@ module.exports = function (RED) {
 					'Subscription successful',
 					'Failed to subscribe',
 					(response) => {
-						msg.payload = response.data;
+						const enhancedData = {
+							confirmationPageUrl: response?.data?.[0] || null,
+						};
+
+						msg.payload = enhancedData;
 					},
 				);
 			} catch (error) {

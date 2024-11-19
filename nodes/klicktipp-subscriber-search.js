@@ -32,7 +32,10 @@ module.exports = function (RED) {
 				'Subscriber ID retrieved',
 				'Failed to search for subscriber',
 				(response) => {
-					msg.payload = response.data;
+					const enhancedData = {
+						id: response?.data?.[0] || null,
+					};
+					msg.payload = enhancedData;
 				},
 			);
 		} catch (error) {

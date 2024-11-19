@@ -44,7 +44,11 @@ module.exports = function (RED) {
 				'Fetched redirection URL',
 				'Failed to fetch redirection URL',
 				(response) => {
-					msg.payload = response.data;
+					const enhancedData = {
+						redirectUrl: response?.data?.[0] || null,
+					};
+
+					msg.payload = enhancedData;
 				},
 			);
 		} catch (error) {
