@@ -7,7 +7,7 @@
  * @param {Object} fields - An object containing additional contact fields.
  * @returns {Object} The prepared subscription data object containing the API key, email, and optionally, SMS number and filtered fields.
  */
-function prepareApiKeySubscriptionData(apiKey, email, smsNumber, fields) {
+function prepareApiKeySubscriptionData(apiKey, email, smsNumber = '', fields = {}) {
 	// Construct the initial data object with required fields
 	const data = {
 		apikey: apiKey,
