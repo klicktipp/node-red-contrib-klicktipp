@@ -7,15 +7,17 @@
  * @returns {Object} The prepared update subscriber data object containing the new email, and optionally, the new SMS number and filtered fields.
  */
 function prepareUpdateSubscriberData(newEmail, newSmsNumber = '', fields = {}) {
-	const data = { newEmail };
+	const data = {
+		newemail: newEmail.trim()
+	};
 
 	// Add optional SMS number if provided
-	if (newSmsNumber) {
-		data.smsnumber = newSmsNumber.trim();
+	if (typeof newSmsNumber === 'string' && newSmsNumber.trim()) {
+		data.newsmsnumber = newSmsNumber.trim();
 	}
 
-	// Add fields only if it's not an empty object
-	if (Object.keys(fields).length > 0) {
+	// Add custom fields if it's an object and not empty
+	if (fields && typeof fields === 'object' && Object.keys(fields).length > 0) {
 		data.fields = fields;
 	}
 

@@ -15,3 +15,8 @@
   - Fixed an issue in the Sign-in and Resend autoresponder nodes.
 - **Improvements**
   - Updated the structure of the returned data across nodes to ensure consistency and better compatibility with downstream integrations.
+
+## Version 1.0.3 (2024-12-10)
+- **Improvements**
+  - Added support for subscriptions with either email or phone number, ensuring better user flexibility.
+  - Resolved an issue with updating subscribers to ensure seamless functionality.

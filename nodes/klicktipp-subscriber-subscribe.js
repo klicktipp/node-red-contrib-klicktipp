@@ -23,9 +23,9 @@ module.exports = function (RED) {
 			node,
 			msg,
 		);
-
-		if (!email) {
-			handleError(node, msg, 'Missing email', 'Invalid input');
+		// Ensure at least one parameter (email or phone number) is provided
+		if (!email && !smsNumber) {
+			handleError(node, msg, 'Missing email or phone number', 'Invalid input');
 			return node.send(msg);
 		}
 

@@ -11,16 +11,16 @@ function prepareApiKeySubscriptionData(apiKey, email, smsNumber = '', fields = {
 	// Construct the initial data object with required fields
 	const data = {
 		apikey: apiKey,
-		email,
+		email: email.trim(),
 	};
 
 	// Add optional SMS number if provided
-	if (smsNumber) {
+	if (typeof smsNumber === 'string' && smsNumber.trim()) {
 		data.smsnumber = smsNumber.trim();
 	}
 
 	// Add fields only if it's not an empty object
-	if (Object.keys(fields).length > 0) {
+	if (fields && typeof fields === 'object' && Object.keys(fields).length > 0) {
 		data.fields = fields;
 	}
 
