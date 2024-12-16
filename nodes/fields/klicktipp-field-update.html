@@ -1,0 +1,162 @@
+<script type="text/x-red" data-template-name="klicktipp-field-update">
+	<div class="form-row">
+        <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+        <input type="text" id="node-input-klicktipp" data-i18n="config node">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fieldId"><i class="fa fa-tag"></i> <span>Field</span></label>
+        <select id="node-input-fieldId"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-fieldName"><i class="fa fa-tags"></i> <span>Name</span></label>
+        <input type="text" id="node-input-fieldName" placeholder="Enter field name (required)">
+        <input type="hidden" id="node-input-fieldNameType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fieldCategory"><i class="fa fa-tags"></i> <span>Category</span></label>
+        <input type="text" id="node-input-fieldCategory" placeholder="Enter category name (optional)">
+        <input type="hidden" id="node-input-fieldCategoryType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fieldDataType"><i class="fa fa-cog"></i> <span>Type</span></label>
+        <input type="text" id="node-input-fieldDataType" placeholder="Enter field type (required)">
+        <input type="hidden" id="node-input-fieldDataTypeType">
+    </div>
+    <div style="display:none;" id="kt-field-type-wrapper" class="form-row">
+        <label for="node-input-fieldDataTypeList"><i class="fa fa-cog"></i> <span>Choose a type</span></label>
+        <select id="node-input-fieldDataTypeList"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-fieldLabel"><i class="fa fa-cog"></i> <span>Labels</span></label>
+        <input type="text" id="node-input-fieldLabel" placeholder="Enter field labels (optional)">
+        <input type="hidden" id="node-input-fieldLabelType">
+    </div>
+    <div style="display:none;" id="kt-field-label-wrapper" class="form-row">
+        <div id="node-input-label"></div>
+        <div style="text-align:end;">
+            <button id="add-field" style="margin-top: 5px;"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+        <input type="text" id="node-input-name" placeholder="Enter node name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp-field-update">
+	<p>Creates a new field.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Expected object with the following properties:
+	        <ul>
+	            <li><code>fieldName</code> - (Required) the name of the field</li>
+	            <li><code>fieldCategory</code> - (Optional) the category of the field</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			On success:
+			<ul>
+				<li>The ID of the newly created field.</li>
+			</ul>
+		</dd>
+		<dd>
+			On failure:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - The field was created successfully.</li>
+	    <li><strong>Red (ring)</strong> - Failed to create the field (e.g., missing field name or API error).</li>
+	</ul>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-field-update', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: { required: true, type: 'klicktipp-config' },
+			fieldId: { value: '' },
+			fieldName: {
+				required: true,
+				value: 'payload.fieldName',
+				validate: RED.validators.typedInput('fieldNameType')
+			},
+			fieldNameType: { value: 'msg' },
+			fieldCategory: {
+				value: 'payload.fieldCategory',
+				validate: RED.validators.typedInput('fieldCategoryType')
+			},
+			fieldCategoryType: { value: 'msg' },
+			fieldLabel: {
+				value: 'payload.fieldLabel',
+				validate: RED.validators.typedInput('fieldLabelType')
+			},
+			fieldLabelType: { value: 'msg' },
+			fieldLabelsData: { value: [] },
+			fieldDataType: {
+				value: 'payload.fieldDataType',
+				validate: function(v) {
+					return (v === '' || v === undefined || RED.validators.typedInput('fieldDataTypeType')(v));
+				}
+			},
+			fieldDataTypeType: {
+				value: 'msg'
+			},
+			fieldDataTypeList: {
+				value: {}
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () { return this.name || 'Field update'; },
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Field update',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-fieldName", "#node-input-fieldNameType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-fieldCategory", "#node-input-fieldCategoryType", 'str', ['str']);
+			ktInitializeTypedInput('#node-input-fieldDataType', '#node-input-fieldDataTypeType', 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPES]);
+			ktInitializeTypedInput('#node-input-fieldLabel', '#node-input-fieldLabelType', 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_LABEL]);
+
+			// Bind fieldId dropdown
+			const klicktippInput = $('#node-input-klicktipp');
+			const fieldsDropdown = $('#node-input-fieldId');
+			const filterDefaultFields = (key, value) => /^field\d+$/.test(key);
+
+			ktBindDropdownToInput(klicktippInput, fieldsDropdown, this.fieldId, this.klicktipp, `/klicktipp/contact-fields/${this.id}`, filterDefaultFields);
+
+			ktSetupFieldLabelsUI(this, '#node-input-fieldLabel', '#kt-field-label-wrapper', '#node-input-label', '#add-field', '.remove-field');
+			ktSetupFieldTypeUI('#node-input-fieldDataType', '#kt-field-type-wrapper', '#node-input-fieldDataTypeList');
+		},
+		oneditsave: function() {
+			this.fieldId = Number($('#node-input-fieldId').val());
+			this.fieldDataTypeList = $('#node-input-fieldDataTypeList').val();
+			this.fieldLabelsData = $("#node-input-label .repeater-item input[name='fieldLabels[]']")
+					.toArray()
+					.map(input => $(input).val().trim())
+					.filter(val => val);
+		}
+	});
+</script>

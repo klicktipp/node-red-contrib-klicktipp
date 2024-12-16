@@ -1,11 +1,11 @@
 'use strict';
 
-const handleResponse = require('./utils/handleResponse');
-const handleError = require('./utils/handleError');
-const makeRequest = require('./utils/makeRequest');
-const prepareApiKeySubscriptionData = require('./utils/transformers/prepareApiKeySubscriptionData');
-const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
-const getContactFields = require('./utils/getContactFields');
+const handleResponse = require('../utils/handleResponse');
+const handleError = require('../utils/handleError');
+const makeRequest = require('../utils/makeRequest');
+const prepareApiKeySubscriptionData = require('../utils/transformers/prepareApiKeySubscriptionData');
+const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const getContactFields = require('../utils/getContactFields');
 const qs = require('qs');
 
 module.exports = function (RED) {

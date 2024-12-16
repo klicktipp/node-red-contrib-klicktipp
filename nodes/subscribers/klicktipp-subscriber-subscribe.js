@@ -1,12 +1,12 @@
 'use strict';
 
-const handleResponse = require('./utils/handleResponse');
-const handleError = require('./utils/handleError');
-const makeRequest = require('./utils/makeRequest');
-const prepareSubscriptionData = require('./utils/transformers/prepareCreateSubscriberData');
-const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require('./utils/evaluatePropertyAsync');
-const getContactFields = require('./utils/getContactFields');
+const handleResponse = require('../utils/handleResponse');
+const handleError = require('../utils/handleError');
+const makeRequest = require('../utils/makeRequest');
+const prepareSubscriptionData = require('../utils/transformers/prepareCreateSubscriberData');
+const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
+const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const getContactFields = require('../utils/getContactFields');
 const qs = require('qs');
 
 module.exports = function (RED) {

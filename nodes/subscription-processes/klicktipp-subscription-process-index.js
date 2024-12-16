@@ -1,10 +1,10 @@
 'use strict';
 
-const handleResponse = require('./utils/handleResponse');
-const handleError = require('./utils/handleError');
-const makeRequest = require('./utils/makeRequest');
-const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const objectToIdValueArray = require('./utils/objectToIdValueArray');
+const handleResponse = require('../utils/handleResponse');
+const handleError = require('../utils/handleError');
+const makeRequest = require('../utils/makeRequest');
+const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
+const objectToIdValueArray = require('../utils/objectToIdValueArray');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {

@@ -1,0 +1,87 @@
+<script type="text/x-red" data-template-name="klicktipp-subscription-process-delete">
+	<div class="form-row">
+	   <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
+        <select id="node-input-listId"></select>
+    </div>
+	<div class="form-row">
+	   <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	   <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="klicktipp-subscription-process-delete">
+	<p>Deletes an opt-in process.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	<dt>msg.payload<span class="property-type">object</span></dt>
+	<dd>
+	   Expected object with the following properties:
+	   <ul>
+		   <li><code>listId</code> - (Required) the ID of a opt-in process</li>
+	   </ul>
+	</dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	<dt>msg.payload <span class="property-type">object</span></dt>
+	<dd>
+	   On success:
+	   <ul>
+		   <li><code>{ success: true }</code></li>
+	   </ul>
+	</dd>
+	<dd>
+	   On failure:
+	   <ul>
+		   <li><code>{ success: false }</code></li>
+	   </ul>
+	</dd>
+
+	<h3>Node Status</h3>
+	<ul>
+	   <li><strong>Green (dot)</strong> - Opt-in processes deleted successfully.</li>
+	   <li><strong>Red (ring)</strong> - Failed to delete opt-in processes due to an error.</li>
+	</ul>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscription-process-delete', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: { type: 'klicktipp-config', required: true },
+			listId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || 'Opt-in process delete';
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: 'Opt\u2013in process delete',
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
+			const listIdDropdown = $('#node-input-listId');
+			ktBindDropdownToInput(klicktippInput, listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
+		},
+		oneditsave: function() {
+			this.listId = Number($('#node-input-listId').val());
+		}
+	});
+</script>
