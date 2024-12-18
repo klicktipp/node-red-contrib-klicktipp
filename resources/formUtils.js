@@ -498,7 +498,7 @@ function ktSaveContactFieldValues($container ) {
 			fields[fieldId] = $element.val().trim(); // Trim whitespace from values
 		}
 	});
-
+	
 	return fields;
 }
 

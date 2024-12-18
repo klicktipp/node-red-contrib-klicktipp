@@ -1,39 +1,40 @@
 'use strict';
 
-const handleResponse = require('./utils/handleResponse');
-const handleError = require('./utils/handleError');
-const makeRequest = require('./utils/makeRequest');
-const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const objectToIdValueArray = require('./utils/objectToIdValueArray');
+const handleResponse = require('../utils/handleResponse');
+const handleError = require('../utils/handleError');
+const makeRequest = require('../utils/makeRequest');
+const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
+const objectToIdValueArray = require('../utils/objectToIdValueArray');
 
 module.exports = function (RED) {
-	const coreFunction = async function (msg, config) {
+	const coreFunction = async function (msg) {
 		try {
-			const response = await makeRequest('/subscriber', 'GET', {}, msg.sessionData);
+			const response = await makeRequest('/field', 'GET', {}, msg.sessionData);
 
 			handleResponse(
 				this,
 				msg,
 				response,
-				'Fetched subscribers successfully',
-				'Failed to fetch subscribers',
+				'Fetched data fields',
+				'Failed to fetch data fields',
 				(response) => {
 					const transformedData = objectToIdValueArray(response.data);
 					msg.payload = transformedData;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch subscribers', error.message);
+			handleError(this, msg, 'Failed to subscribe', error.message);
 		}
 	};
 
 	/**
-	 * KlickTippSubscriberIndexNode - A Node-RED node to retrieve all active subscribers.
+	 * KlickTippFieldIndexNode - A Node-RED node to retrieve all contact fields for the logged-in user.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
+	 *
 	 * Outputs:
-	 * - `msg.payload`: On success, an array of subscriber IDs.
+	 * - `msg.payload`: On success, an array of contact fields.
 	 *   On failure:
 	 *   - `msg.payload`: An object containing `success: false`.
 	 *   - `msg.error`: An error message indicating what went wrong.
@@ -42,11 +43,11 @@ module.exports = function (RED) {
 	 * - If session credentials are missing or invalid, the node outputs `msg.error` and returns `success: false`.
 	 * - If the API request fails, the node outputs `msg.error` and returns `success: false`.
 	 */
-	function KlickTippSubscriberIndexNode(config) {
+	function KlickTippFieldIndexNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
 		createKlickTippSessionNode(RED, node, coreFunction)(config);
 	}
 
-	RED.nodes.registerType('klicktipp-subscriber-index', KlickTippSubscriberIndexNode);
+	RED.nodes.registerType('klicktipp-field-index', KlickTippFieldIndexNode);
 };

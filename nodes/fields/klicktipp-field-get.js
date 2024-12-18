@@ -1,0 +1,72 @@
+'use strict';
+
+const handleResponse = require('../utils/handleResponse');
+const handleError = require('../utils/handleError');
+const makeRequest = require('../utils/makeRequest');
+const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
+
+module.exports = function (RED) {
+	const coreFunction = async function (msg, config) {
+		try {
+			const apiFieldId = config.apiFieldId || msg?.payload?.apiFieldId;
+			
+			if (!apiFieldId) {
+				handleError(this, msg, 'The API field ID is required.', 'Invalid input');
+				return this.send(msg);
+			}
+			
+			//Extract field ID, i.e. CompanyName
+			const fieldId = apiFieldId.replace(/^field/, '');
+			
+			if (!fieldId) {
+				handleError(this, msg, 'No field ID could be extracted from the provided API field ID.', 'Invalid input');
+				return this.send(msg);
+			}
+			
+			const response = await makeRequest(
+				`/field/${encodeURIComponent(fieldId)}`,
+				'GET',
+				{},
+				msg.sessionData,
+			);
+			
+			handleResponse(
+				this,
+				msg,
+				response,
+				'Fetched field definition',
+				'Failed to fetch field data',
+				(response) => {
+					msg.payload = response.data;
+				},
+			);
+		} catch (error) {
+			console.log(error);
+			handleError(this, msg, 'Failed to fetch field data', error.message);
+		}
+	};
+
+	/**
+	 * KlickTippFieldGetNode - A Node-RED node to get the definition of a specific custom field.
+	 * It requires a valid session ID and session name (obtained during login) to perform the request.
+	 *
+	 * @param {object} config - The configuration object passed from Node-RED.
+	 *
+	 * Outputs:
+	 * - `msg.payload`: On success, an object representing the custom field definition.
+	 *   On failure:
+	 *   - `msg.payload`: An object containing `success: false`.
+	 *   - `msg.error`: An error message indicating what went wrong.
+	 *
+	 * Error Handling:
+	 * - If session credentials are missing or invalid, the node outputs `msg.error` and returns `success: false`.
+	 * - If the API request fails, the node outputs `msg.error` and returns `success: false`.
+	 */
+	function KlickTippFieldGetNode(config) {
+		RED.nodes.createNode(this, config);
+		const node = this;
+		createKlickTippSessionNode(RED, node, coreFunction)(config);
+	}
+
+	RED.nodes.registerType('klicktipp-field-get', KlickTippFieldGetNode);
+};

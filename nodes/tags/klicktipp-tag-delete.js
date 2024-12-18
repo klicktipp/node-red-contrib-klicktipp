@@ -1,11 +1,11 @@
 'use strict';
 
-const handleResponse = require('./utils/handleResponse');
-const handleError = require('./utils/handleError');
-const makeRequest = require('./utils/makeRequest');
-const clearCache = require('./utils/cache/clearCache');
-const createKlickTippSessionNode = require('./utils/createKlickTippSessionNode');
-const CACHE_KEYS = require('./utils/cache/cacheKeys');
+const handleResponse = require('../utils/handleResponse');
+const handleError = require('../utils/handleError');
+const makeRequest = require('../utils/makeRequest');
+const clearCache = require('../utils/cache/clearCache');
+const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
+const CACHE_KEYS = require('../utils/cache/cacheKeys');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
