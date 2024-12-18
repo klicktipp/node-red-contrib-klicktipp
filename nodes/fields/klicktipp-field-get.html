@@ -4,8 +4,8 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
     <div class="form-row">
-        <label for="node-input-fieldId"><i class="fa fa-tag"></i> <span>Field</span></label>
-        <select id="node-input-fieldId"></select>
+        <label for="node-input-apiFieldId"><i class="fa fa-tag"></i> <span>Field</span></label>
+        <select id="node-input-apiFieldId"></select>
     </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
@@ -22,7 +22,7 @@
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-	            <li><code>fieldId</code> - (Required) the ID of the field</li>
+	            <li><code>apiFieldId</code> - (Required) The API ID of the field.</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -63,7 +63,7 @@
 				type: 'klicktipp-config',
 				required: true
 			},
-			fieldId: {
+			apiFieldId: {
 				value: '',
 			},
 			name: {
@@ -83,11 +83,11 @@
 		},
 		oneditprepare: function() {
 			const klicktippInput = $('#node-input-klicktipp');
-			const fieldDropdown = $('#node-input-fieldId');
-			ktBindDropdownToInput(klicktippInput, fieldDropdown, this.fieldId, this.klicktipp, `/klicktipp/contact-fields/${this.id}`);
+			const fieldDropdown = $('#node-input-apiFieldId');
+			ktBindDropdownToInput(klicktippInput, fieldDropdown, this.apiFieldId, this.klicktipp, `/klicktipp/contact-fields/${this.id}`);
 		},
 		oneditsave: function() {
-			this.fieldId = Number($('#node-input-fieldId').val());
+			this.apiFieldId = Number($('#node-input-apiFieldId').val());
 		}
 	});
 </script>

@@ -4,24 +4,27 @@ const handleResponse = require('../utils/handleResponse');
 const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
-const objectToIdValueArray = require('../utils/objectToIdValueArray');
-const evaluatePropertyAsync = require("../utils/evaluatePropertyAsync");
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		try {
-			const fieldId = config.fieldId || msg?.payload?.fieldId;
+			const apiFieldId = config.apiFieldId || msg?.payload?.apiFieldId;
 			
-			//Extract just field name, i.e. CompanyName
-			const fieldName = fieldId.replace(/^field/, '');
+			if (!apiFieldId) {
+				handleError(this, msg, 'The API field ID is required.', 'Invalid input');
+				return this.send(msg);
+			}
 			
-			if (!fieldName) {
-				handleError(this, msg, 'Missing field ID', 'Invalid input');
+			//Extract field ID, i.e. CompanyName
+			const fieldId = apiFieldId.replace(/^field/, '');
+			
+			if (!fieldId) {
+				handleError(this, msg, 'No field ID could be extracted from the provided API field ID.', 'Invalid input');
 				return this.send(msg);
 			}
 			
 			const response = await makeRequest(
-				`/field/${encodeURIComponent(fieldName)}`,
+				`/field/${encodeURIComponent(fieldId)}`,
 				'GET',
 				{},
 				msg.sessionData,
