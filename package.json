@@ -45,8 +45,6 @@
       "klicktipp-subscriber-signin": "nodes/subscribers/klicktipp-subscriber-signin.js",
       "klicktipp-subscription-process-index": "nodes/subscription-processes/klicktipp-subscription-process-index.js",
       "klicktipp-subscription-process-get": "nodes/subscription-processes/klicktipp-subscription-process-get.js",
-      "klicktipp-subscription-process-create": "nodes/subscription-processes/klicktipp-subscription-process-create.js",
-      "klicktipp-subscription-process-delete": "nodes/subscription-processes/klicktipp-subscription-process-delete.js",
       "klicktipp-subscription-process-get-redirect": "nodes/subscription-processes/klicktipp-subscription-process-get-redirect.js",
       "klicktipp-resend-autoresponder": "nodes/subscribers/klicktipp-resend-autoresponder.js",
       "klicktipp-tag-index": "nodes/tags/klicktipp-tag-index.js",
@@ -55,10 +53,7 @@
       "klicktipp-tag-update": "nodes/tags/klicktipp-tag-update.js",
       "klicktipp-tag-delete": "nodes/tags/klicktipp-tag-delete.js",
       "klicktipp-field-index": "nodes/fields/klicktipp-field-index.js",
-      "klicktipp-field-create": "nodes/fields/klicktipp-field-create.js",
-      "klicktipp-field-get": "nodes/fields/klicktipp-field-get.js",
-      "klicktipp-field-update": "nodes/fields/klicktipp-field-update.js",
-      "klicktipp-field-delete": "nodes/fields/klicktipp-field-delete.js"
+      "klicktipp-field-get": "nodes/fields/klicktipp-field-get.js"
     }
   },
   "dependencies": {

@@ -44,13 +44,13 @@ module.exports = function (RED) {
 	};
 
 	/**
-	 * KlickTippFieldGetNode - A Node-RED node to retrieve all contact fields for the logged-in user.
+	 * KlickTippFieldGetNode - A Node-RED node to get the definition of a specific custom field.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Outputs:
-	 * - `msg.payload`: On success, an array of contact fields.
+	 * - `msg.payload`: On success, an object representing the custom field definition.
 	 *   On failure:
 	 *   - `msg.payload`: An object containing `success: false`.
 	 *   - `msg.error`: An error message indicating what went wrong.
