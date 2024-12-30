@@ -1,0 +1,23 @@
+{
+  "klicktipp-subscription-process-get-redirect" : {
+    "name": "Weiterleitung der URL für den Opt\u2013in\u2013Prozessn",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "subscription-process": "Opt-in-Prozess",
+      "email": "E-Mail-Adresse"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben"
+    },
+    "status": {
+      "success": "Abgerufene Umleitungs-URL",
+      "failed": "Umleitungs-URL konnte nicht abgerufen werden"
+    },
+    "error": {
+      "missing-list-id": "Fehlende Opt-in ID",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

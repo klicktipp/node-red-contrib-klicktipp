@@ -1,0 +1,16 @@
+{
+  "klicktipp-subscriber-index" : {
+    "name": "Abonnenten-Index",
+    "config": "KlickTipp Konfig",
+    "label": {
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Abgeholte Abonnenten erfolgreich",
+      "failed": "Abonnenten konnten nicht abgerufen werden"
+    }
+  }
+}

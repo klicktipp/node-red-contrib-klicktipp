@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-tag-get">
+	<p>Gibt den Namen und die Beschreibung eines Tags zurück.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>tagId</code> - (Erforderlich) Die ID des Tags</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Bei Erfolg:
+			<ul>
+				<li>Das Tag-Definitionsobjekt.</li>
+			</ul>
+		</dd>
+		<dd>
+			Bei Fehler:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Tag-Definition erfolgreich abgerufen.</li>
+	    <li><strong>Rot (Ring)</strong> - Abrufen der Tag-Definition fehlgeschlagen (z. B. fehlende Tag-ID oder API-Fehler).</li>
+	</ul>
+</script>

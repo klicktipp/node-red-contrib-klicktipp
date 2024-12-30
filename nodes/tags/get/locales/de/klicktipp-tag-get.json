@@ -1,0 +1,21 @@
+{
+  "klicktipp-tag-get" : {
+    "name": "Tag erhalten",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "tag": "Tag"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Abgerufene Tag-Definition",
+      "failed": "Tag-Definition konnte nicht abgerufen werden"
+    },
+    "error": {
+      "missing-tag": "Fehlende Tag-ID",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

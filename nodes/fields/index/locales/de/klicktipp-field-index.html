@@ -1,0 +1,28 @@
+<script type="text/x-red" data-help-name="klicktipp-field-index">
+	<p>Gibt ein assoziatives Array <code>[field_id] => [field_name]</code> aller Datenfelder zurück.</p>
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li>Eine Liste der Datenfelder, die von der API abgerufen wurden.</li>
+		   </ul>
+	   	</dd>
+	   	<dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	    </dd>
+
+	    <dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Datenfelder erfolgreich abgerufen.</li>
+	    <li><strong>Rot (Ring)</strong> - Abrufen der Datenfelder fehlgeschlagen (z. B. ungültige Sitzungsdaten oder API-Fehler).</li>
+	</ul>
+</script>

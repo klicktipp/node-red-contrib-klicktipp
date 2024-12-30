@@ -1,0 +1,22 @@
+{
+  "klicktipp-subscriber-delete" : {
+    "name": "Subscriber delete",
+    "config": "KlickTipp Config",
+    "label": {
+      "name": "Name",
+      "subscriber-id": "Subscriber ID"
+    },
+    "placeholder": {
+      "name": "Name",
+      "subscriber-id": "Enter Subscriber ID (required)"
+    },
+    "status": {
+      "success": "Subscriber deleted'",
+      "failed": "Failed to delete subscriber"
+    },
+    "error": {
+      "missing-subscriber-id": "Missing subscriber ID",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

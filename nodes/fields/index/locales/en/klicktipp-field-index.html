@@ -1,0 +1,28 @@
+<script type="text/x-red" data-help-name="klicktipp-field-index">
+	<p>Returns an associative array <code>[field_id] => [field_name]</code> of all data fields</p>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+		   On success:
+		   <ul>
+			   <li>A list of data fields retrieved from the API.</li>
+		   </ul>
+	   	</dd>
+	   	<dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	    </dd>
+
+	    <dt>msg.error <span class="property-type">string</span></dt>
+		<dd>An error message indicating why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Successfully fetched the data fields.</li>
+	    <li><strong>Red (ring)</strong> - Failed to fetch data fields (e.g., invalid session data or API error).</li>
+	</ul>
+</script>

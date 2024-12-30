@@ -1,0 +1,24 @@
+{
+  "klicktipp-subscriber-tag" : {
+    "name": "Abonnenten-Tag",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "tag": "Tags"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben"
+    },
+    "status": {
+      "success": "E-Mail erfolgreich getaggt",
+      "failed": "E-Mail kann nicht markiert werden"
+    },
+    "error": {
+      "missing-email": "Fehlende E-Mail",
+      "missing-tag": "Fehlende oder ungültige Tag-IDs",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

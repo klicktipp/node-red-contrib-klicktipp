@@ -1,0 +1,41 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signout">
+	<p>Entfernt den manuellen Tag oder SmartLink, der im API-Schlüssel definiert ist, von einem Abonnenten.</p>
+
+   <h3>Eingaben</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Erwartetes Objekt mit den folgenden Eigenschaften:
+		   <ul>
+			   <li><code>apiKey</code> - (Erforderlich) Der API-Schlüssel zur Authentifizierung</li>
+			   <li><code>email</code> - (Erforderlich) Die E-Mail-Adresse des Abonnenten</li>
+		   </ul>
+	   </dd>
+   </dl>
+
+   <h3>Ausgaben</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+   </dl>
+
+   <h3>Knotenstatus</h3>
+   <ul>
+	   <li><strong>Grün (Punkt)</strong> - Das Entfernen des Tags war erfolgreich.</li>
+	   <li><strong>Rot (Ring)</strong> - Das Entfernen des Tags ist fehlgeschlagen (z. B. fehlender API-Schlüssel, fehlende E-Mail oder API-Fehler).</li>
+   </ul>
+</script>

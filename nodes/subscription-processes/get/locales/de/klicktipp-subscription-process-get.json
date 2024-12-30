@@ -1,0 +1,21 @@
+{
+  "klicktipp-subscription-process-get" : {
+    "name": "Opt-in-Prozess erhalten",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "subscription-process": "Opt-in-Prozess"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Abgeholtes Opt-in-Verfahren",
+      "failed": "Opt-in-Prozess konnte nicht abgerufen werden"
+    },
+    "error": {
+      "missing-list-id": "Fehlende Opt-in ID",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

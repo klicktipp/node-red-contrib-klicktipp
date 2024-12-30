@@ -1,0 +1,37 @@
+<script type="text/x-red" data-template-name="klicktipp-subscription-process-index">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+		<input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+		<input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscription-process-index', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			name: { value: '' },
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-subscription-process-index.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-subscription-process-index.name");
+		},
+	});
+</script>

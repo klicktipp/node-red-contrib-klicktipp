@@ -1,0 +1,25 @@
+{
+  "klicktipp-subscriber-signout" : {
+    "name": "Subscriber signout",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address",
+      "api-key": "API key"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address",
+      "api-key": "Enter your API key"
+    },
+    "status": {
+      "success": "Email untagged successfully",
+      "failed": "Failed to untag email"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "missing-api-key": "Missing API key",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

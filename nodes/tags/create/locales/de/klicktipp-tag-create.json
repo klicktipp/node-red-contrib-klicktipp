@@ -1,0 +1,24 @@
+{
+  "klicktipp-tag-create" : {
+    "name": "Tag erstellen",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "tag-name": "Name",
+      "tag-description": "Beschreibung"
+    },
+    "placeholder": {
+      "name": "Name",
+      "tag-name": "Name eingeben (erforderlich)",
+      "tag-description": "Beschreibung eingeben (optional)"
+    },
+    "status": {
+      "success": "Tag erstellt",
+      "failed": "Tag kann nicht erstellt werden"
+    },
+    "error": {
+      "missing-name": "Fehlender Tag-Name",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

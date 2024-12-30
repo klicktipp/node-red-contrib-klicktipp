@@ -1,0 +1,41 @@
+<script type="text/x-red" data-help-name="klicktipp-tag-create">
+	<p>Erstellt einen neuen manuellen Tag.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>tagName</code> - (Erforderlich) Der Name des manuellen Tags</li>
+	            <li><code>tagDescription</code> - (Optional) Die Beschreibung des manuellen Tags</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Bei Erfolg:
+			<ul>
+				<li>Die ID des neu erstellten Tags.</li>
+			</ul>
+		</dd>
+		<dd>
+			Bei Fehler:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Der Tag wurde erfolgreich erstellt.</li>
+	    <li><strong>Rot (Ring)</strong> - Erstellen des Tags fehlgeschlagen (z. B. fehlender Tag-Name oder API-Fehler).</li>
+	</ul>
+</script>

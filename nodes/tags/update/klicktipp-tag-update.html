@@ -1,0 +1,79 @@
+<script type="text/x-red" data-template-name="klicktipp-tag-update">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-tag-update.label.config"></label>
+		<input type="text" id="node-input-klicktipp">
+	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-tag-update.label.tag"></span></label>
+        <select id="node-input-tagId"></select>
+    </div>
+	<div class="form-row">
+		<label for="node-input-tagName"><i class="fa fa-tags""></i> <span data-i18n="klicktipp-tag-update.label.tag-name"></span></label>
+		<input type="text" id="node-input-tagName" data-i18n="[placeholder]klicktipp-tag-update.placeholder.tag-name">
+		<input type="hidden" id="node-input-tagNameType">
+	</div>
+	<div class="form-row">
+		<label for="node-input-tagDescription"><i class="fa fa-tags""></i> <span data-i18n="klicktipp-tag-update.label.tag-description"</label>
+		<input type="text" id="node-input-tagDescription" data-i18n="[placeholder]klicktipp-tag-update.placeholder.tag-description">
+		<input type="hidden" id="node-input-tagDescriptionType">
+	</div>
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-tag-update.label.name"></span></label>
+		<input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-tag-update.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-tag-update', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			tagName: {
+				value: 'payload.tagName',
+				validate: RED.validators.typedInput('tagNameType')
+			},
+			tagNameType: {
+				value: 'msg'
+			},
+			tagDescription: {
+				value: 'payload.tagDescription',
+				validate: RED.validators.typedInput('tagDescriptionType')
+			},
+			tagDescriptionType: {
+				value: 'str'
+			},
+			tagId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-tag-update.name");
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-tag-update.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
+			const tagDropdown = $('#node-input-tagId');
+			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			// Initialize typedInput for both tagName and tagDescription with default values
+			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType", 'str', ['str']);
+		},
+		oneditsave: function() {
+			this.tagId = Number($('#node-input-tagId').val());
+		}
+	});
+</script>

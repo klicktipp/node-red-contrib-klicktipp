@@ -1,0 +1,16 @@
+{
+  "klicktipp-subscription-process-index" : {
+    "name": "Opt\u2013in process index",
+    "config": "KlickTipp Config",
+    "label": {
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Fetched Opt-in processes",
+      "failed": "Failed to fetch Opt-in processes"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "klicktipp-subscriber-unsubscribe" : {
+    "name": "Subscriber unsubscribe",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address"
+    },
+    "status": {
+      "success": "Unsubscribed successfully",
+      "failed": "Failed to unsubscribe"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

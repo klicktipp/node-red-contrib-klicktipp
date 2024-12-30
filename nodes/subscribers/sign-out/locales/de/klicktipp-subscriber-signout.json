@@ -1,0 +1,25 @@
+{
+  "klicktipp-subscriber-signout": {
+    "name": "Austragen des Abonnenten",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "api-key": "API-Schlüssel"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben",
+      "api-key": "Geben Sie Ihren API-Schlüssel ein"
+    },
+    "status": {
+      "success": "E-Mail erfolgreich enttaggt",
+      "failed": "E-Mail kann nicht enttaggt werden"
+    },
+    "error": {
+      "missing-email": "Fehlende E-Mail",
+      "missing-api-key": "Fehlender API-Schlüssel",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

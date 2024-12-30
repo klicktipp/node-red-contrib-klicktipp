@@ -1,0 +1,16 @@
+{
+  "klicktipp-subscription-process-index" : {
+    "name": "Index des Opt\u2013in\u2013Prozesses",
+    "config": "KlickTipp Konfig",
+    "label": {
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Abgerufene Opt-in-Verfahren",
+      "failed": "Opt-in-Prozesse konnten nicht abgerufen werden"
+    }
+  }
+}

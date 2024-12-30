@@ -1,0 +1,45 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
+	<p>Fügt einen Abonnenten hinzu oder aktualisiert ihn. Der Abonnent kann anhand seiner E-Mail-Adresse oder seiner SMS-Nummer identifiziert werden, mit optionalem Opt-in-Prozess, Tag und Feldern.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>email</code> - (Erforderlich) die E-Mail-Adresse des Abonnenten</li>
+	            <li><code>smsNumber</code> - (Optional) die Mobilnummer des Abonnenten</li>
+	            <li><code>listId</code> - (Optional) die ID eines Opt-in-Prozesses</li>
+	            <li><code>tagId</code> - (Optional) die ID eines manuellen Tags oder SmartLinks</li>
+	            <li><code>fields</code> - (Optional) ein Objekt mit Datenfeldern (z. B. Vorname, Nachname, Adresse usw.),
+	            strukturiert wie vom <code>Field index</code>-Node zurückgegeben</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Bei Erfolg:
+	        <ul>
+	            <li>Ein Objekt, das den erstellten Abonnenten repräsentiert.</li>
+	        </ul>
+	    </dd>
+	    <dd>
+	        Bei Fehler:
+	        <ul>
+	            <li><code>{ success: false }</code></li>
+	        </ul>
+	    </dd>
+
+	    <dt>msg.error <span class="property-type">string</span></dt>
+	    <dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Node-Status</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Die Anmeldung war erfolgreich.</li>
+	    <li><strong>Rot (Ring)</strong> - Die Anmeldung ist fehlgeschlagen (z. B. fehlende erforderliche Daten oder API-Fehler).</li>
+	</ul>
+</script>

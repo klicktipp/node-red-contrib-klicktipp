@@ -1,0 +1,24 @@
+{
+  "klicktipp-subscriber-untag" : {
+    "name": "Abonnent untag",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "tag": "Tag"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben"
+    },
+    "status": {
+      "success": "E-Mail erfolgreich enttaggt",
+      "failed": "E-Mail kann nicht enttaggt werden"
+    },
+    "error": {
+      "missing-email": "Fehlende E-Mail",
+      "missing-tag": "Fehlende oder ungültige Tag-IDs",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

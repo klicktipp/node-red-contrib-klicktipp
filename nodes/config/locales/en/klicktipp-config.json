@@ -1,0 +1,15 @@
+{
+  "klicktipp-config" : {
+    "name": "KlickTipp Config",
+    "label": {
+      "name": "Name",
+      "username": "Username",
+      "password": "Password"
+    },
+    "placeholder": {
+      "name": "Enter a name for this config",
+      "username": "Enter your KlickTipp username",
+      "password": "Enter your KlickTipp password"
+    }
+  }
+}

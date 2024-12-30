@@ -1,0 +1,55 @@
+<script type="text/x-red" data-template-name="klicktipp-subscriber-unsubscribe">
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-subscriber-unsubscribe.label.config"></span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span data-i18n="klicktipp-subscriber-unsubscribe.label.email"></span></label>
+	    <input type="text" id="node-input-email" data-i18n="[placeholder]klicktipp-subscriber-unsubscribe.placeholder.email">
+	    <input type="hidden" id="node-input-emailType">
+	</div>
+	<div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-subscriber-unsubscribe.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-subscriber-unsubscribe.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscriber-unsubscribe', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			email: {
+				value: 'payload.email',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'msg'
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-subscriber-unsubscribe.name");
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-subscriber-unsubscribe.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+		},
+	});
+</script>

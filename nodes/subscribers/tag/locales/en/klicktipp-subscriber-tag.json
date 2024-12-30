@@ -1,0 +1,24 @@
+{
+  "klicktipp-subscriber-tag" : {
+    "name": "Subscriber tag",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address",
+      "tag": "Tags"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address"
+    },
+    "status": {
+      "success": "Email tagged successfully",
+      "failed": "Failed to tag email"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "missing-tag": "Missing or invalid tag IDs",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

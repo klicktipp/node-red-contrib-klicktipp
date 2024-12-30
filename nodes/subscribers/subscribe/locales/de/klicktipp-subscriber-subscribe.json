@@ -1,0 +1,40 @@
+{
+  "klicktipp-subscriber-subscribe": {
+    "name": "Abonnent abonnieren",
+    "label": {
+      "config": "KlickTipp Konfiguration",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "sms-number": "SMS-Nummer",
+      "subscription-process": "Opt-in-Prozess",
+      "tag": "Tag",
+      "fields": "Datenfelder",
+      "data-fields-list": "Liste der Datenfelder",
+      "select-option": "Wählen Sie eine Option",
+      "add-custom-field": "Benutzerdefiniertes Feld hinzufügen"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben",
+      "sms-number": "SMS-Nummer eingeben (optional)",
+      "fields": "Datenfelder",
+      "custom-field-dropdown": "Wert wählen",
+      "custom-field-enter": "Eingabe",
+      "custom-field-optional": "optional"
+    },
+    "status": {
+      "success": "Erfolgreich abonniert",
+      "failed": "Abonnieren fehlgeschlagen"
+    },
+    "validation": {
+      "errors": {
+        "missing-email-or-phone": "E-Mail-Adresse oder Telefonnummer fehlt",
+        "invalid-input": "Ungültige Eingabe"
+      }
+    },
+    "error": {
+      "no-valid-items-found": "Keine gültigen Einträge gefunden",
+      "prefix": "Fehler"
+    }
+  }
+}

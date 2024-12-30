@@ -1,0 +1,25 @@
+{
+  "klicktipp-resend-autoresponder" : {
+    "name": "Resend autoresponder",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address",
+      "autoresponder": "Autoresponder"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address",
+      "autoresponder": "Enter the ID of the autoresponder (optional)"
+    },
+    "status": {
+      "success": "Autoresponder resent successfully",
+      "failed": "Failed to resend autoresponder"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "missing-autoresponder": "Missing autoresponder ID",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "klicktipp-subscriber-tagged" : {
+    "name": "Subscriber tagged",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "tag": "Tag",
+      "select-option": "Select an option"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Subscribers tagged retrieved",
+      "failed": "Failed to retrieve tagged subscribers"
+    },
+    "error": {
+      "missing-tag": "Missing tag ID",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

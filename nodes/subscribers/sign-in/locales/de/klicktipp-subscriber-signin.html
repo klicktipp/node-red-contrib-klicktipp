@@ -1,0 +1,38 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signin">
+	<p>Fügt einen Abonnenten hinzu oder aktualisiert ihn mithilfe eines API-Schlüssels. Der Abonnent kann über seine E-Mail-Adresse oder Mobilnummer identifiziert werden, mit optionalen Feldern.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Erwartetes Objekt mit den folgenden Eigenschaften:
+		   <ul>
+			   <li><code>apiKey</code> - (Erforderlich) Der API-Schlüssel zur Authentifizierung</li>
+			   <li><code>email</code> - (Erforderlich) Die E-Mail-Adresse des Abonnenten</li>
+			   <li><code>smsNumber</code> - (Optional) Die Mobilnummer des Abonnenten</li>
+			   <li><code>fields</code> - (Optional) Ein Objekt mit Datenfeldern (z. B. Vorname, Nachname, Adresse usw.),
+			   strukturiert wie von dem <code>Field index</code>-Knoten zurückgegeben</li>
+		   </ul>
+	   </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   <ul>
+			   <li>Bei Erfolg: Enthält die Antwortdaten, einschließlich der Weiterleitungs-URL.</li>
+			   <li>Bei Fehler: Enthält <code>{ success: false }</code>.</li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	   <li><strong>Grün (Punkt)</strong> - Die Anmeldung war erfolgreich.</li>
+	   <li><strong>Rot (Ring)</strong> - Die Anmeldung ist fehlgeschlagen (z. B. fehlender API-Schlüssel, fehlende E-Mail/Mobilnummer oder API-Fehler).</li>
+	</ul>
+</script>

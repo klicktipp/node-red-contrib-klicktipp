@@ -1,0 +1,38 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-signin">
+	<p>Adds or updates a subscriber using an API key. The subscriber can be identified by their email address or SMS number, with optional fields.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Expected object with the following properties:
+		   <ul>
+			   <li><code>apiKey</code> - (Required) the API key for authentication</li>
+			   <li><code>email</code> - (Required) the subscriber's email address</li>
+			   <li><code>smsNumber</code> - (Optional) the subscriber's mobile number</li>
+			   <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
+			   structured as returned by the <code>Field index</code> node</li>
+		   </ul>
+	   </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   <ul>
+			   <li>On success: Contains the response data, including the redirection URL.</li>
+			   <li>On failure: Will contain <code>{ success: false }</code>.</li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	   <li><strong>Green (dot)</strong> - Subscription was successful.</li>
+	   <li><strong>Red (ring)</strong> - Subscription failed (e.g., missing API key, missing email/SMS number, or API error).</li>
+	</ul>
+</script>

@@ -1,0 +1,16 @@
+{
+  "klicktipp-tag-index" : {
+    "name": "Tag index",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Fetched manual tags",
+      "failed": "Failed to fetch manual tags"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "klicktipp-subscriber-index" : {
+    "name": "Subscriber index",
+    "config": "KlickTipp Config",
+    "label": {
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Fetched subscribers successfully",
+      "failed": "Failed to fetch subscribers"
+    }
+  }
+}

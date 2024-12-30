@@ -1,0 +1,29 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-index">
+	<p>Gibt ein assoziatives Array im Format <code>{ subscriber_id: ID }</code> zurück, wobei jeder Schlüssel einer eindeutigen Abonnenten-ID entspricht. Verwenden Sie den <code>Subscriber Get</code>-Knoten, um detaillierte Informationen über einen Abonnenten abzurufen.</p>
+
+    <h3>Ausgaben</h3>
+    <dl class="message-properties">
+       <dt>msg.payload <span class="property-type">object</span></dt>
+       <dd>
+           Bei Erfolg:
+           <ul>
+               <li>Ein Array, das die Abonnenten-IDs aller aktiven Abonnenten enthält.</li>
+           </ul>
+       </dd>
+       <dd>
+           Bei Fehler:
+           <ul>
+               <li><code>{ success: false }</code></li>
+           </ul>
+       </dd>
+
+       <dt>msg.error <span class="property-type">string</span></dt>
+       <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+    </dl>
+
+    <h3>Knotenstatus</h3>
+    <ul>
+        <li><strong>Grün (Punkt)</strong> - Die Abonnentenliste wurde erfolgreich abgerufen.</li>
+        <li><strong>Rot (Ring)</strong> - Abrufen der Abonnenten fehlgeschlagen (z. B. API-Fehler).</li>
+    </ul>
+</script>

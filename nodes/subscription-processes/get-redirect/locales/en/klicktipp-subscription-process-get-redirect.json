@@ -1,0 +1,24 @@
+{
+  "klicktipp-subscription-process-get-redirect" : {
+    "name": "Opt\u2013in process redirect URL",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "subscription-process": "Opt-in process",
+      "email": "Email address"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address"
+    },
+    "status": {
+      "success": "Fetched redirection URL",
+      "failed": "Failed to fetch redirection URL"
+    },
+    "error": {
+      "missing-list-id": "Missing Opt-in ID",
+      "missing-email": "Missing email",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

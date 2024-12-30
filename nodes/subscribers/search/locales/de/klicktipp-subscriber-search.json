@@ -1,0 +1,22 @@
+{
+  "klicktipp-subscriber-search": {
+    "name": "Abonnent abonnieren",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben"
+    },
+    "status": {
+      "success": "Abgerufene Abonnenten-ID",
+      "failed": "Suche nach Abonnenten fehlgeschlagen"
+    },
+    "error": {
+      "missing-email": "Fehlende E-Mail",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

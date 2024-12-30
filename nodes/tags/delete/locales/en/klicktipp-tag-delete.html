@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-tag-delete">
+	<p>Deletes a manual tag or SmartLink.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Expected object with the following properties:
+	        <ul>
+	            <li><code>tagId</code> - (Required) the ID of the tag</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	  <h3>Outputs</h3>
+	  <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message indicating why the request failed.</dd>
+	  </dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - The tag was successfully deleted.</li>
+	    <li><strong>Red (ring)</strong> - The tag deletion failed (e.g., missing tag ID or API error).</li>
+	</ul>
+</script>

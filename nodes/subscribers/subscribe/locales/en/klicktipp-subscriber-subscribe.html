@@ -1,0 +1,45 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
+	<p>Adds or updates a subscriber. The subscriber can be identified by their email address or SMS number, with an optional opt-in process, tag, and fields.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Expected object with the following properties:
+	        <ul>
+	            <li><code>email</code> - (Required) the subscriber's email address</li>
+	            <li><code>smsNumber</code> -(Optional) the subscriber's mobile number</li>
+	            <li><code>listId</code> - (Optional) the ID of a opt-in process</li>
+	            <li><code>tagId</code> - (Optional) the ID of a manual tag or SmartLink</li>
+	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
+	            structured as returned by the <code>Field index</code> node</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li>An object representing the subscriber that was created.</li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+		<li><strong>Green (dot)</strong> - Subscription was successful.</li>
+		<li><strong>Red (ring)</strong> - Subscription failed (e.g., missing required data or API error).</li>
+	</ul>
+</script>

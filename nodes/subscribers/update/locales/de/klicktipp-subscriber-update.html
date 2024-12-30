@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-update">
+	<p>Aktualisiert die Datenfelder, die E-Mail-Adresse oder die SMS-Nummer eines Abonnenten.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>subscriberId</code> - (Erforderlich) Die ID des Abonnenten</li>
+	            <li><code>fields</code> - (Optional) Ein Objekt mit Datenfeldern (z. B. Vorname, Nachname, Adresse usw.),
+	            strukturiert wie von dem <code>Field index</code>-Knoten zurückgegeben</li>
+	            <li><code>newEmail</code> - (Optional) Die neue E-Mail-Adresse des Abonnenten</li>
+	            <li><code>newSmsNumber</code> - (Optional) Die neue Mobilnummer des Abonnenten</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+   <h3>Ausgaben</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+   </dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Der Abonnent wurde erfolgreich aktualisiert.</li>
+	    <li><strong>Rot (Ring)</strong> - Aktualisierung des Abonnenten fehlgeschlagen (z. B. fehlende Abonnenten-ID, ungültige Daten oder API-Fehler).</li>
+	</ul>
+</script>

@@ -1,0 +1,22 @@
+{
+  "klicktipp-field-get" : {
+    "name": "Field get",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "field": "Field"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Fetched field definition",
+      "failed": "Failed to fetch field data"
+    },
+    "error": {
+      "missing-api-field": "The API field ID is required.",
+      "missing-field-id": "No field ID could be extracted from the provided API field ID.",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

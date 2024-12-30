@@ -1,0 +1,11 @@
+{
+  "klicktipp-subscriber-subscribe": {
+    "label": {
+      "data-fields-list": "Data fields list",
+      "add-field": "Add custom field"
+    },
+    "error": {
+      "no-valid-items-found": "No valid items found"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+<script type="text/x-red" data-template-name="klicktipp-subscriber-untag">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-subscriber-untag.label.config"></label>
+	    <input type="text" id="node-input-klicktipp">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span data-i18n="klicktipp-subscriber-untag.label.email"></span></label>
+	    <input type="text" id="node-input-email" data-i18n="[placeholder]klicktipp-subscriber-untag.placeholder.email">
+	    <input type="hidden" id="node-input-emailType">
+	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-subscriber-untag.label.tag"></span></label>
+        <select id="node-input-tagId"></select>
+    </div>
+	<div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-subscriber-untag.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-subscriber-untag.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscriber-untag', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			email: {
+				value: 'payload.email',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'msg',
+			},
+			tagId: {
+				value: '',
+				validate: RED.validators.number(),
+				required: true
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-subscriber-untag.name")
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-subscriber-untag.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			this.tagDropdown = $('#node-input-tagId');
+			const klicktippInput = $('#node-input-klicktipp');
+			ktBindDropdownToInput(klicktippInput, this.tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+		},
+		oneditsave: function() {
+			this.tagId = Number(this.tagDropdown.val()); // Save the selected tagId
+		}
+	});
+</script>

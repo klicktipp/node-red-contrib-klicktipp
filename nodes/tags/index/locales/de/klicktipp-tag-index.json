@@ -1,0 +1,16 @@
+{
+  "klicktipp-tag-index" : {
+    "name": "Tag\u2013Index",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Abgerufene manuelle Tags",
+      "failed": "Manuelle Tags konnten nicht abgerufen werden"
+    }
+  }
+}

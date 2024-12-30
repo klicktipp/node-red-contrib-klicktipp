@@ -1,0 +1,37 @@
+{
+  "klicktipp-subscriber-signin": {
+    "name": "Anmeldung des Abonnenten",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "sms-number": "SMS-Nummer",
+      "api-key": "API-Schlüssel",
+      "fields": "Datenfelder",
+      "data-fields-list": "Liste der Datenfelder",
+      "select-option": "Wählen Sie eine Option",
+      "add-custom-field": "Benutzerdefiniertes Feld hinzufügen"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben",
+      "api-key": "Geben Sie Ihren API-Schlüssel ein",
+      "sms-number": "SMS-Nummer eingeben (optional)",
+      "fields": "Datenfelder",
+      "custom-field-dropdown": "Wert wählen",
+      "custom-field-enter": "Eingabe",
+      "custom-field-optional": "optional"
+    },
+    "status": {
+      "success": "Erfolgreich abonniert",
+      "failed": "Abonnieren fehlgeschlagen"
+    },
+    "error": {
+      "no-valid-items-found": "Keine gültigen Einträge gefunden",
+      "missing-email-or-sms-number": "Fehlende E-Mail- oder SMS-Nummer",
+      "missing-api-key": "Fehlender API-Schlüssel",
+      "prefix": "Fehler",
+      "invalid-input": "Ungültige Eingabe"
+    }
+  }
+}

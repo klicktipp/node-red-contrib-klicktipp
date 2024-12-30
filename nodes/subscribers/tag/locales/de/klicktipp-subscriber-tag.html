@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-tag">
+	<p>Markiert einen Abonnenten mit einem manuellen Tag oder einem SmartLink.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>email</code> - (Erforderlich) Die E-Mail-Adresse des Abonnenten</li>
+	            <li><code>tagIds</code> - (Erforderlich) Die ID eines manuellen Tags oder eines SmartLinks.
+	            	Sie können auch ein Array von Tag-IDs übergeben, um mehrere Tags gleichzeitig zuzuweisen.
+	            	Wenn eine einzelne Tag-ID bereitgestellt wird, wird sie automatisch in ein Array eingefügt.
+	            </li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Die E-Mail wurde erfolgreich markiert.</li>
+	    <li><strong>Rot (Ring)</strong> - Der Markierungsprozess ist fehlgeschlagen (z. B. fehlende E-Mail, Tag-IDs oder API-Fehler).</li>
+	</ul>
+</script>

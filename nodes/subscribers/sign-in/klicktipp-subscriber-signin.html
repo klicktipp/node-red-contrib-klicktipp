@@ -1,0 +1,130 @@
+<script type="text/x-red" data-template-name="klicktipp-subscriber-signin">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-subscriber-signin.label.config"></label>
+	    <input type="text" id="node-input-klicktipp">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-apiKey"><i class="fa fa-key"></i> <span data-i18n="klicktipp-subscriber-signin.label.api-key"></span></label>
+	    <input type="text" id="node-input-apiKey" data-i18n="[placeholder]klicktipp-subscriber-signin.placeholder.api-key">
+	    <input type="hidden" id="node-input-apiKeyType">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span data-i18n="klicktipp-subscriber-signin.label.email"></span></label>
+	    <input type="text" id="node-input-email" data-i18n="[placeholder]klicktipp-subscriber-signin.placeholder.email">
+	    <input type="hidden" id="node-input-emailType">
+	</div>
+	<div class="form-row">
+		<label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span data-i18n="klicktipp-subscriber-signin.label.sms-number"></span></label>
+		<input type="text" id="node-input-smsNumber" data-i18n="[placeholder]klicktipp-subscriber-signin.placeholder.sms-number">
+	    <input type="hidden" id="node-input-smsNumberType">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span data-i18n="klicktipp-subscriber-signin.label.fields"></span></label>
+	    <input type="text" id="node-input-fields" data-i18n="[placeholder]klicktipp-subscriber-signin.placeholder.fields">
+	    <input type="hidden" id="node-input-fieldsType">
+	</div>
+	<div id="contact-fields-section" class="form-row" style="display: none"></div>
+	<div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-subscriber-signin.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-subscriber-signin.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscriber-signin', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			apiKey: {
+				value: 'payload.apiKey',
+				required: true,
+				validate: RED.validators.typedInput('apiKeyType')
+			},
+			apiKeyType: {
+				value: 'msg'
+			},
+			email: {
+				value: 'payload.email',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'msg'
+			},
+			smsNumber: {
+				value: 'payload.smsNumber',
+				validate: RED.validators.typedInput('smsNumberType')
+			},
+			smsNumberType: {
+				value: 'msg'
+			},
+			fields: {
+				value: 'payload.fields',
+				validate: function(v) {
+					// Allow empty values
+					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
+				}
+			},
+			fieldsType: {
+				value: 'msg'
+			},
+			fieldsData: {
+				value: {}
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-subscriber-signin.name");
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-subscriber-signin.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
+			this.contactFieldsSection = $('#contact-fields-section');
+			const fieldsInput = $("#node-input-fields");
+
+			const i18nStrings = {
+				noValidItemsError: this._('klicktipp-subscriber-signin.error.no-valid-items-found'),
+				placeholderOption: this._("klicktipp-subscriber-signin.label.select-option"),
+				errorNoValidItems: this._("klicktipp-subscriber-signin.error.no-valid-items-found"),
+				errorPrefix: this._("klicktipp-subscriber-signin.error.prefix"),
+				dropdownPlaceholderText: this._("klicktipp-subscriber-signin.placeholder.custom-field-dropdown"),
+				addCustomFieldLabelText: this._("klicktipp-subscriber-signin.label.add-custom-field"),
+				customFieldsListLabel: this._("klicktipp-subscriber-signin.label.data-fields-list"),
+				customFieldOptional: this._("klicktipp-subscriber-signin.placeholder.custom-field-optional"),
+				customFieldEnter: this._("klicktipp-subscriber-signin.placeholder.custom-field-enter"),
+			};
+
+			setKlicktippI18n(i18nStrings);
+
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', getKTCustomContactFieldsType()]);
+
+			// Initialize the contact fields section logic
+			ktInitializeContactFieldsSection(fieldsInput, this.contactFieldsSection, klicktippInput, this.fieldsData, this.id);
+
+			// Initialize the select handler with user change detection
+			ktInitializeUserSelectHandler(klicktippInput, '#node-input-fieldsType', this.contactFieldsSection, this.fieldsData, this.id);
+		},
+		oneditsave: function() {
+			// Collect all field from API vales and store them in this.fieldsData
+			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
+		}
+	});
+</script>
