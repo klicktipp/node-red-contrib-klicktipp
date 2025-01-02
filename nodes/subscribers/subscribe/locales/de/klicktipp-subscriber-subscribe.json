@@ -8,33 +8,21 @@
       "sms-number": "SMS-Nummer",
       "subscription-process": "Opt-in-Prozess",
       "tag": "Tag",
-      "fields": "Datenfelder",
-      "data-fields-list": "Liste der Datenfelder",
-      "select-option": "Wählen Sie eine Option",
-      "add-custom-field": "Benutzerdefiniertes Feld hinzufügen"
+      "fields": "Datenfelder"
     },
     "placeholder": {
       "name": "Name",
       "email": "E-Mail-Adresse eingeben",
       "sms-number": "SMS-Nummer eingeben (optional)",
-      "fields": "Datenfelder",
-      "custom-field-dropdown": "Wert wählen",
-      "custom-field-enter": "Eingabe",
-      "custom-field-optional": "optional"
+      "fields": "Datenfelder"
     },
     "status": {
       "success": "Erfolgreich abonniert",
       "failed": "Abonnieren fehlgeschlagen"
     },
-    "validation": {
-      "errors": {
-        "missing-email-or-phone": "E-Mail-Adresse oder Telefonnummer fehlt",
-        "invalid-input": "Ungültige Eingabe"
-      }
-    },
     "error": {
-      "no-valid-items-found": "Keine gültigen Einträge gefunden",
-      "prefix": "Fehler"
+      "missing-email-or-phone": "E-Mail-Adresse oder Telefonnummer fehlt",
+      "invalid-input": "Ungültige Eingabe"
     }
   }
 }

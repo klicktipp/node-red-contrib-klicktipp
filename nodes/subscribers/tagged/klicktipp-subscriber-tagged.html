@@ -47,12 +47,6 @@
 			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
 
-			const i18nStrings = {
-				placeholderOption: this._("klicktipp-subscriber-tagged.label.select-option"),
-			};
-
-			setKlicktippI18n(i18nStrings);
-
 			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
 		},
 		// When the node editor is saved, capture the selected tagId

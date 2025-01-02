@@ -103,20 +103,6 @@
 			this.listIdDropdown = $('#node-input-listId');
 			this.contactFieldsSection = $('#contact-fields-section');
 
-			const i18nStrings = {
-				noValidItemsError: this._('klicktipp-subscriber-subscribe.error.no-valid-items-found'),
-				placeholderOption: this._("klicktipp-subscriber-subscribe.label.select-option"),
-				errorNoValidItems: this._("klicktipp-subscriber-subscribe.error.no-valid-items-found"),
-				errorPrefix: this._("klicktipp-subscriber-subscribe.error.prefix"),
-				dropdownPlaceholderText: this._("klicktipp-subscriber-subscribe.placeholder.custom-field-dropdown"),
-				addCustomFieldLabelText: this._("klicktipp-subscriber-subscribe.label.add-custom-field"),
-				customFieldsListLabel: this._("klicktipp-subscriber-subscribe.label.data-fields-list"),
-				customFieldOptional: this._("klicktipp-subscriber-subscribe.placeholder.custom-field-optional"),
-				customFieldEnter: this._("klicktipp-subscriber-subscribe.placeholder.custom-field-enter"),
-			};
-
-			setKlicktippI18n(i18nStrings);
-
 			// Initialize typed inputs
 			ktInitializeTypedInput(
 					'#node-input-email',

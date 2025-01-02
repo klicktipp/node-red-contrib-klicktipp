@@ -10,6 +10,37 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, n);
 		this.username = this.credentials.username;
 		this.password = this.credentials.password;
+		
+		const i18n = {
+			error: {
+				missingCredentialsError: RED._('klicktipp-config.error.missing-credentials'),
+				missingConfigurationError: RED._('klicktipp-config.error.missing-configuration'),
+				failedFetchDataError: RED._('klicktipp-config.error.failed-to-fetch'),
+			}
+		}
+		
+		console.log('registerKlickTippEndpoint', i18n);
+		
+		// Helper function to register endpoints with caching
+		const registerKlickTippEndpoint = (endpointPath, apiPath, cacheKey) => {
+			createCachedApiEndpoint(RED, {
+				endpoint: endpointPath,
+				cacheKey: cacheKey,
+				fetchFunction: async (username, password) => {
+					return await fetchKlickTippData(username, password, apiPath);
+				},
+				i18n
+			});
+		};
+		
+		// Register each endpoint with caching, using centralized cache keys
+		registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag', CACHE_KEYS.TAGS);
+		registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field', CACHE_KEYS.FIELDS);
+		registerKlickTippEndpoint(
+			'/klicktipp/subscription-processes/:nodeId',
+			'/list',
+			CACHE_KEYS.OPT_IN_PROCESSES,
+		);
 	}
 
 	// Register the config node for KlickTipp credentials
@@ -19,24 +50,4 @@ module.exports = function (RED) {
 			password: { type: 'password' },
 		},
 	});
-
-	// Helper function to register endpoints with caching
-	const registerKlickTippEndpoint = (endpointPath, apiPath, cacheKey) => {
-		createCachedApiEndpoint(RED, {
-			endpoint: endpointPath,
-			cacheKey: cacheKey,
-			fetchFunction: async (username, password) => {
-				return await fetchKlickTippData(username, password, apiPath);
-			},
-		});
-	};
-
-	// Register each endpoint with caching, using centralized cache keys
-	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag', CACHE_KEYS.TAGS);
-	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field', CACHE_KEYS.FIELDS);
-	registerKlickTippEndpoint(
-		'/klicktipp/subscription-processes/:nodeId',
-		'/list',
-		CACHE_KEYS.OPT_IN_PROCESSES,
-	);
 };

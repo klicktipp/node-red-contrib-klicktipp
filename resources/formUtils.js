@@ -41,10 +41,11 @@ const KLICKTIPP_ICON_MAP = {
 const KT_CONTACT_FIELDS_API_TYPE = "fieldsFromApi"
 
 const getKTCustomContactFieldsType = () => {
-	const i18n = getKlicktippI18n(); // read from the cache
+	const i18n = getKlicktippI18n();
+
 	return {
 		value: KT_CONTACT_FIELDS_API_TYPE,
-		label: i18n.customFieldsListLabel || 'Data fields list',
+		label: i18n?.label?.customFields?.fieldList || 'Data fields list',
 		icon: "fa fa-cog",
 		hasValue: false
 	};
@@ -140,9 +141,9 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 	const i18nStrings = getKlicktippI18n();
 	
 	// Provide fallback strings if i18nStrings is missing
-	const placeholderOption    = i18nStrings?.placeholderOption   || "Select an option";
-	const errorNoValidItems    = i18nStrings?.errorNoValidItems   || "No valid items found";
-	const errorPrefix          = i18nStrings?.errorPrefix         || "Error: ";
+	const defaultDropdownOptionLabel    = i18nStrings?.label?.defaultDropdownOption   || "Select an option";
+	const errorNoItems    							= i18nStrings?.error?.noItems   || "No valid items found";
+	const errorPrefix          					= i18nStrings?.error.generic || "Error";
 	
 	const $spinner = ktCreateSpinner();
 	
@@ -152,7 +153,7 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 	
 	// Always reinsert the placeholder option at the top
 	$dropdown.empty().append(
-		new Option(placeholderOption, '', !selectedItemId)
+		new Option(defaultDropdownOptionLabel, '', !selectedItemId)
 	);
 	
 	$.ajax({
@@ -184,11 +185,11 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 				// Set the dropdown value based on selectedItemId; fallback to placeholder if not found
 				$dropdown.val(itemExists ? selectedItemId : '');
 			} else {
-				$dropdown.append(new Option(errorNoValidItems, '', true, true));
+				$dropdown.append(new Option(errorNoItems, '', true, true));
 			}
 		})
 		.fail((jqXHR) => {
-			const errorMessage = `${errorPrefix}: ${ktGetErrorMessage(jqXHR)}`;
+			const errorMessage = `${errorPrefix} : ${ktGetErrorMessage(jqXHR)}`;
 			console.error('Error:', errorMessage);
 			$dropdown.append(new Option(errorMessage, '', true, true));
 		})
@@ -207,6 +208,12 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
  * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
  */
 function ktPopulateContactFields($container, defaultValues = {}, configId, actionUrl) {
+	const i18nStrings = getKlicktippI18n();
+
+	// Provide fallback strings if i18nStrings is missing
+	const errorNoItems = i18nStrings?.error?.noItems || "No valid items found";
+	const errorPrefix  = i18nStrings?.error?.generic || "Error";
+	
 	const $spinner = ktCreateSpinner();
 	$container.before($spinner);
 	$spinner.show();
@@ -242,13 +249,13 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 				ktGenerateCustomFieldsDropdown($container, customFields, defaultValues);
 				$container.show();
 			} else {
-				ktShowError($container, 'No valid items found');
+				ktShowError($container, errorNoItems);
 			}
 		})
 		.fail((jqXHR) => {
 			const errorMessage = ktGetErrorMessage(jqXHR);
 			console.error('Error:', errorMessage);
-			ktShowError($container, `Error: ${errorMessage}`);
+			ktShowError($container, `${errorPrefix} : ${errorMessage}`);
 			$container.show();
 		})
 		.always(() => {
@@ -268,8 +275,8 @@ function ktGenerateFormFields($container, fields, defaultValues = {}) {
 	const i18nStrings = getKlicktippI18n();
 	
 	// Provide fallback strings if i18nStrings is missing
-	const customFieldOptional = i18nStrings?.customFieldOptional || 'optional';
-	const customFieldEnter = i18nStrings?.customFieldEnter || 'Enter';
+	const customFieldOptional = i18nStrings?.placeholder?.customFields?.optional || 'optional';
+	const customFieldEnter = i18nStrings?.placeholder?.customFields?.choose || 'Enter';
 	
 	if (!$container.length) {
 		return;
@@ -348,16 +355,16 @@ function ktCreateDropdownRow() {
 	const i18nStrings = getKlicktippI18n();
 	
 	// Provide fallback strings if i18nStrings is missing
-	const dropdownPlaceholderText = i18nStrings?.dropdownPlaceholderText || 'Choose value';
-	const addCustomFieldLabelText = i18nStrings?.addCustomFieldLabelText || 'Add Custom Field';
+	const defaultDropdownOption  = i18nStrings?.label?.defaultDropdownOption || "Select an option";
+	const addCustomFieldButton = i18nStrings?.label?.customFields.addButton || 'Add Custom Field';
 	
 	return $(`
 		<div class="form-row">
 			<label>
-				<i class="fa fa-plus"></i> ${addCustomFieldLabelText}
+				<i class="fa fa-plus"></i> ${addCustomFieldButton}
 			</label>
 			<select class="custom-fields-dropdown">
-				<option value="" disabled selected>${dropdownPlaceholderText}</option>
+				<option value="" disabled selected>${defaultDropdownOption}</option>
 			</select>
 			<button type="button" class="add-custom-field-btn btn btn-sm" style="border: none; background: none;">
 				<i class="fa fa-plus" aria-hidden="true"></i>
@@ -433,11 +440,9 @@ function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = 
 function ktCreateFormRow(fieldKey, fieldLabel, defaultValue) {
 	const i18nStrings = getKlicktippI18n();
 	
-	console.log({i18nStrings})
-	
 	// Provide fallback strings if i18nStrings is missing
-	const customFieldOptional = i18nStrings?.customFieldOptional || 'optional';
-	const customFieldEnter = i18nStrings?.customFieldEnter || 'Enter';
+	const customFieldOptional = i18nStrings?.placeholder?.customFields?.optional || 'optional';
+	const customFieldEnter = i18nStrings?.placeholder?.customFields?.choose || 'Enter';
 	
 	return $(`
 		<div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">

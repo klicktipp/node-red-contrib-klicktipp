@@ -6,31 +6,21 @@
       "name": "Name",
       "email": "Email address",
       "api-key": "API key",
-      "sms-number": "SMS number",
-      "fields": "Data fields",
-      "data-fields-list": "Data fields list",
-      "select-option": "Select an option",
-      "add-custom-field": "Add Custom Field"
+      "sms-number": "SMS number"
     },
     "placeholder": {
       "name": "Name",
       "email": "Enter email address",
       "api-key": "Enter your API key",
-      "sms-number": "Enter SMS number (optional)",
-      "fields": "Data fields",
-      "custom-field-enter": "Choose",
-      "custom-field-dropdown": "Select value",
-      "custom-field-optional": "optional"
+      "sms-number": "Enter SMS number (optional)"
     },
     "status": {
       "success": "Subscribed successfully",
       "failed": "Failed to subscribe"
     },
     "error": {
-      "no-valid-items-found": "No valid items found",
       "missing-email-or-sms-number": "Missing email or SMS number",
       "missing-api-key": "Missing API key",
-      "prefix": "Error",
       "invalid-input": "Invalid input"
     }
   }

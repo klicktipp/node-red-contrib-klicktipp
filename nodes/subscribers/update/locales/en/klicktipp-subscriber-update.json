@@ -7,35 +7,22 @@
       "subscriber-id": "Subscriber ID",
       "email": "Email address",
       "sms-number": "SMS number",
-      "fields": "Data fields",
-      "data-fields-list": "Data fields list",
-      "select-option": "Select an option",
-      "add-custom-field": "Add Custom Field"
+      "fields": "Data fields"
     },
     "placeholder": {
       "name": "Name",
       "subscriber-id": "Enter Subscriber ID (required)",
       "email": "Enter email address",
       "sms-number": "Enter SMS number (optional)",
-      "fields": "Data fields",
-      "custom-field-dropdown": "Select value",
-      "custom-field-enter": "Choose",
-      "custom-field-optional": "optional"
+      "fields": "Data fields"
     },
     "status": {
       "success": "Subscriber updated",
       "failed": "Failed to update subscriber"
     },
-    "validation": {
-      "errors": {
-        "missing-email-or-phone": "Missing email or phone number",
-        "invalid-input": "Invalid input"
-      }
-    },
     "error": {
-      "no-valid-items-found": "No valid items found",
-      "missing-email-or-phone": "Missing email or phone number",
-      "prefix": "Error"
+      "missing-subscriber-id": "Missing subscriber ID",
+      "invalid-input": "Invalid input"
     }
   }
 }

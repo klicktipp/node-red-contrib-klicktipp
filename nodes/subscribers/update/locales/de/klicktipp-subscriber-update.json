@@ -7,34 +7,22 @@
       "subscriber-id": "Abonnenten-ID",
       "email": "E-Mail-Adresse",
       "sms-number": "SMS-Nummer",
-      "fields": "Datenfelder",
-      "data-fields-list": "Liste der Datenfelder",
-      "select-option": "Wählen Sie eine Option",
-      "add-custom-field": "Benutzerdefiniertes Feld hinzufügen"
+      "fields": "Datenfelder"
     },
     "placeholder": {
       "name": "Name",
       "subscriber-id": "Abonnenten-ID eingeben (erforderlich)",
       "email": "E-Mail-Adresse eingeben",
       "sms-number": "SMS-Nummer eingeben (optional)",
-      "fields": "Datenfelder",
-      "custom-field-dropdown": "Wert wählen",
-      "custom-field-enter": "Eingabe",
-      "custom-field-optional": "optional"
+      "fields": "Datenfelder"
     },
     "status": {
       "success": "Abonnent aktualisiert",
       "failed": "Aktualisierung des Abonnenten fehlgeschlagen"
     },
-    "validation": {
-      "errors": {
-        "missing-email-or-phone": "E-Mail-Adresse oder Telefonnummer fehlt",
-        "invalid-input": "Ungültige Eingabe"
-      }
-    },
     "error": {
-      "no-valid-items-found": "Keine gültigen Einträge gefunden",
-      "prefix": "Fehler"
+      "missing-subscriber-id": "Fehlende Abonnenten-ID",
+      "invalid-input": "Ungültige Eingabe"
     }
   }
 }

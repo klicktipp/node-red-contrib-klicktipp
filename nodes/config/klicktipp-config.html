@@ -25,6 +25,30 @@
 			username: { type: 'text' },
 			password: { type: 'password' },
 		},
+		onpaletteadd: function() {
+			const i18nStrings = {
+				label: {
+					defaultDropdownOption: this._("klicktipp-config.label.default-dropdown-option"),
+					customFields: {
+						fieldList: this._("klicktipp-config.label.custom-fields.list"),
+						addButton: this._("klicktipp-config.label.custom-fields.add"),
+					}
+				},
+				placeholder: {
+					customFields: {
+						choose: this._("klicktipp-config.placeholder.custom-fields.choose"),
+						optional: this._("klicktipp-config.placeholder.custom-fields.optional"),
+					}
+				},
+				error: {
+					missingCredentials: this._("klicktipp-config.error.missing-credentials"),
+					noItems: this._("klicktipp-config.error.no-items"),
+					generic: this._("klicktipp-config.error.generic-error"),
+				},
+			};
+
+			setKlicktippI18n(i18nStrings);
+		},
 		label: function () {
 			return this.name || this._("klicktipp-config.name");
 		},

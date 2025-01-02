@@ -8,34 +8,21 @@
       "sms-number": "SMS number",
       "subscription-process": "Opt-in process",
       "tag": "Tag",
-      "fields": "Data fields",
-      "data-fields-list": "Data fields list",
-      "select-option": "Select an option",
-      "add-custom-field": "Add Custom Field"
+      "fields": "Data fields"
     },
     "placeholder": {
       "name": "Name",
       "email": "Enter email address",
       "sms-number": "Enter SMS number (optional)",
-      "fields": "Data fields",
-      "custom-field-enter": "Choose",
-      "custom-field-dropdown": "Select value",
-      "custom-field-optional": "optional"
+      "fields": "Data fields"
     },
     "status": {
       "success": "Subscribed successfully",
       "failed": "Failed to subscribe"
     },
-    "validation": {
-      "errors": {
-        "missing-email-or-phone": "Missing email or phone number",
-        "invalid-input": "Invalid input"
-      }
-    },
     "error": {
-      "no-valid-items-found": "No valid items found",
       "missing-email-or-phone": "Missing email or phone number",
-      "prefix": "Error"
+      "invalid-input": "Invalid input"
     }
   }
 }

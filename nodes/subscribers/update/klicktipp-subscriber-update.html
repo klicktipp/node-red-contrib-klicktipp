@@ -93,20 +93,6 @@
 			this.contactFieldsSection = $('#contact-fields-section');
 			const fieldsInput = $("#node-input-fields");
 
-			const i18nStrings = {
-				noValidItemsError: this._('klicktipp-subscriber-update.error.no-valid-items-found'),
-				placeholderOption: this._("klicktipp-subscriber-update.label.select-option"),
-				errorNoValidItems: this._("klicktipp-subscriber-update.error.no-valid-items-found"),
-				errorPrefix: this._("klicktipp-subscriber-update.error.prefix"),
-				dropdownPlaceholderText: this._("klicktipp-subscriber-update.placeholder.custom-field-dropdown"),
-				addCustomFieldLabelText: this._("klicktipp-subscriber-update.label.add-custom-field"),
-				customFieldsListLabel: this._("klicktipp-subscriber-update.label.data-fields-list"),
-				customFieldOptional: this._("klicktipp-subscriber-update.placeholder.custom-field-optional"),
-				customFieldEnter: this._("klicktipp-subscriber-update.placeholder.custom-field-enter"),
-			};
-
-			setKlicktippI18n(i18nStrings);
-
 			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
 			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType", 'str', ['str']);
 			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType", 'str', ['str']);

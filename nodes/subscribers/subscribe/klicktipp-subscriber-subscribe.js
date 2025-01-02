@@ -28,8 +28,8 @@ module.exports = function (RED) {
 			handleError(
 				node,
 				msg,
-				'klicktipp-subscriber-subscribe.validation.errors.missing-email-or-phone',
-				'klicktipp-subscriber-subscribe.validation.errors.invalid-input'
+				'klicktipp-subscriber-subscribe.error.missing-email-or-phone',
+				'klicktipp-subscriber-subscribe.error.invalid-input'
 			);
 			return node.send(msg);
 		}
