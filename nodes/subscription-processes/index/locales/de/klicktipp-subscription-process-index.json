@@ -11,6 +11,13 @@
     "status": {
       "success": "Abgerufene Opt-in-Verfahren",
       "failed": "Opt-in-Prozesse konnten nicht abgerufen werden"
+    },
+    "error": {
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
     }
   }
 }

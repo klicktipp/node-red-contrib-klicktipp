@@ -93,7 +93,15 @@ module.exports = function (RED) {
 	function KlickTippResendAutoresponderNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-resend-autoresponder.error.missing-credentials',
+			invalidCredentials: 'klicktipp-resend-autoresponder.error.invalid-credentials',
+			loginFailed: 'klicktipp-resend-autoresponder.error.login-failed',
+			requestFailed: 'klicktipp-resend-autoresponder.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-resend-autoresponder', KlickTippResendAutoresponderNode);

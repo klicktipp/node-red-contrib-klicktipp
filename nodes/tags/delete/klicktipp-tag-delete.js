@@ -76,8 +76,15 @@ module.exports = function (RED) {
 	function KlickTippTagDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-tag-delete.error.missing-credentials',
+			invalidCredentials: 'klicktipp-tag-delete.error.invalid-credentials',
+			loginFailed: 'klicktipp-tag-delete.error.login-failed',
+			requestFailed: 'klicktipp-tag-delete.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-tag-delete', KlickTippTagDeleteNode);

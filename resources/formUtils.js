@@ -126,7 +126,12 @@ function ktShowError($element, message) {
  * @returns {string} - The extracted or default error message.
  */
 function ktGetErrorMessage(jqXHR) {
-	return jqXHR?.responseJSON?.error || 'Failed to load items';
+	const i18n = getKlicktippI18n();
+	const apiErrorKey = jqXHR?.responseJSON?.error;
+	
+	const translatedErrorMessage = i18n?.error[apiErrorKey] || 'Failed to load items';
+	
+	return translatedErrorMessage;
 }
 
 /**

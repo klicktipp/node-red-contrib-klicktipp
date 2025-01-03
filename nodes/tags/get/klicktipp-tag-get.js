@@ -71,8 +71,15 @@ module.exports = function (RED) {
 	function KlickTippTagGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-tag-get.error.missing-credentials',
+			invalidCredentials: 'klicktipp-tag-get.error.invalid-credentials',
+			loginFailed: 'klicktipp-tag-get.error.login-failed',
+			requestFailed: 'klicktipp-tag-get.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-tag-get', KlickTippTagGetNode);

@@ -16,7 +16,12 @@
     "error": {
       "missing-api-field": "The API field ID is required.",
       "missing-field-id": "Es konnte keine Feld-ID aus der angegebenen API-Feld-ID extrahiert werden.",
-      "invalid-input": "Ungültige Eingabe"
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
     }
   }
 }

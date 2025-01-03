@@ -71,7 +71,15 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessGetNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-subscription-process-get.error.missing-credentials',
+			invalidCredentials: 'klicktipp-subscription-process-get.error.invalid-credentials',
+			loginFailed: 'klicktipp-subscription-process-get.error.login-failed',
+			requestFailed: 'klicktipp-subscription-process-get.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-subscription-process-get', KlickTippSubscriptionProcessGetNode);

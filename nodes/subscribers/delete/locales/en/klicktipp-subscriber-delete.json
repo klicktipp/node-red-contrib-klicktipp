@@ -16,7 +16,12 @@
     },
     "error": {
       "missing-subscriber-id": "Missing subscriber ID",
-      "invalid-input": "Invalid input"
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
     }
   }
 }

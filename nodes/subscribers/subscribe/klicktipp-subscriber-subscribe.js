@@ -63,7 +63,15 @@ module.exports = function (RED) {
 	function KlickTippSubscriberSubscribeNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-subscriber-subscribe.error.missing-credentials',
+			invalidCredentials: 'klicktipp-subscriber-subscribe.error.invalid-credentials',
+			loginFailed: 'klicktipp-subscriber-subscribe.error.login-failed',
+			requestFailed: 'klicktipp-subscriber-subscribe.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-subscriber-subscribe', KlickTippSubscriberSubscribeNode);

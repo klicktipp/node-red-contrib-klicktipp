@@ -11,6 +11,14 @@
     "status": {
       "success": "Fetched data fields",
       "failed": "Datenfelder konnten nicht abgerufen werden"
+    },
+    "error": {
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
     }
   }
 }

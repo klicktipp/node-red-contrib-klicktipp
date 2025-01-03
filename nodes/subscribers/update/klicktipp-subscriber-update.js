@@ -40,7 +40,7 @@ module.exports = function (RED) {
 				this,
 				msg,
 				'klicktipp-subscriber-update.error.missing-subscriber-id',
-				'klicktipp-subscriber-update.error.invalid-input',
+				RED._('klicktipp-subscriber-update.error.missing-subscriber-id'),
 			);
 			return node.send(msg);
 		}
@@ -96,7 +96,14 @@ module.exports = function (RED) {
 	function KlickTippSubscriberUpdateNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-subscriber-update.error.missing-credentials',
+			invalidCredentials: 'klicktipp-subscriber-update.error.invalid-credentials',
+			loginFailed: 'klicktipp-subscriber-update.error.login-failed',
+			requestFailed: 'klicktipp-subscriber-update.error.request-failed',
+		}
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-subscriber-update', KlickTippSubscriberUpdateNode);

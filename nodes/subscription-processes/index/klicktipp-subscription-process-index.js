@@ -52,7 +52,15 @@ module.exports = function (RED) {
 	function KlickTippSubscriptionProcessIndexNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-subscription-process-index.error.missing-credentials',
+			invalidCredentials: 'klicktipp-subscription-process-index.error.invalid-credentials',
+			loginFailed: 'klicktipp-subscription-process-index.error.login-failed',
+			requestFailed: 'klicktipp-subscription-process-index.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType(

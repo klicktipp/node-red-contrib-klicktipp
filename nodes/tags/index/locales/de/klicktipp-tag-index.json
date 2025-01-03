@@ -11,6 +11,13 @@
     "status": {
       "success": "Abgerufene manuelle Tags",
       "failed": "Manuelle Tags konnten nicht abgerufen werden"
+    },
+    "error": {
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
     }
   }
 }

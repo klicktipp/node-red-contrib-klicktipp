@@ -81,7 +81,15 @@ module.exports = function (RED) {
 	function KlickTippSubscriberUntagNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		createKlickTippSessionNode(RED, node, coreFunction)(config);
+		
+		const i18n = {
+			missingCredentials: 'klicktipp-subscriber-untag.error.missing-credentials',
+			invalidCredentials: 'klicktipp-subscriber-untag.error.invalid-credentials',
+			loginFailed: 'klicktipp-subscriber-untag.error.login-failed',
+			requestFailed: 'klicktipp-subscriber-untag.error.request-failed',
+		}
+		
+		createKlickTippSessionNode(RED, node, coreFunction, i18n)(config);
 	}
 
 	RED.nodes.registerType('klicktipp-subscriber-untag', KlickTippSubscriberUntagNode);

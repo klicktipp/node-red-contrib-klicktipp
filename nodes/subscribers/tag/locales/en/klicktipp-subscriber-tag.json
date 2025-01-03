@@ -18,7 +18,12 @@
     "error": {
       "missing-email": "Missing email",
       "missing-tag": "Missing or invalid tag IDs",
-      "invalid-input": "Invalid input"
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
     }
   }
 }
