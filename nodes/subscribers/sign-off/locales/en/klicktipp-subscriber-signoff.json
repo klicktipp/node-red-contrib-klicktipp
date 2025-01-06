@@ -1,0 +1,25 @@
+{
+  "klicktipp-subscriber-signoff" : {
+    "name": "Subscriber signoff",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address",
+      "api-key": "API key"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address",
+      "api-key": "Enter your API key"
+    },
+    "status": {
+      "success": "Unsubscribed successfully",
+      "failed": "Failed to unsubscribe"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "missing-api-key": "Missing API key",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

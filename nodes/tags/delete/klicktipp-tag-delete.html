@@ -1,0 +1,55 @@
+<script type="text/x-red" data-template-name="klicktipp-tag-delete">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-tag-delete.label.config"></label>
+		<input type="text" id="node-input-klicktipp">
+	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-tag-delete.label.tag"></span></label>
+        <select id="node-input-tagId"></select>
+    </div>
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-tag-delete.label.name"></span></label>
+		<input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-tag-delete.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-tag-delete', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			tagId: {
+				value: '',
+				validate: RED.validators.number()
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-tag-delete.name");
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-tag-delete.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
+			const tagDropdown = $('#node-input-tagId');
+			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+		},
+		oneditsave: function() {
+			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
+		}
+	});
+</script>

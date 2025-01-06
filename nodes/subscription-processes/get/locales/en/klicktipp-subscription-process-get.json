@@ -1,0 +1,26 @@
+{
+  "klicktipp-subscription-process-get" : {
+    "name": "Opt\u2013in process get",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "subscription-process": "Opt-in process"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Fetched Opt-in process",
+      "failed": "Failed to fetch Opt-in process"
+    },
+    "error": {
+      "missing-list-id": "Missing Opt-in ID",
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
+    }
+  }
+}

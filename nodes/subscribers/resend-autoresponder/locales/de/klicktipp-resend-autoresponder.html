@@ -1,0 +1,41 @@
+<script type="text/x-red" data-help-name="klicktipp-resend-autoresponder">
+	<p>Sendet eine Follow-up-E-Mail erneut an einen Abonnenten.</p>
+
+   <h3>Eingaben</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Erwartetes Objekt mit den folgenden Eigenschaften:
+		   <ul>
+			   <li><code>email</code> - (Erforderlich) Die E-Mail-Adresse des Abonnenten</li>
+			   <li><code>autoresponderId</code> - (Erforderlich) Die ID der Follow-up-E-Mail</li>
+		   </ul>
+	   </dd>
+   </dl>
+
+   <h3>Ausgaben</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+   </dl>
+
+   <h3>Knotenstatus</h3>
+   <ul>
+	   <li><strong>Grün (Punkt)</strong> - Der Autoresponder wurde erfolgreich erneut gesendet.</li>
+	   <li><strong>Rot (Ring)</strong> - Der Prozess zum erneuten Senden des Autoresponders ist fehlgeschlagen (z. B. fehlende E-Mail, Autoresponder-ID oder API-Fehler).</li>
+   </ul>
+</script>

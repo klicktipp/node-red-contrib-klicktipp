@@ -1,5 +1,4 @@
 const cache = require('./cache');
-const CACHE_KEYS = require('./cacheKeys'); // Import the shared cache instance
 
 /**
  * Creates a cached API endpoint in Node-RED.
@@ -22,12 +21,12 @@ function createCachedApiEndpoint(RED, options) {
 			const configId = req.headers['config-id'];
 
 			if (!configId) {
-				return res.status(400).json({ error: 'Configuration is missing' });
+				return res.status(400).json({ error: 'missingConfiguration' });
 			}
 
 			const credentials = RED.nodes.getCredentials(configId);
 			if (!credentials || !credentials.username || !credentials.password) {
-				return res.status(400).json({ error: `Credentials are missing` });
+				return res.status(400).json({ error: 'missingCredentials'});
 			}
 			
 			const fullCacheKey = `${configId}_${cacheKey}`;
@@ -46,7 +45,7 @@ function createCachedApiEndpoint(RED, options) {
 			res.json(data);
 		} catch (error) {
 			console.error('Error fetching data:', error);
-			res.status(500).json({ error: 'Failed to fetch data', message: error.message });
+			res.status(500).json({ error: 'failedFetchData', message: error.message });
 		}
 	});
 }

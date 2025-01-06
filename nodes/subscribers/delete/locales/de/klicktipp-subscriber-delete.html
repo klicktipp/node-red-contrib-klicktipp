@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-delete">
+	<p>Löscht einen Abonnenten.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>subscriberId</code> - (Erforderlich) die ID des Abonnenten</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Der Abonnent wurde erfolgreich gelöscht.</li>
+	    <li><strong>Rot (Ring)</strong> - Löschen des Abonnenten fehlgeschlagen (z. B. fehlende Abonnenten-ID oder API-Fehler).</li>
+	</ul>
+</script>

@@ -1,0 +1,27 @@
+{
+  "klicktipp-subscriber-signin" : {
+    "name": "Subscriber signin",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address",
+      "api-key": "API key",
+      "sms-number": "SMS number"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address",
+      "api-key": "Enter your API key",
+      "sms-number": "Enter SMS number (optional)"
+    },
+    "status": {
+      "success": "Subscribed successfully",
+      "failed": "Failed to subscribe"
+    },
+    "error": {
+      "missing-email-or-sms-number": "Missing email or SMS number",
+      "missing-api-key": "Missing API key",
+      "invalid-input": "Invalid input"
+    }
+  }
+}

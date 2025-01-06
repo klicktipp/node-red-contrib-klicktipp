@@ -1,0 +1,23 @@
+{
+  "klicktipp-tag-index" : {
+    "name": "Tag index",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Fetched manual tags",
+      "failed": "Failed to fetch manual tags"
+    },
+    "error": {
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
+    }
+  }
+}

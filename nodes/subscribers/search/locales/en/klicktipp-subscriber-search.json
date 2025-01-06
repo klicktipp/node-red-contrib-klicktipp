@@ -1,0 +1,27 @@
+{
+  "klicktipp-subscriber-search" : {
+    "name": "Subscriber search",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address"
+    },
+    "status": {
+      "success": "Subscriber ID retrieved",
+      "failed": "Failed to search for subscriber"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
+    }
+  }
+}

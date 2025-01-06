@@ -1,0 +1,28 @@
+<script type="text/x-red" data-help-name="klicktipp-subscription-process-index">
+	<p>Gibt ein assoziatives Array im Format <code>{ optin_process_id: optin_process_name }</code> zurück, wobei jeder Schlüssel die eindeutige ID eines Opt-in-Prozesses darstellt und der Wert den entsprechenden Opt-in-Prozessnamen.</p>
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Bei Erfolg:
+			<ul>
+				<li>Ein assoziatives Array, bei dem jeder Schlüssel die Listen-ID ist und der Wert den Namen des Opt-in-Prozesses darstellt.</li>
+			</ul>
+		</dd>
+		<dd>
+			Bei Fehler:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	   <li><strong>Grün (Punkt)</strong> - Opt-in-Prozesse erfolgreich abgerufen.</li>
+	   <li><strong>Rot (Ring)</strong> - Abrufen der Opt-in-Prozesse aufgrund eines Fehlers fehlgeschlagen.</li>
+	</ul>
+</script>

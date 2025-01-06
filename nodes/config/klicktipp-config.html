@@ -1,0 +1,58 @@
+<script src="resources/@klicktipp/node-red-contrib-klicktipp/formUtils.js"></script>
+
+<script type="text/x-red" data-template-name="klicktipp-config">
+	<div class="form-row">
+	    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-config.label.name"></span></label>
+	    <input type="text" id="node-config-input-name" data-i18n="[placeholder]klicktipp-config.placeholder.name">
+	</div>
+	<div class="form-row">
+	    <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="klicktipp-config.label.username"></span></label>
+	    <input type="text" id="node-config-input-username" data-i18n="[placeholder]klicktipp-config.placeholder.username">
+	</div>
+	<div class="form-row">
+	    <label for="node-config-input-password"><i class="fa fa-key"></i> <span data-i18n="klicktipp-config.label.password"></span></label>
+	    <input type="password" id="node-config-input-password" data-i18n="[placeholder]klicktipp-config.placeholder.password">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-config', {
+		category: 'config',
+		defaults: {
+			name: { value: '' },
+		},
+		credentials: {
+			username: { type: 'text' },
+			password: { type: 'password' },
+		},
+		onpaletteadd: function() {
+			const i18nStrings = {
+				label: {
+					defaultDropdownOption: this._("klicktipp-config.label.default-dropdown-option"),
+					customFields: {
+						fieldList: this._("klicktipp-config.label.custom-fields.list"),
+						addButton: this._("klicktipp-config.label.custom-fields.add"),
+					}
+				},
+				placeholder: {
+					customFields: {
+						choose: this._("klicktipp-config.placeholder.custom-fields.choose"),
+						optional: this._("klicktipp-config.placeholder.custom-fields.optional"),
+					}
+				},
+				error: {
+					missingCredentials: this._("klicktipp-config.error.missing-credentials"),
+					noItems: this._("klicktipp-config.error.no-items"),
+					generic: this._("klicktipp-config.error.generic-error"),
+					missingConfiguration: this._('klicktipp-config.error.missing-configuration'),
+					failedFetchData: this._('klicktipp-config.error.failed-to-fetch'),
+				},
+			};
+
+			setKlicktippI18n(i18nStrings);
+		},
+		label: function () {
+			return this.name || this._("klicktipp-config.name");
+		},
+	});
+</script>

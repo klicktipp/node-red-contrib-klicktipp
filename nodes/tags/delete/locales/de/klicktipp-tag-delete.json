@@ -1,0 +1,26 @@
+{
+  "klicktipp-tag-delete" : {
+    "name": "Tag löschen",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "tag": "Tag"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Tag gelöscht",
+      "failed": "Tag konnte nicht gelöscht werden"
+    },
+    "error": {
+      "missing-tag": "Fehlende Tag-ID",
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
+    }
+  }
+}

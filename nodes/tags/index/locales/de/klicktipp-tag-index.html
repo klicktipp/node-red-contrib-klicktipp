@@ -1,0 +1,29 @@
+<script type="text/x-red" data-help-name="klicktipp-tag-index">
+	<p>Gibt ein assoziatives Array im Format <code>{ tag_id: tag_name }</code> zurück, wobei jeder Schlüssel die eindeutige ID eines manuellen Tags oder SmartLinks darstellt und der Wert der entsprechende Tag-Name ist.
+	Verwenden Sie den <code>Tag get</code>-Knoten, um den Namen und die Beschreibung eines Tags abzurufen.</p>
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Bei Erfolg:
+			<ul>
+				<li>Ein Array aller manuellen Tags, die dem angemeldeten Benutzer zugeordnet sind.</li>
+			</ul>
+		</dd>
+		<dd>
+			Bei Fehler:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	   <li><strong>Grün (Punkt)</strong> - Tags wurden erfolgreich abgerufen.</li>
+	   <li><strong>Rot (Ring)</strong> - Abrufen der Tags aufgrund eines Fehlers fehlgeschlagen (z. B. fehlgeschlagene API-Anfrage oder ungültige Sitzung).</li>
+	</ul>
+</script>

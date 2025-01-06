@@ -1,0 +1,27 @@
+{
+  "klicktipp-subscriber-tagged" : {
+    "name": "Subscriber tagged",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "tag": "Tag",
+      "select-option": "Select an option"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Subscribers tagged retrieved",
+      "failed": "Failed to retrieve tagged subscribers"
+    },
+    "error": {
+      "missing-tag": "Missing tag ID",
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
+    }
+  }
+}

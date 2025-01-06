@@ -1,0 +1,68 @@
+<script type="text/x-red" data-template-name="klicktipp-subscriber-tag">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-subscriber-tag.label.config"></label>
+	    <input type="text" id="node-input-klicktipp">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span data-i18n="klicktipp-subscriber-tag.label.email"></span></label>
+	    <input type="text" id="node-input-email" data-i18n="[placeholder]klicktipp-subscriber-tag.placeholder.email">
+	    <input type="hidden" id="node-input-emailType">
+	</div>
+    <div class="form-row">
+        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-subscriber-tag.label.tag"></span></label>
+        <select id="node-input-tagId" multiple style="height: auto; width: 100%;"></select>
+    </div>
+	<div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-subscriber-tag.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-subscriber-tag.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-subscriber-tag', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			email: {
+				value: 'payload.email',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'msg'
+			},
+			tagId: {
+				value: [],
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-subscriber-tag.name")
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-subscriber-tag.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			const klicktippInput = $('#node-input-klicktipp');
+			const tagDropdown = $('#node-input-tagId');
+			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+		},
+		oneditsave: function() {
+			this.tagId = $('#node-input-tagId').val(); // Save the selected tagId(s)
+		}
+	});
+</script>

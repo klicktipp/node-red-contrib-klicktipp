@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-field-get">
+	<p>Returns the ID and the name of a field.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Expected object with the following properties:
+	        <ul>
+	            <li><code>apiFieldId</code> - (Required) The API ID of the field.</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			On success:
+			<ul>
+				<li>The field definition object.</li>
+			</ul>
+		</dd>
+		<dd>
+			On failure:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>An error message explaining why the request failed.</dd>
+	</dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Field definition fetched successfully.</li>
+	    <li><strong>Red (ring)</strong> - Failed to fetch field definition (e.g., missing field ID or API error).</li>
+	</ul>
+</script>

@@ -1,0 +1,41 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-tagged">
+	<p>Gibt ein assoziatives Array im Format <code>{ subscriber_id: subscription_timestamp }</code> zurück, wobei jeder Schlüssel die eindeutige ID eines markierten Abonnenten darstellt
+	und der Wert den Zeitpunkt der Anmeldung angibt. Verwenden Sie den <code>Subscriber Get</code>-Knoten, um detaillierte Informationen zu einem Abonnenten abzurufen.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>tagId</code> - (Erforderlich) Die ID eines manuellen Tags oder eines SmartLinks</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li>Ein Array von Abonnenten-IDs, die mit der angegebenen Tag-ID verknüpft sind.</li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Abonnenten, die mit der angegebenen Tag-ID markiert sind, wurden erfolgreich abgerufen.</li>
+	    <li><strong>Rot (Ring)</strong> - Abrufen der Abonnenten fehlgeschlagen, entweder aufgrund einer fehlenden Tag-ID oder eines Fehlers bei der API-Anfrage.</li>
+	</ul>
+</script>

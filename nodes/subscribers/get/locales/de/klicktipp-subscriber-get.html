@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-get">
+	<p>Gibt alle verfügbaren Informationen über einen Abonnenten zurück. Zum Beispiel können Sie damit prüfen, wann ein Kontakt eine E-Mail erhalten, geöffnet oder auf einen bestimmten Link geklickt hat.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>subscriberId</code> - (Erforderlich) die ID des Abonnenten</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li>Ein Objekt mit den Details des Abonnenten</li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Abonnenteninformationen erfolgreich abgerufen.</li>
+	    <li><strong>Rot (Ring)</strong> - Abrufen der Abonnenteninformationen fehlgeschlagen (z. B. fehlende Abonnenten-ID oder API-Fehler).</li>
+	</ul>
+</script>

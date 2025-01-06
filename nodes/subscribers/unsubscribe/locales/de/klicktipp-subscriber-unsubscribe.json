@@ -1,0 +1,27 @@
+{
+  "klicktipp-subscriber-unsubscribe": {
+    "name": "Abonnent abmelden",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben"
+    },
+    "status": {
+      "success": "Erfolgreich abgemeldet",
+      "failed": "Abmeldung fehlgeschlagen"
+    },
+    "error": {
+      "missing-email": "Fehlende E-Mail",
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+<script type="text/x-red" data-template-name="klicktipp-resend-autoresponder">
+	<div class="form-row">
+		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span data-i18n="klicktipp-resend-autoresponder.label.config"></label>
+		<input type="text" id="node-input-klicktipp">
+	</div>
+	<div class="form-row">
+		<label for="node-input-email"><i class="fa fa-envelope"></i> <span data-i18n="klicktipp-resend-autoresponder.label.email"></span></label>
+		<input type="text" id="node-input-email" data-i18n="[placeholder]klicktipp-resend-autoresponder.placeholder.email">
+		<input type="hidden" id="node-input-emailType">
+	</div>
+	<div class="form-row">
+		<label for="node-input-autoresponderId"><i class="fa fa-mobile"></i> <span data-i18n="klicktipp-resend-autoresponder.label.autoresponder"></span></label>
+		<input type="text" id="node-input-autoresponderId" data-i18n="[placeholder]klicktipp-resend-autoresponder.placeholder.autoresponder">
+		<input type="hidden" id="node-input-autoresponderIdType">
+	</div>
+	<div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="klicktipp-resend-autoresponder.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]klicktipp-resend-autoresponder.placeholder.name">
+	</div>
+</script>
+
+<script type="text/javascript">
+	RED.nodes.registerType('klicktipp-resend-autoresponder', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: {
+				type: 'klicktipp-config',
+				required: true
+			},
+			email: {
+				value: 'payload.email',
+				required: true,
+				validate: RED.validators.typedInput('emailType')
+			},
+			emailType: {
+				value: 'msg'
+			},
+			autoresponderId: {
+				value: 'payload.autoresponderId',
+				validate: RED.validators.typedInput('autoresponderIdType')
+			},
+			autoresponderIdType: {
+				value: 'msg'
+			},
+			name: {
+				value: ''
+			},
+		},
+		inputs: 1,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || this._("klicktipp-resend-autoresponder.name");
+		},
+		labelStyle: "klicktipp_label_style",
+		paletteLabel: function () {
+			return this._("klicktipp-resend-autoresponder.name");
+		},
+		onadd: function() {
+			ktPopulateConfig(this);
+		},
+		oneditprepare: function() {
+			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktInitializeTypedInput("#node-input-autoresponderId", "#node-input-autoresponderIdType", 'num', ['num']);
+		},
+	});
+</script>

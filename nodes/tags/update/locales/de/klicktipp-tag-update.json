@@ -1,0 +1,32 @@
+{
+  "klicktipp-tag-update" : {
+    "name": "Tag update",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "tag": "Tag",
+      "tag-name": "Name",
+      "tag-description": "Beschreibung"
+    },
+    "placeholder": {
+      "name": "Name",
+      "tag-name": "Name eingeben (optional)",
+      "tag-description": "Beschreibung eingeben (optional)"
+    },
+    "status": {
+      "success": "Tag aktualisiert",
+      "failed": "Tag kann nicht aktualisiert werden"
+    },
+    "error": {
+      "nothing-to-update": "Nichts zu aktualisieren",
+      "missing-tag": "Fehlende Tag-ID",
+      "missing-name": "Fehlender Tag-Name",
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
+    }
+  }
+}

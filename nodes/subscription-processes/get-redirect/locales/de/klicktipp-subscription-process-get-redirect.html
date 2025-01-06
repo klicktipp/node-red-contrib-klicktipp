@@ -1,0 +1,41 @@
+<script type="text/x-red" data-help-name="klicktipp-subscription-process-get-redirect">
+	<p>Gibt die URL der Bestätigungsseite für den Opt-in-Prozess eines Abonnenten zurück.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	<dt>msg.payload <span class="property-type">object</span></dt>
+	<dd>
+	   Erwartetes Objekt mit den folgenden Eigenschaften:
+	   <ul>
+		   <li><code>listId</code> - (Erforderlich) Die ID eines Opt-in-Prozesses</li>
+		   <li><code>email</code> - (Erforderlich) Die E-Mail-Adresse des Abonnenten</li>
+	   </ul>
+	</dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Bei Erfolg:
+			<ul>
+				<li>Die URL, zu der der Abonnent für den angegebenen Opt-in-Prozess weitergeleitet wird.</li>
+			</ul>
+		</dd>
+		<dd>
+			Bei Fehler:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+		<li><strong>Grün (Punkt)</strong> - Die Weiterleitungs-URL wurde erfolgreich abgerufen.</li>
+		<li><strong>Rot (Ring)</strong> - Abrufen der Weiterleitungs-URL aufgrund eines Fehlers fehlgeschlagen (z. B. fehlende Listen-ID oder E-Mail).</li>
+	</ul>
+</script>

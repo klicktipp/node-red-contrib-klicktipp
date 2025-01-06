@@ -1,0 +1,32 @@
+{
+  "klicktipp-config" : {
+    "name": "KlickTipp Config",
+    "label": {
+      "name": "Name",
+      "username": "Username",
+      "password": "Password",
+      "default-dropdown-option": "Select an option",
+      "custom-fields": {
+        "list": "Data fields list",
+        "add": "Add Custom Field"
+      }
+    },
+    "placeholder": {
+      "name": "Enter a name for this config",
+      "username": "Enter your KlickTipp username",
+      "password": "Enter your KlickTipp password",
+      "custom-fields": {
+        "choose": "Choose",
+        "optional": "optional"
+      }
+    },
+    "error": {
+      "missing-credentials": "Missing credentials",
+      "missing-configuration": "Configuration is missing",
+      "failed-to-fetch": "Failed to fetch data",
+      "no-items": "No valid items found",
+      "invalid-input": "Invalid input",
+      "generic-error": "Error"
+    }
+  }
+}

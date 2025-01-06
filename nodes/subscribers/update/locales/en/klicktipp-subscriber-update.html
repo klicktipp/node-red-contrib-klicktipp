@@ -1,0 +1,44 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-update">
+	<p>Updates the data fields, email address, or SMS number of a subscriber.</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Expected object with the following properties:
+	        <ul>
+	            <li><code>subscriberId</code> - (Required) the subscriber's ID</li>
+	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
+	            structured as returned by the <code>Field index</code> node</li>
+	            <li><code>newEmail</code> - (Optional) the subscriber's new email address</li>
+	            <li><code>newSmsNumber</code> - (Optional) the subscriber's new mobile number</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+   <h3>Outputs</h3>
+   <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message explaining why the request failed.</dd>
+   </dl>
+
+	<h3>Node Status</h3>
+	<ul>
+	    <li><strong>Green (dot)</strong> - Subscriber was updated successfully.</li>
+	    <li><strong>Red (ring)</strong> - Failed to update subscriber (e.g., missing subscriber ID, invalid data, or API error).</li>
+	</ul>
+</script>

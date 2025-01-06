@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-subscriber-search">
+	<p>Gibt die Abonnenten-ID für eine E-Mail-Adresse zurück. Verwenden Sie den <code>Subscriber get</code>-Knoten, um detaillierte Informationen über diesen Abonnenten abzurufen.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>email</code> - (Erforderlich) die E-Mail-Adresse des Abonnenten</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   Bei Erfolg:
+		   <ul>
+			   <li>Ein Objekt mit den Details des Abonnenten (z. B. Abonnenten-ID), falls gefunden.</li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   Bei Fehler:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>Eine Fehlermeldung, die angibt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Die Abonnentensuche war erfolgreich, und die Abonnenten-ID wurde abgerufen.</li>
+	    <li><strong>Rot (Ring)</strong> - Die Suche nach dem Abonnenten ist fehlgeschlagen (z. B. fehlende E-Mail-Adresse oder API-Fehler).</li>
+	</ul>
+</script>

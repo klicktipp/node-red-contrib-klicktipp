@@ -1,0 +1,33 @@
+{
+  "klicktipp-subscriber-subscribe": {
+    "name": "Abonnent abonnieren",
+    "label": {
+      "config": "KlickTipp Konfiguration",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "sms-number": "SMS-Nummer",
+      "subscription-process": "Opt-in-Prozess",
+      "tag": "Tag",
+      "fields": "Datenfelder"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben",
+      "sms-number": "SMS-Nummer eingeben (optional)",
+      "fields": "Datenfelder"
+    },
+    "status": {
+      "success": "Erfolgreich abonniert",
+      "failed": "Abonnieren fehlgeschlagen"
+    },
+    "error": {
+      "missing-email-or-phone": "E-Mail-Adresse oder Telefonnummer fehlt",
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
+    }
+  }
+}

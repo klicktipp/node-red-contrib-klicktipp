@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="klicktipp-field-get">
+	<p>Gibt die ID und den Namen eines Feldes zurück.</p>
+
+	<h3>Eingaben</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        Erwartetes Objekt mit den folgenden Eigenschaften:
+	        <ul>
+	            <li><code>apiFieldId</code> - (Erforderlich) Die API-ID des Feldes.</li>
+	        </ul>
+	    </dd>
+	</dl>
+
+	<h3>Ausgaben</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Bei Erfolg:
+			<ul>
+				<li>Das Felddefinitionsobjekt.</li>
+			</ul>
+		</dd>
+		<dd>
+			Bei Fehler:
+			<ul>
+				<li><code>{ success: false }</code></li>
+			</ul>
+		</dd>
+
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Eine Fehlermeldung, die erklärt, warum die Anfrage fehlgeschlagen ist.</dd>
+	</dl>
+
+	<h3>Knotenstatus</h3>
+	<ul>
+	    <li><strong>Grün (Punkt)</strong> - Felddefinition erfolgreich abgerufen.</li>
+	    <li><strong>Rot (Ring)</strong> - Abrufen der Felddefinition fehlgeschlagen (z. B. fehlende Feld-ID oder API-Fehler).</li>
+	</ul>
+</script>

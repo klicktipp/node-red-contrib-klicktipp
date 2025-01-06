@@ -1,0 +1,27 @@
+{
+  "klicktipp-subscriber-get" : {
+    "name": "Subscriber get",
+    "config": "KlickTipp Config",
+    "label": {
+      "name": "Name",
+      "subscriber-id": "Subscriber ID"
+    },
+    "placeholder": {
+      "name": "Name",
+      "subscriber-id": "Enter Subscriber ID (required)"
+    },
+    "status": {
+      "success": "Fetched subscriber information",
+      "failed": "Failed to fetch subscriber information"
+    },
+    "error": {
+      "missing-subscriber-id": "Missing subscriber ID",
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
+    }
+  }
+}

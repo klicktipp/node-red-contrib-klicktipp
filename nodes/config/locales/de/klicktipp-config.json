@@ -1,0 +1,32 @@
+{
+  "klicktipp-config" : {
+    "name": "KlickTipp Konfig",
+    "label": {
+      "name": "Name",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "default-dropdown-option": "Wählen Sie eine Option",
+      "custom-fields": {
+        "list": "Liste der Datenfelder",
+        "add": "Benutzerdefiniertes Feld hinzufügen"
+      }
+    },
+    "placeholder": {
+      "name": "Name",
+      "username": "Geben Sie Ihren KlickTipp-Benutzernamen ein",
+      "password": "Geben Sie Ihr KlickTipp-Passwort ein",
+      "custom-fields": {
+        "choose": "Eingabe",
+        "optional": "optional"
+      }
+    },
+    "error": {
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "missing-configuration": "Die Konfiguration fehlt",
+      "failed-to-fetch": "Daten können nicht abgerufen werden",
+      "no-items": "Keine gültigen Einträge gefunden",
+      "invalid-input": "Invalid input",
+      "generic-error": "Fehler"
+    }
+  }
+}

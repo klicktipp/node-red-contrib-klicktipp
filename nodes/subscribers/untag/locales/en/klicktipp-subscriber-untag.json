@@ -1,0 +1,29 @@
+{
+  "klicktipp-subscriber-untag" : {
+    "name": "Subscriber untag",
+    "label": {
+      "config": "KlickTipp Config",
+      "name": "Name",
+      "email": "Email address",
+      "tag": "Tag"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "Enter email address"
+    },
+    "status": {
+      "success": "Email untagged successfully",
+      "failed": "Failed to untag email"
+    },
+    "error": {
+      "missing-email": "Missing email",
+      "missing-tag": "Missing tag ID",
+      "invalid-input": "Invalid input",
+      "missing-credentials": "Missing credentials",
+      "invalid-credentials": "Invalid credentials or session ID missing",
+      "login-failed": "Login request failed",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Request failed"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "klicktipp-subscriber-tagged" : {
+    "name": "Abonnent getaggt",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "tag": "Tag",
+      "select-option": "Wählen Sie eine Option"
+    },
+    "placeholder": {
+      "name": "Name"
+    },
+    "status": {
+      "success": "Abgerufene markierte Abonnenten",
+      "failed": "Abruf der markierten Abonnenten fehlgeschlagen"
+    },
+    "error": {
+      "missing-tag": "Fehlende Tag-ID",
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "klicktipp-resend-autoresponder": {
+    "name": "Autoresponder erneut senden",
+    "label": {
+      "config": "KlickTipp Konfig",
+      "name": "Name",
+      "email": "E-Mail-Adresse",
+      "autoresponder": "Autoresponder"
+    },
+    "placeholder": {
+      "name": "Name",
+      "email": "E-Mail-Adresse eingeben",
+      "autoresponder": "Geben Sie die ID des Autoresponders ein (optional)"
+    },
+    "status": {
+      "success": "Autoresponder erfolgreich erneut gesendet",
+      "failed": "Autoresponder konnte nicht erneut gesendet werden"
+    },
+    "error": {
+      "missing-email": "Fehlende E-Mail",
+      "missing-autoresponder": "Fehlende Autoresponder-ID",
+      "invalid-input": "Ungültige Eingabe",
+      "missing-credentials": "Fehlende Berechtigungsnachweise",
+      "invalid-credentials": "Ungültige Anmeldedaten oder Sitzungs-ID fehlt",
+      "login-failed": "Login-Anfrage fehlgeschlagen",
+      "logout-failed": "Invalid credentials or session ID missing",
+      "request-failed": "Anfrage fehlgeschlagen"
+    }
+  }
+}
