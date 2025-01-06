@@ -7,17 +7,18 @@ const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNo
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
+		const node = this;
 		try {
 			const apiFieldId = config.apiFieldId || msg?.payload?.apiFieldId;
 			
 			if (!apiFieldId) {
 				handleErrorWithI18n(
-					this,
+					node,
 					msg,
 					'klicktipp-field-get.error.missing-api-field',
 					RED._('klicktipp-field-get.error.missing-api-field')
 				);
-				return this.send(msg);
+				return node.send(msg);
 			}
 			
 			//Extract field ID, i.e. CompanyName
@@ -25,12 +26,12 @@ module.exports = function (RED) {
 			
 			if (!fieldId) {
 				handleErrorWithI18n(
-					this,
+					node,
 					msg,
 					'klicktipp-field-get.error.missing-field-id',
 					RED._('klicktipp-field-get.error.missing-field-id')
 				);
-				return this.send(msg);
+				return node.send(msg);
 			}
 			
 			const response = await makeRequest(
@@ -41,7 +42,7 @@ module.exports = function (RED) {
 			);
 			
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'klicktipp-field-get.status.success',
@@ -53,7 +54,7 @@ module.exports = function (RED) {
 		} catch (error) {
 			console.log(error);
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-field-get.status.failed',
 				error.message

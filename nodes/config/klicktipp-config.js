@@ -7,9 +7,11 @@ const CACHE_KEYS = require('../utils/cache/cacheKeys');
 module.exports = function (RED) {
 	// Configuration node for storing API credentials
 	function KlickTippConfigNode(n) {
-		RED.nodes.createNode(this, n);
-		this.username = this.credentials.username;
-		this.password = this.credentials.password;
+		const node = this;
+		
+		RED.nodes.createNode(node, n);
+		node.username = node.credentials.username;
+		node.password = node.credentials.password;
 	}
 	
 	// Register the config node for KlickTipp credentials

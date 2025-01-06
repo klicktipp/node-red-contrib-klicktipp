@@ -17,7 +17,7 @@ module.exports = function (RED) {
 				'klicktipp-subscription-process-get.error.missing-list-id',
 				RED._('klicktipp-subscription-process-get.error.missing-list-id')
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {

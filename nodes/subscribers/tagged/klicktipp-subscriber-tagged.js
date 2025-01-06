@@ -19,7 +19,7 @@ module.exports = function (RED) {
 				'klicktipp-subscriber-tagged.error.missing-tag',
 				RED._('klicktipp-subscriber-tagged.error.missing-tag'),
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {
@@ -31,7 +31,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'klicktipp-subscriber-tagged.status.success',

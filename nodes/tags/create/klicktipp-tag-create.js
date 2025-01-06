@@ -24,12 +24,12 @@ module.exports = function (RED) {
 
 		if (!name) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-tag-create.error.missing-name',
 				RED._('klicktipp-tag-create.error.missing-name'),
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {

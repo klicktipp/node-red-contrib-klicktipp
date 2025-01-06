@@ -27,7 +27,7 @@ module.exports = function (RED) {
 				'klicktipp-resend-autoresponder.error.missing-email',
 				RED._('klicktipp-resend-autoresponder.error.missing-email')
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		if (!autoresponderId) {
@@ -37,7 +37,7 @@ module.exports = function (RED) {
 				'klicktipp-resend-autoresponder.error.missing-autoresponder',
 				RED._('klicktipp-resend-autoresponder.error.missing-autoresponder')
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {

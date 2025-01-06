@@ -8,11 +8,13 @@ const objectToIdValueArray = require('../../utils/objectToIdValueArray');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
+		const node = this;
+		
 		try {
 			const response = await makeRequest('/tag', 'GET', {}, msg.sessionData);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'klicktipp-tag-index.status.success',
@@ -24,7 +26,7 @@ module.exports = function (RED) {
 			);
 		} catch (error) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-tag-index.status.failed',
 				error.message

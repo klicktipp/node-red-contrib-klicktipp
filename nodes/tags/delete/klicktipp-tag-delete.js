@@ -10,15 +10,16 @@ const CACHE_KEYS = require('../../utils/cache/cacheKeys');
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const tagId = config.tagId || msg?.payload?.tagId;
+		const node = this;
 
 		if (!tagId) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-tag-delete.error.missing-tag',
 				RED._('klicktipp-tag-delete.error.missing-tag'),
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {
@@ -30,7 +31,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'klicktipp-tag-delete.status.success',
@@ -44,7 +45,7 @@ module.exports = function (RED) {
 			);
 		} catch (error) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-tag-delete.status.failed',
 				error.message

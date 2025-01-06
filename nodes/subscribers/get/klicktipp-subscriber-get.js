@@ -19,12 +19,12 @@ module.exports = function (RED) {
 
 		if (!subscriberId) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-subscriber-get.error.missing-subscriber-id',
 				RED._('klicktipp-subscriber-get.error.missing-subscriber-id'),
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {

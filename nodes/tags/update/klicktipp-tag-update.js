@@ -25,22 +25,22 @@ module.exports = function (RED) {
 
 		if (!tagId) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-tag-get.error.missing-tag',
 				RED._('klicktipp-tag-get.error.missing-tag'),
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		if (name === '' && text === '') {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-tag-get.error.nothing-to-update',
 				RED._('klicktipp-tag-get.error.nothing-to-update'),
 			);
-			return this.send(msg);
+			return node.send(msg);
 		}
 
 		try {

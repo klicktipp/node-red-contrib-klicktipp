@@ -8,11 +8,12 @@ const objectToIdValueArray = require('../../utils/objectToIdValueArray');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg) {
+		const node = this;
 		try {
 			const response = await makeRequest('/field', 'GET', {}, msg.sessionData);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'klicktipp-field-index.status.success',
@@ -24,7 +25,7 @@ module.exports = function (RED) {
 			);
 		} catch (error) {
 			handleErrorWithI18n(
-				this,
+				node,
 				msg,
 				'klicktipp-field-index.status.failed',
 				error.message
