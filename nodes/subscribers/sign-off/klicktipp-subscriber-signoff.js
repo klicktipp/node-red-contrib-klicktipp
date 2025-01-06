@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const evaluatePropertyAsync = require('../../utils/evaluatePropertyAsync');
 const qs = require('qs');
@@ -36,21 +36,21 @@ module.exports = function (RED) {
 			const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
 			
 			if (!apiKey) {
-				handleError(
+				handleErrorWithI18n(
 					node,
 					msg,
 					'klicktipp-subscriber-signoff.error.missing-api-key',
-					'klicktipp-subscriber-signoff.error.invalid-input'
+					RED._('klicktipp-subscriber-signoff.error.missing-api-key')
 				);
 				return node.send(msg);
 			}
 			
 			if (!email) {
-				handleError(
+				handleErrorWithI18n(
 					node,
 					msg,
 					'klicktipp-subscriber-signoff.error.missing-email',
-					'klicktipp-subscriber-signoff.error.invalid-input'
+					RED._('klicktipp-subscriber-signoff.error.missing-email')
 				);
 				return node.send(msg);
 			}
@@ -74,7 +74,12 @@ module.exports = function (RED) {
 					},
 				);
 			} catch (error) {
-				handleError(node, msg, 'klicktipp-subscriber-signoff.status.failed', error.message);
+				handleErrorWithI18n(
+					node,
+					msg,
+					'klicktipp-subscriber-signoff.status.failed',
+					error.message
+				);
 			}
 
 			node.send(msg);

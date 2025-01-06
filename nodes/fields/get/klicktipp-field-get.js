@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 
@@ -11,11 +11,11 @@ module.exports = function (RED) {
 			const apiFieldId = config.apiFieldId || msg?.payload?.apiFieldId;
 			
 			if (!apiFieldId) {
-				handleError(
+				handleErrorWithI18n(
 					this,
 					msg,
 					'klicktipp-field-get.error.missing-api-field',
-					'klicktipp-field-get.error.invalid-input',
+					RED._('klicktipp-field-get.error.missing-api-field')
 				);
 				return this.send(msg);
 			}
@@ -24,11 +24,11 @@ module.exports = function (RED) {
 			const fieldId = apiFieldId.replace(/^field/, '');
 			
 			if (!fieldId) {
-				handleError(
+				handleErrorWithI18n(
 					this,
 					msg,
 					'klicktipp-field-get.error.missing-field-id',
-					'klicktipp-field-get.error.invalid-input',
+					RED._('klicktipp-field-get.error.missing-field-id')
 				);
 				return this.send(msg);
 			}
@@ -52,7 +52,7 @@ module.exports = function (RED) {
 			);
 		} catch (error) {
 			console.log(error);
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-field-get.status.failed',

@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../../utils/evaluatePropertyAsync');
@@ -21,21 +21,21 @@ module.exports = function (RED) {
 		);
 
 		if (!email) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-resend-autoresponder.error.missing-email',
-				'klicktipp-resend-autoresponder.error.invalid-input'
+				RED._('klicktipp-resend-autoresponder.error.missing-email')
 			);
 			return this.send(msg);
 		}
 
 		if (!autoresponderId) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-resend-autoresponder.error.missing-autoresponder',
-				'klicktipp-resend-autoresponder.error.invalid-input'
+				RED._('klicktipp-resend-autoresponder.error.missing-autoresponder')
 			);
 			return this.send(msg);
 		}
@@ -60,7 +60,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-resend-autoresponder.status.failed',

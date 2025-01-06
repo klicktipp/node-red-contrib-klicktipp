@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const prepareUpdateSubscriberData = require('../../utils/transformers/prepareUpdateSubscriberData');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
@@ -36,8 +36,8 @@ module.exports = function (RED) {
 		);
 
 		if (!subscriberId) {
-			handleError(
-				this,
+			handleErrorWithI18n(
+				node,
 				msg,
 				'klicktipp-subscriber-update.error.missing-subscriber-id',
 				RED._('klicktipp-subscriber-update.error.missing-subscriber-id'),
@@ -66,7 +66,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'klicktipp-subscriber-update.status.failed', error.message);
+			handleErrorWithI18n(
+				node,
+				msg,
+				'klicktipp-subscriber-update.status.failed',
+				error.message
+			);
 		}
 	};
 

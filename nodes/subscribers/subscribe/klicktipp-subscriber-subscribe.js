@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const prepareSubscriptionData = require('../../utils/transformers/prepareCreateSubscriberData');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
@@ -25,11 +25,11 @@ module.exports = function (RED) {
 		);
 		// Ensure at least one parameter (email or phone number) is provided
 		if (!email && !smsNumber) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-subscriber-subscribe.error.missing-email-or-phone',
-				'klicktipp-subscriber-subscribe.error.invalid-input'
+				RED._('klicktipp-subscriber-subscribe.error.missing-email-or-phone')
 			);
 			return node.send(msg);
 		}
@@ -56,7 +56,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'klicktipp-subscriber-subscribe.status.failed', error.message);
+			handleErrorWithI18n(
+				node,
+				msg,
+				'klicktipp-subscriber-subscribe.status.failed',
+				error.message
+			);
 		}
 	};
 

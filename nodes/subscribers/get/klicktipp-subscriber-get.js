@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../../utils/evaluatePropertyAsync');
@@ -18,11 +18,11 @@ module.exports = function (RED) {
 		);
 
 		if (!subscriberId) {
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-subscriber-get.error.missing-subscriber-id',
-				'klicktipp-subscriber-get.error.invalid-input',
+				RED._('klicktipp-subscriber-get.error.missing-subscriber-id'),
 			);
 			return this.send(msg);
 		}
@@ -47,7 +47,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'klicktipp-subscriber-get.status.failed', error.message);
+			handleErrorWithI18n(
+				node,
+				msg,
+				'klicktipp-subscriber-get.status.failed',
+				error.message
+			);
 		}
 	};
 	/**

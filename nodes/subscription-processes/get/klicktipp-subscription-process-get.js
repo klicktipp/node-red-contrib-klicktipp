@@ -1,20 +1,21 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
+		const node = this;
 		const listId = config.listId || msg?.payload?.listId;
 
 		if (!listId) {
-			handleError(
-				this,
+			handleErrorWithI18n(
+				node,
 				msg,
 				'klicktipp-subscription-process-get.error.missing-list-id',
-				'klicktipp-subscription-process-get.error.invalid-input'
+				RED._('klicktipp-subscription-process-get.error.missing-list-id')
 			);
 			return this.send(msg);
 		}
@@ -28,7 +29,7 @@ module.exports = function (RED) {
 			);
 
 			handleResponse(
-				this,
+				node,
 				msg,
 				response,
 				'klicktipp-subscription-process-get.status.success',
@@ -38,8 +39,8 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(
-				this,
+			handleErrorWithI18n(
+				node,
 				msg,
 				'klicktipp-subscription-process-get.status.failed',
 				error.message

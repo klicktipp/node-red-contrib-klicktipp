@@ -1,5 +1,5 @@
 const makeRequest = require('./makeRequest');
-const handleError = require('./handleError');
+const { handleErrorWithI18n } = require('./handleError');
 
 /**
  * createKlickTippSessionNode - A higher-order function to create a Node-RED node with KlickTipp login and logout functionality.
@@ -25,7 +25,12 @@ function createKlickTippSessionNode(RED, node, coreFunction, i18n = {}) {
 			const loginFailedMessage = i18n?.loginFailed || 'Login request failed';
 			const requestFailedMessage = i18n?.requestFailed || 'Request failed';
 			if (!username || !password) {
-				handleError(node, msg, missingCredentialsMessage);
+				handleErrorWithI18n(
+					node,
+					msg,
+					missingCredentialsMessage,
+					RED._(missingCredentialsMessage)
+				);
 				return node.send(msg);
 			}
 
@@ -42,18 +47,32 @@ function createKlickTippSessionNode(RED, node, coreFunction, i18n = {}) {
 						};
 						msg.sessionData = sessionData;
 					} else {
-						handleError(node, msg, invalidCredentialsMessage);
+						handleErrorWithI18n(
+							node,
+							msg,
+							invalidCredentialsMessage
+						);
 						return node.send(msg);
 					}
 				} catch (loginError) {
-					handleError(node, msg, loginFailedMessage, loginError.message);
+					handleErrorWithI18n(
+						node,
+						msg,
+						loginFailedMessage,
+						loginError.message
+					);
 					return node.send(msg);
 				}
 
 				// Execute core functionality
 				await coreFunction.call(node, msg, config);
 			} catch (error) {
-				handleError(node, msg, requestFailedMessage, error.message);
+				handleErrorWithI18n(
+					node,
+					msg,
+					requestFailedMessage,
+					error.message
+				);
 			} finally {
 				//Logout
 				if (sessionData) {

@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../../utils/evaluatePropertyAsync');
@@ -15,21 +15,21 @@ module.exports = function (RED) {
 		const listId = config.listId;
 
 		if (!listId) {
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-subscription-process-get-redirect.error.missing-list-id',
-				'klicktipp-subscription-process-get-redirect.error.invalid-input'
+				RED._('klicktipp-subscription-process-get-redirect.error.missing-list-id')
 			);
 			return node.send(msg);
 		}
 
 		if (!email) {
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-subscription-process-get-redirect.error.missing-email',
-				'klicktipp-subscription-process-get-redirect.error.invalid-input'
+				RED._('klicktipp-subscription-process-get-redirect.error.missing-email')
 			);
 			return node.send(msg);
 		}
@@ -62,7 +62,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-subscription-process-get-redirect.status.failed',

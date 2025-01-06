@@ -3,7 +3,6 @@
 const createCachedApiEndpoint = require('../utils/cache/createCachedApiEndpoint');
 const fetchKlickTippData = require('../utils/fetchKlickTippData');
 const CACHE_KEYS = require('../utils/cache/cacheKeys');
-const cache = require("../utils/cache/cache");
 
 module.exports = function (RED) {
 	// Configuration node for storing API credentials

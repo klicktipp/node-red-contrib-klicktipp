@@ -1,4 +1,4 @@
-const handleError = require('./handleError');
+const { handleErrorWithI18n} = require('./handleError');
 
 /**
  * Handles the API response and updates the Node-RED node's status accordingly.
@@ -18,7 +18,7 @@ function handleResponse(node, msg, response, successMessage, failureMessage, onS
 		node.status({ fill: 'green', shape: 'dot', text: successMessage });
 	} else {
 		const errorMessage = response?.error || 'Unknown error';
-		handleError(node, msg, failureMessage, errorMessage);
+		handleErrorWithI18n(node, msg, failureMessage, errorMessage);
 	}
 }
 

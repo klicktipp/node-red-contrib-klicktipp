@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 const objectToIdValueArray = require('../../utils/objectToIdValueArray');
@@ -13,11 +13,11 @@ module.exports = function (RED) {
 		const tagId = config.tagId || msg?.payload?.tagId;
 
 		if (!tagId) {
-			handleError(
-				this,
+			handleErrorWithI18n(
+				node,
 				msg,
 				'klicktipp-subscriber-tagged.error.missing-tag',
-				'klicktipp-subscriber-tagged.error.invalid-input',
+				RED._('klicktipp-subscriber-tagged.error.missing-tag'),
 			);
 			return this.send(msg);
 		}
@@ -48,7 +48,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'klicktipp-subscriber-tagged.status.failed', error.message);
+			handleErrorWithI18n(
+				node,
+				msg,
+				'klicktipp-subscriber-tagged.status.failed',
+				error.message
+			);
 		}
 	};
 

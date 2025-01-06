@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const clearCache = require('../../utils/cache/clearCache');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
@@ -23,11 +23,11 @@ module.exports = function (RED) {
 		);
 
 		if (!name) {
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-tag-create.error.missing-name',
-				'klicktipp-tag-create.error.invalid-input',
+				RED._('klicktipp-tag-create.error.missing-name'),
 			);
 			return this.send(msg);
 		}
@@ -61,7 +61,12 @@ module.exports = function (RED) {
 				}
 			);
 		} catch (error) {
-			handleError(node, msg, 'klicktipp-tag-create.status.failed', error.message);
+			handleErrorWithI18n(
+				node,
+				msg,
+				'klicktipp-tag-create.status.failed',
+				error.message
+			);
 		}
 	};
 

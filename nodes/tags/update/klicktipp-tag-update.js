@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const clearCache = require('../../utils/cache/clearCache');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
@@ -24,21 +24,21 @@ module.exports = function (RED) {
 		);
 
 		if (!tagId) {
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-tag-get.error.missing-tag',
-				'klicktipp-tag-get.error.invalid-input',
+				RED._('klicktipp-tag-get.error.missing-tag'),
 			);
 			return this.send(msg);
 		}
 
 		if (name === '' && text === '') {
-			handleError(
+			handleErrorWithI18n(
 				this,
 				msg,
 				'klicktipp-tag-get.error.nothing-to-update',
-				'klicktipp-tag-get.error.invalid-input',
+				RED._('klicktipp-tag-get.error.nothing-to-update'),
 			);
 			return this.send(msg);
 		}
@@ -70,7 +70,7 @@ module.exports = function (RED) {
 				}
 			);
 		} catch (error) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-tag-update.status.failed',

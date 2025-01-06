@@ -1,7 +1,7 @@
 'use strict';
 
 const handleResponse = require('../../utils/handleResponse');
-const handleError = require('../../utils/handleError');
+const { handleErrorWithI18n } = require('../../utils/handleError');
 const makeRequest = require('../../utils/makeRequest');
 const createKlickTippSessionNode = require('../../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../../utils/evaluatePropertyAsync');
@@ -15,21 +15,21 @@ module.exports = function (RED) {
 		const tagId = config.tagId;
 
 		if (!email) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-subscriber-untag.error.missing-email',
-				'klicktipp-subscriber-untag.error.invalid-input'
+				RED._('klicktipp-subscriber-untag.error.missing-email')
 			);
 			return node.send(msg);
 		}
 
 		if (!tagId) {
-			handleError(
+			handleErrorWithI18n(
 				node,
 				msg,
 				'klicktipp-subscriber-untag.error.missing-tag',
-				'klicktipp-subscriber-untag.error.invalid-input'
+				RED._('klicktipp-subscriber-untag.error.missing-tag')
 			);
 			return node.send(msg);
 		}
@@ -53,7 +53,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'klicktipp-subscriber-untag.status.failed', error.message);
+			handleErrorWithI18n(
+				node,
+				msg,
+				'klicktipp-subscriber-untag.status.failed',
+				error.message
+			);
 		}
 	};
 	/**
