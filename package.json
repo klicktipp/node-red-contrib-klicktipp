@@ -1,6 +1,6 @@
 {
   "name": "@klicktipp/node-red-contrib-klicktipp",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "KlickTipp API integration node for Node-RED",
   "keywords": [
     "node-red",
@@ -46,7 +46,6 @@
       "klicktipp-subscription-process-index": "nodes/subscription-processes/klicktipp-subscription-process-index.js",
       "klicktipp-subscription-process-get": "nodes/subscription-processes/klicktipp-subscription-process-get.js",
       "klicktipp-subscription-process-get-redirect": "nodes/subscription-processes/klicktipp-subscription-process-get-redirect.js",
-      "klicktipp-resend-autoresponder": "nodes/subscribers/klicktipp-resend-autoresponder.js",
       "klicktipp-tag-index": "nodes/tags/klicktipp-tag-index.js",
       "klicktipp-tag-get": "nodes/tags/klicktipp-tag-get.js",
       "klicktipp-tag-create": "nodes/tags/klicktipp-tag-create.js",
