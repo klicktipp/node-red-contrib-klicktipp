@@ -21,7 +21,6 @@ For more detailed information on the KlickTipp API, including available function
     - [Subscriber](#subscriber-nodes)
     - [Sign-out/Sign-off/Sign-in](#sign-out-sign-off-and-sign-in-nodes)
     - [Data fields](#field-index-node)
-    - [Resend autoresponder](#resend-autoresponder-node)
 - [Credentials](#credentials)
 - [Error Handling](#error-handling)
 - [License](#license)
@@ -90,11 +89,6 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 ### Field index node
 - **Node Name**: `Field index`
 - **Description:**  Retrieves all available data fields for the subscriber.
----
-
-### Resend autoresponder node
-- **Node Name**: `Resend autoresponder`
-- **Description:**  Resend an autoresponder to an email address.
 ---
 
 ## Credentials

@@ -1341,24 +1341,6 @@
         ]
     },
     {
-        "id": "8f1d24a17151b4ae",
-        "type": "klicktipp-resend-autoresponder",
-        "z": "fe79a10b200fcbe4",
-        "g": "91d5baa69631ee47",
-        "name": "",
-        "email": "",
-        "emailType": "str",
-        "autoresponderId": 0,
-        "autoresponderIdType": "num",
-        "x": 320,
-        "y": 860,
-        "wires": [
-            [
-                "1a95b681ac2bd59b"
-            ]
-        ]
-    },
-    {
         "id": "04b724f4f05057b8",
         "type": "klicktipp-subscriber-tagged",
         "z": "fe79a10b200fcbe4",
