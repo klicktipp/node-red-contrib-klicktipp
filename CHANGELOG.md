@@ -25,6 +25,6 @@
 - **Feature**
   - Introduced the Field get node, enabling seamless access to custom field data for enhanced workflow capabilities.
 
-## Version 1.0.5 (2025-01-23)
+## Version 1.0.5 (2025-01-24)
 - **Changes**
   - Removed the Autoresponder node.
