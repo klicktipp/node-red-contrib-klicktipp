@@ -10,7 +10,7 @@
 	</div>
 	<div class="form-row">
 		<label for="node-input-tagDescription"><i class="fa fa-tags""></i> <span>Description</span></label>
-		<input type="text" id="node-input-tagDescription" placeholder="Enter description (optional)">
+		<input type="text" id="node-input-tagDescription" placeholder="Enter description">
 		<input type="hidden" id="node-input-tagDescriptionType">
 	</div>
 	<div class="form-row">
@@ -20,7 +20,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-tag-create">
-	<p>Creates a new manual tag.</p>
+	<p>Creates a new manual tag</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -71,36 +71,41 @@
 			tagName: {
 				value: 'payload.tagName',
 				required: true,
-				validate: RED.validators.typedInput('tagNameType')
+				validate: RED.validators.typedInput('tagNameType'),
 			},
 			tagNameType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			tagDescription: {
 				value: 'payload.tagDescription',
-				validate: RED.validators.typedInput('tagDescriptionType')
+				validate: RED.validators.typedInput('tagDescriptionType'),
 			},
 			tagDescriptionType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Tag create';
+			return this.name || 'Create Tag';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Tag create',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Create Tag',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-tagName", "#node-input-tagNameType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-tagDescription", "#node-input-tagDescriptionType", 'str', ['str']);
+		oneditprepare: function () {
+			ktInitializeTypedInput('#node-input-tagName', '#node-input-tagNameType', 'str', ['str']);
+			ktInitializeTypedInput(
+				'#node-input-tagDescription',
+				'#node-input-tagDescriptionType',
+				'str',
+				['str'],
+			);
 		},
 	});
 </script>

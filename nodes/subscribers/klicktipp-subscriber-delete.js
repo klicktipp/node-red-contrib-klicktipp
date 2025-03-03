@@ -18,7 +18,7 @@ module.exports = function (RED) {
 		);
 
 		if (!subscriberId) {
-			handleError(node, msg, 'Missing subscriber ID', 'Invalid input');
+			handleError(node, msg, 'Contact ID is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
@@ -30,18 +30,11 @@ module.exports = function (RED) {
 				msg.sessionData,
 			);
 
-			handleResponse(
-				node,
-				msg,
-				response,
-				'Subscriber deleted',
-				'Failed to delete subscriber',
-				() => {
-					msg.payload = { success: true };
-				},
-			);
+			handleResponse(node, msg, response, 'Contact deleted', 'Contact could not be deleted', () => {
+				msg.payload = { success: true };
+			});
 		} catch (error) {
-			handleError(node, msg, 'Failed to delete subscriber', error.message);
+			handleError(node, msg, 'Contact could not be deleted', error.message);
 		}
 	};
 	/**

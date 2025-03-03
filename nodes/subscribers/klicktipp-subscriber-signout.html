@@ -5,8 +5,8 @@
 	       <input type="hidden" id="node-input-apiKeyType">
 	   </div>
 	   <div class="form-row">
-	       <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
-	       <input type="text" id="node-input-email" placeholder="Enter email address">
+	       <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+	       <input type="text" id="node-input-email" placeholder="Enter email address (required)">
 	       <input type="hidden" id="node-input-emailType">
 	   </div>
 	   <div class="form-row">
@@ -16,10 +16,10 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-signout">
-	<p>Removes the manual tag or SmartLink defined in the API key from a subscriber.</p>
+	<p>Removes the tag of a contact associated with the API key</p>
 
-   <h3>Inputs</h3>
-   <dl class="message-properties">
+	  <h3>Inputs</h3>
+	  <dl class="message-properties">
 	   <dt>msg.payload <span class="property-type">object</span></dt>
 	   <dd>
 		   Expected object with the following properties:
@@ -28,10 +28,10 @@
 			   <li><code>email</code> - (Required) the subscriber's email address</li>
 		   </ul>
 	   </dd>
-   </dl>
+	  </dl>
 
-   <h3>Outputs</h3>
-   <dl class="message-properties">
+	  <h3>Outputs</h3>
+	  <dl class="message-properties">
 	   <dt>msg.payload <span class="property-type">object</span></dt>
 	   <dd>
 		   On success:
@@ -48,13 +48,13 @@
 
 	   <dt>msg.error <span class="property-type">string</span></dt>
 	   <dd>An error message explaining why the request failed.</dd>
-   </dl>
+	  </dl>
 
-   <h3>Node Status</h3>
-   <ul>
+	  <h3>Node Status</h3>
+	  <ul>
 	   <li><strong>Green (dot)</strong> - Untagging was successful.</li>
 	   <li><strong>Red (ring)</strong> - Untagging failed (e.g., missing API key, email, or API error).</li>
-   </ul>
+	  </ul>
 </script>
 
 <script type="text/javascript">
@@ -65,34 +65,34 @@
 			apiKey: {
 				value: 'payload.apiKey',
 				required: true,
-				validate: RED.validators.typedInput('apiKeyType')
+				validate: RED.validators.typedInput('apiKeyType'),
 			},
 			apiKeyType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			email: {
 				value: 'payload.email',
 				required: true,
-				validate: RED.validators.typedInput('emailType')
+				validate: RED.validators.typedInput('emailType'),
 			},
 			emailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber signout';
+			return this.name || 'Remove Contact via API Key';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber signout',
-		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Remove Contact via API Key',
+		oneditprepare: function () {
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-apiKey', '#node-input-apiKeyType', 'str', ['str']);
 		},
 	});
 </script>

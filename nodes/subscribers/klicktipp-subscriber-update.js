@@ -36,7 +36,7 @@ module.exports = function (RED) {
 		);
 
 		if (!subscriberId) {
-			handleError(node, msg, 'Missing subscriber ID');
+			handleError(node, msg, 'Contact ID is missing');
 			return node.send(msg);
 		}
 
@@ -50,18 +50,11 @@ module.exports = function (RED) {
 				msg.sessionData,
 			);
 
-			handleResponse(
-				node,
-				msg,
-				response,
-				'Subscriber updated',
-				'Failed to update subscriber',
-				() => {
-					msg.payload = { success: true };
-				},
-			);
+			handleResponse(node, msg, response, 'Contact updated', 'Contact could not be updated', () => {
+				msg.payload = { success: true };
+			});
 		} catch (error) {
-			handleError(node, msg, 'Failed to update subscriber', error.message);
+			handleError(node, msg, 'Contact could not be updated', error.message);
 		}
 	};
 

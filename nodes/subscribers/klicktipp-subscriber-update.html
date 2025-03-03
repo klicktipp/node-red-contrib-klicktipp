@@ -4,22 +4,22 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Subscriber ID</span></label>
-	    <input type="text" id="node-input-subscriberId" placeholder="Enter Subscriber ID (required)">
+	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Contact ID</span></label>
+	    <input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 	    <input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>Email address</span></label>
-	    <input type="text" id="node-input-newEmail" placeholder="Enter email address (optional)">
+	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+	    <input type="text" id="node-input-newEmail" placeholder="Enter email address">
 	    <input type="hidden" id="node-input-newEmailType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-newSmsNumber"><i class="fa fa-mobile"></i> <span>SMS number</span></label>
-	    <input type="text" id="node-input-newSmsNumber" placeholder="Enter SMS number (optional)">
+	    <label for="node-input-newSmsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+	    <input type="text" id="node-input-newSmsNumber" placeholder="Enter SMS number">
 	    <input type="hidden" id="node-input-newSmsNumberType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data fields</span></label>
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
 	    <input type="text" id="node-input-fields" placeholder="Data fields">
 	    <input type="hidden" id="node-input-fieldsType">
 	</div>
@@ -31,7 +31,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-update">
-	<p>Updates the data fields, email address, or SMS number of a subscriber.</p>
+	<p>Updates a contact</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -39,17 +39,17 @@
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-	            <li><code>subscriberId</code> - (Required) the subscriber's ID</li>
+	            <li><code>subscriberId</code> - (Required) the contact's ID</li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
 	            structured as returned by the <code>Field index</code> node</li>
-	            <li><code>newEmail</code> - (Optional) the subscriber's new email address</li>
-	            <li><code>newSmsNumber</code> - (Optional) the subscriber's new mobile number</li>
+	            <li><code>newEmail</code> - (Optional) the contact's new email address</li>
+	            <li><code>newSmsNumber</code> - (Optional) the contact's new mobile number</li>
 	        </ul>
 	    </dd>
 	</dl>
 
-   <h3>Outputs</h3>
-   <dl class="message-properties">
+	  <h3>Outputs</h3>
+	  <dl class="message-properties">
 	   <dt>msg.payload <span class="property-type">object</span></dt>
 	   <dd>
 		   On success:
@@ -66,12 +66,12 @@
 
 	   <dt>msg.error <span class="property-type">string</span></dt>
 	   <dd>An error message explaining why the request failed.</dd>
-   </dl>
+	  </dl>
 
 	<h3>Node Status</h3>
 	<ul>
-	    <li><strong>Green (dot)</strong> - Subscriber was updated successfully.</li>
-	    <li><strong>Red (ring)</strong> - Failed to update subscriber (e.g., missing subscriber ID, invalid data, or API error).</li>
+	    <li><strong>Green (dot)</strong> - Contact was updated successfully.</li>
+	    <li><strong>Red (ring)</strong> - Failed to update contact (e.g., missing contact ID, invalid data, or API error).</li>
 	</ul>
 </script>
 
@@ -84,72 +84,91 @@
 			subscriberId: {
 				required: true,
 				value: 'payload.subscriberId',
-				validate: RED.validators.typedInput('subscriberIdType')
+				validate: RED.validators.typedInput('subscriberIdType'),
 			},
 			subscriberIdType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			newEmail: {
 				value: 'payload.newEmail',
-				validate: RED.validators.typedInput('newEmailType')
+				validate: RED.validators.typedInput('newEmailType'),
 			},
 			newEmailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			newSmsNumber: {
 				value: 'payload.newSmsNumber',
-				validate: RED.validators.typedInput('smsNumberType')
+				validate: RED.validators.typedInput('smsNumberType'),
 			},
 			newSmsNumberType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			fields: {
 				value: 'payload.fields',
-				validate: function(v) {
+				validate: function (v) {
 					// Allow empty values
-					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
-				}
+					return v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v);
+				},
 			},
 			fieldsType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			fieldsData: {
-				value: {}
+				value: {},
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber update';
+			return this.name || 'Update Contact';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber update',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Update Contact',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			this.contactFieldsSection = $('#contact-fields-section');
-			const fieldsInput = $("#node-input-fields");
+			const fieldsInput = $('#node-input-fields');
 
-			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
-			ktInitializeTypedInput("#node-input-newEmail", "#node-input-newEmailType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-newSmsNumber", "#node-input-newSmsNumberType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
+				'num',
+			]);
+			ktInitializeTypedInput('#node-input-newEmail', '#node-input-newEmailType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-newSmsNumber', '#node-input-newSmsNumberType', 'str', [
+				'str',
+			]);
+			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', [
+				'json',
+				KT_CUSTOM_CONTACT_FIELDS_TYPE,
+			]);
 
 			// Initialize the contact fields section logic
-			ktInitializeContactFieldsSection(fieldsInput, this.contactFieldsSection, klicktippInput, this.fieldsData, this.id);
+			ktInitializeContactFieldsSection(
+				fieldsInput,
+				this.contactFieldsSection,
+				klicktippInput,
+				this.fieldsData,
+				this.id,
+			);
 
 			// Initialize the select handler with user change detection
-			ktInitializeUserSelectHandler(klicktippInput, '#node-input-fieldsType', this.contactFieldsSection, this.fieldsData, this.id);
+			ktInitializeUserSelectHandler(
+				klicktippInput,
+				'#node-input-fieldsType',
+				this.contactFieldsSection,
+				this.fieldsData,
+				this.id,
+			);
 		},
-		oneditsave: function() {
+		oneditsave: function () {
 			// Collect all field from API vales and store them in this.fieldsData
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
-		}
+		},
 	});
 </script>

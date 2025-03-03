@@ -10,7 +10,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-field-index">
-	<p>Returns an associative array <code>[field_id] => [field_name]</code> of all data fields</p>
+	<p>Lists the IDs and names of all data fields</p>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>
@@ -50,11 +50,11 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Field index';
+			return this.name || 'List Data Fields';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Field index',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'List Data Fields',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
 	});

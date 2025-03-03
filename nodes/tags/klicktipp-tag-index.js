@@ -15,15 +15,15 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched manual tags',
-				'Failed to fetch manual tags',
+				'Tags retrieved',
+				'Tags could not be retrieved',
 				(response) => {
 					const transformedData = objectToIdValueArray(response.data);
 					msg.payload = transformedData;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch manual tags', error.message);
+			handleError(this, msg, 'Tags could not be retrieved', error.message);
 		}
 	};
 

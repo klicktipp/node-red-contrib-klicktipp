@@ -10,7 +10,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscription-process-index">
-	<p>Returns an associative array in the format <code>{ optin_process_id: optin_process_name }</code>, where each key represents the unique ID of an opt-in process, and its value is the corresponding opt-in process name.</p>
+	<p>Lists the IDs and names of all opt-in processes</p>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>
@@ -50,12 +50,12 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Opt-in process index';
+			return this.name || 'List Opt-in Processes';
 		},
-		onadd: function() {
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Opt\u2013in process index',
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'List Opt\u2013in Processes',
 	});
 </script>

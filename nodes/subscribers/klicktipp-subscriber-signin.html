@@ -9,17 +9,17 @@
 	    <input type="hidden" id="node-input-apiKeyType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
 	    <input type="text" id="node-input-email" placeholder="Enter email address">
 	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS number</span></label>
-	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number (optional)">
+	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number">
 	    <input type="hidden" id="node-input-smsNumberType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data fields</span></label>
+	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
 	    <input type="text" id="node-input-fields" placeholder="Data fields">
 	    <input type="hidden" id="node-input-fieldsType">
 	</div>
@@ -31,7 +31,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-signin">
-	<p>Adds or updates a subscriber using an API key. The subscriber can be identified by their email address or SMS number, with optional fields.</p>
+	<p>Creates or updates a contact and associates the tag linked to the API key</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -78,73 +78,88 @@
 			apiKey: {
 				value: 'payload.apiKey',
 				required: true,
-				validate: RED.validators.typedInput('apiKeyType')
+				validate: RED.validators.typedInput('apiKeyType'),
 			},
 			apiKeyType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			email: {
 				value: 'payload.email',
 				required: true,
-				validate: RED.validators.typedInput('emailType')
+				validate: RED.validators.typedInput('emailType'),
 			},
 			emailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			smsNumber: {
 				value: 'payload.smsNumber',
-				validate: RED.validators.typedInput('smsNumberType')
+				validate: RED.validators.typedInput('smsNumberType'),
 			},
 			smsNumberType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			fields: {
 				value: 'payload.fields',
-				validate: function(v) {
+				validate: function (v) {
 					// Allow empty values
-					return (v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v));
-				}
+					return v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v);
+				},
 			},
 			fieldsType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			fieldsData: {
-				value: {}
+				value: {},
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber signin';
+			return this.name || 'Add Contact via API Key';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber signin',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Add Contact via API Key',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			this.contactFieldsSection = $('#contact-fields-section');
-			const fieldsInput = $("#node-input-fields");
+			const fieldsInput = $('#node-input-fields');
 
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-smsNumber", "#node-input-smsNumberType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-apiKey", "#node-input-apiKeyType", 'str', ['str']);
-			ktInitializeTypedInput("#node-input-fields", "#node-input-fieldsType", 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-smsNumber', '#node-input-smsNumberType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-apiKey', '#node-input-apiKeyType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', [
+				'json',
+				KT_CUSTOM_CONTACT_FIELDS_TYPE,
+			]);
 
 			// Initialize the contact fields section logic
-			ktInitializeContactFieldsSection(fieldsInput, this.contactFieldsSection, klicktippInput, this.fieldsData, this.id);
+			ktInitializeContactFieldsSection(
+				fieldsInput,
+				this.contactFieldsSection,
+				klicktippInput,
+				this.fieldsData,
+				this.id,
+			);
 
 			// Initialize the select handler with user change detection
-			ktInitializeUserSelectHandler(klicktippInput, '#node-input-fieldsType', this.contactFieldsSection, this.fieldsData, this.id);
+			ktInitializeUserSelectHandler(
+				klicktippInput,
+				'#node-input-fieldsType',
+				this.contactFieldsSection,
+				this.fieldsData,
+				this.id,
+			);
 		},
-		oneditsave: function() {
+		oneditsave: function () {
 			// Collect all field from API vales and store them in this.fieldsData
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
-		}
+		},
 	});
 </script>

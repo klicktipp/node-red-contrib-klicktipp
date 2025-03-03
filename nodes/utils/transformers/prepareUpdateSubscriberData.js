@@ -8,7 +8,7 @@
  */
 function prepareUpdateSubscriberData(newEmail, newSmsNumber = '', fields = {}) {
 	const data = {
-		newemail: newEmail.trim()
+		newemail: newEmail.trim(),
 	};
 
 	// Add optional SMS number if provided

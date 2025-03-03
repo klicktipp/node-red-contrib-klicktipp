@@ -23,7 +23,7 @@ module.exports = function (RED) {
 		);
 
 		if (!name) {
-			handleError(node, msg, 'Missing tag name');
+			handleError(node, msg, 'Tag name is missing');
 			return this.send(msg);
 		}
 
@@ -38,7 +38,7 @@ module.exports = function (RED) {
 
 			const response = await makeRequest('/tag', 'POST', qs.stringify(data), msg.sessionData);
 
-			handleResponse(node, msg, response, 'Tag created', 'Failed to create tag', (response) => {
+			handleResponse(node, msg, response, 'Tag created', 'Tag could not be created', (response) => {
 				const enhancedData = {
 					id: response?.data?.[0] || null,
 				};
@@ -49,7 +49,7 @@ module.exports = function (RED) {
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(node, msg, 'Failed to create tag', error.message);
+			handleError(node, msg, 'Tag could not be created', error.message);
 		}
 	};
 

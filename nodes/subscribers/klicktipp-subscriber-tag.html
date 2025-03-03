@@ -4,14 +4,14 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address (required)">
 	    <input type="hidden" id="node-input-emailType">
 	</div>
-    <div class="form-row">
-        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tags</span></label>
-        <select id="node-input-tagId" multiple style="height: auto; width: 100%;"></select>
-    </div>
+	   <div class="form-row">
+	       <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag IDs</span></label>
+	       <select id="node-input-tagId" multiple style="height: auto; width: 100%;"></select>
+	   </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -19,7 +19,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tag">
-	<p>Tags a subscriber with a manual tag or SmartLink.</p>
+	<p>Adds one or more tags to a contact</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -72,37 +72,43 @@
 			email: {
 				value: 'payload.email',
 				required: true,
-				validate: RED.validators.typedInput('emailType')
+				validate: RED.validators.typedInput('emailType'),
 			},
 			emailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			tagId: {
 				value: [],
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber tag';
+			return this.name || 'Tag Contact';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber tag',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Tag Contact',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
-			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktBindDropdownToInput(
+				klicktippInput,
+				tagDropdown,
+				this.tagId,
+				this.klicktipp,
+				`/klicktipp/tags/${this.id}`,
+			);
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 		},
-		oneditsave: function() {
+		oneditsave: function () {
 			this.tagId = $('#node-input-tagId').val(); // Save the selected tagId(s)
-		}
+		},
 	});
 </script>

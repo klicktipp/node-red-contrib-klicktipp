@@ -4,8 +4,8 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Subscriber ID</span></label>
-	    <input type="text" id="node-input-subscriberId" placeholder="Enter Subscriber ID (required)">
+	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Contact ID</span></label>
+	    <input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 	    <input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row">
@@ -15,7 +15,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-get">
-	<p>Returns all available information about a subscriber. For example, you can use it to check when a contact received, opened, or clicked in a specific email.</p>
+	<p>Returns the complete data of a contact</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -50,7 +50,7 @@
 
 	<h3>Node Status</h3>
 	<ul>
-	    <li><strong>Green (dot)</strong> - Subscriber information fetched successfully.</li>
+	    <li><strong>Green (dot)</strong> - Contact information fetched successfully.</li>
 	    <li><strong>Red (ring)</strong> - Failed to fetch subscriber information (e.g., missing subscriber ID or API error).</li>
 	</ul>
 </script>
@@ -64,10 +64,10 @@
 			subscriberId: {
 				required: true,
 				value: 'payload.subscriberId',
-				validate: RED.validators.typedInput('subscriberIdType')
+				validate: RED.validators.typedInput('subscriberIdType'),
 			},
 			subscriberIdType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			name: { value: '' },
 		},
@@ -75,15 +75,17 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber get';
+			return this.name || 'Get Contact';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber get',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Get Contact',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-subscriberId", "#node-input-subscriberIdType", 'num', ['num']);
+		oneditprepare: function () {
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
+				'num',
+			]);
 		},
 	});
 </script>

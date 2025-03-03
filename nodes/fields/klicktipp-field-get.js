@@ -9,40 +9,40 @@ module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		try {
 			const apiFieldId = config.apiFieldId || msg?.payload?.apiFieldId;
-			
+
 			if (!apiFieldId) {
-				handleError(this, msg, 'The API field ID is required.', 'Invalid input');
+				handleError(this, msg, 'Data field ID is required', 'Invalid input');
 				return this.send(msg);
 			}
-			
+
 			//Extract field ID, i.e. CompanyName
 			const fieldId = apiFieldId.replace(/^field/, '');
-			
+
 			if (!fieldId) {
-				handleError(this, msg, 'No field ID could be extracted from the provided API field ID.', 'Invalid input');
+				handleError(this, msg, 'No data field ID found', 'Invalid input');
 				return this.send(msg);
 			}
-			
+
 			const response = await makeRequest(
 				`/field/${encodeURIComponent(fieldId)}`,
 				'GET',
 				{},
 				msg.sessionData,
 			);
-			
+
 			handleResponse(
 				this,
 				msg,
 				response,
-				'Fetched field definition',
-				'Failed to fetch field data',
+				'Data field retrieved',
+				'Data field could not be retrieved',
 				(response) => {
 					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
 			console.log(error);
-			handleError(this, msg, 'Failed to fetch field data', error.message);
+			handleError(this, msg, 'Data field could not be retrieved', error.message);
 		}
 	};
 
