@@ -13,7 +13,7 @@ module.exports = function (RED) {
 		const tagId = config.tagId || msg?.payload?.tagId;
 
 		if (!tagId) {
-			handleError(this, msg, 'Missing tag ID');
+			handleError(this, msg, 'Tag ID is missing');
 			return this.send(msg);
 		}
 
@@ -29,8 +29,8 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Subscribers tagged retrieved',
-				'Failed to retrieve tagged subscribers',
+				'Contacts retrieved',
+				'Contacts could not be retrieved',
 				(response) => {
 					const transformedData = objectToIdValueArray(response.data);
 
@@ -43,7 +43,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to retrieve tagged subscribers', error.message);
+			handleError(node, msg, 'Contacts could not be retrieved', error.message);
 		}
 	};
 

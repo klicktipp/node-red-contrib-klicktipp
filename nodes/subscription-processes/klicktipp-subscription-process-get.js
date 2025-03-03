@@ -10,7 +10,7 @@ module.exports = function (RED) {
 		const listId = config.listId || msg?.payload?.listId;
 
 		if (!listId) {
-			handleError(this, msg, 'Missing opt-in ID');
+			handleError(this, msg, 'Opt-in process ID is missing');
 			return this.send(msg);
 		}
 
@@ -26,14 +26,14 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched opt-in process',
-				'Failed to fetch opt-in process',
+				'Opt-in process retrieved',
+				'Opt-in process could not be retrieved',
 				(response) => {
 					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch opt-in process', error.message);
+			handleError(this, msg, 'Opt-in process could not be retrieved', error.message);
 		}
 	};
 

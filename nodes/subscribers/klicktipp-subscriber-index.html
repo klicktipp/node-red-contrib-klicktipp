@@ -10,7 +10,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-index">
-	<p>Returns an associative array in the format <code>{ subscriber_id: ID }</code>, where each key corresponds to a unique subscriber ID. Use the <code>Subscriber Get</code> node to retrieve detailed information about a subscriber.</p>
+	<p>Lists the IDs of all active contacts</p>
 
 	<h3>Outputs</h3>
 	<dl class="message-properties">
@@ -51,11 +51,11 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber index';
+			return this.name || 'List Contacts';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber index',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'List Contacts',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
 	});

@@ -15,15 +15,15 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched subscribers successfully',
-				'Failed to fetch subscribers',
+				'Contacts retrieved',
+				'Contacts could not be retrieved',
 				(response) => {
 					const transformedData = objectToIdValueArray(response.data);
 					msg.payload = transformedData;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch subscribers', error.message);
+			handleError(this, msg, 'Contacts could not be retrieved', error.message);
 		}
 	};
 

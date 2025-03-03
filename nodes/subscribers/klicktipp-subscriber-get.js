@@ -18,7 +18,7 @@ module.exports = function (RED) {
 		);
 
 		if (!subscriberId) {
-			handleError(this, msg, 'Missing subscriber ID', 'Invalid input');
+			handleError(this, msg, 'Contact ID is missing', 'Invalid input');
 			return this.send(msg);
 		}
 
@@ -35,14 +35,14 @@ module.exports = function (RED) {
 				node,
 				msg,
 				response,
-				'Fetched subscriber information',
-				'Failed to fetch subscriber information',
+				'Contact information retrieved',
+				'Contact information could not be retrieved',
 				(response) => {
 					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to fetch subscriber', error.message);
+			handleError(node, msg, 'Contact information could not be retrieved', error.message);
 		}
 	};
 	/**

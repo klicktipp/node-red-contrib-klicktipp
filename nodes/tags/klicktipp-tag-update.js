@@ -24,12 +24,12 @@ module.exports = function (RED) {
 		);
 
 		if (!tagId) {
-			handleError(node, msg, 'Missing tag ID', 'Invalid input');
+			handleError(node, msg, 'Tag ID is missing', 'Invalid input');
 			return this.send(msg);
 		}
 
 		if (name === '' && text === '') {
-			handleError(node, msg, 'Nothing to update', 'Invalid input');
+			handleError(node, msg, 'No changes detected', 'Invalid input');
 			return this.send(msg);
 		}
 
@@ -46,14 +46,14 @@ module.exports = function (RED) {
 				msg.sessionData,
 			);
 
-			handleResponse(node, msg, response, 'Tag updated', 'Failed to update tag', () => {
+			handleResponse(node, msg, response, 'Tag updated', 'Tag could not be updated', () => {
 				msg.payload = { success: true };
 
 				// Clear the cache after a successful update
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(node, msg, 'Failed to update tag', error.message);
+			handleError(node, msg, 'Tag could not be updated', error.message);
 		}
 	};
 

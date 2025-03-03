@@ -55,8 +55,13 @@ module.exports = function (RED) {
 					msg,
 				);
 
-				if (!apiKey || (!email && !smsNumber)) {
-					handleError(node, msg, 'Missing API key or email/SMS number');
+				if (!apiKey) {
+					handleError(node, msg, 'Login failed');
+					return node.send(msg);
+				}
+
+				if (!email && !smsNumber) {
+					handleError(node, msg, 'Email or SMS number is missing');
 					return node.send(msg);
 				}
 
@@ -68,8 +73,8 @@ module.exports = function (RED) {
 					node,
 					msg,
 					response,
-					'Subscription successful',
-					'Failed to subscribe',
+					'Contact signed in',
+					'Contact could not be signed in',
 					(response) => {
 						const enhancedData = {
 							confirmationPageUrl: response?.data?.[0] || null,
@@ -79,7 +84,7 @@ module.exports = function (RED) {
 					},
 				);
 			} catch (error) {
-				handleError(node, msg, 'Failed to subscribe', error.message);
+				handleError(node, msg, 'Contact could not be signed in', error.message);
 			}
 
 			node.send(msg);

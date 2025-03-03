@@ -14,7 +14,7 @@ module.exports = function (RED) {
 		let tagIds = config.tagId || [];
 
 		if (!email) {
-			handleError(node, msg, 'Missing email', 'Invalid input');
+			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
 		// Ensure tagIds is an array, even if a single value, and convert all to numbers
@@ -25,7 +25,7 @@ module.exports = function (RED) {
 
 		// Validate that we have valid tag IDs to proceed
 		if (tagIds.length === 0) {
-			handleError(node, msg, 'Missing or invalid tag IDs', 'Invalid input');
+			handleError(node, msg, 'Tag ID is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
@@ -41,18 +41,11 @@ module.exports = function (RED) {
 			);
 
 			// Handle the response
-			handleResponse(
-				this,
-				msg,
-				response,
-				'Email tagged successfully',
-				'Failed to tag email',
-				() => {
-					msg.payload = { success: true };
-				},
-			);
+			handleResponse(this, msg, response, 'Contact tagged', 'Contact could not be tagged', () => {
+				msg.payload = { success: true };
+			});
 		} catch (error) {
-			handleError(node, msg, 'Failed to tag email', error.message);
+			handleError(node, msg, 'Contact could not be tagged', error.message);
 		}
 	};
 

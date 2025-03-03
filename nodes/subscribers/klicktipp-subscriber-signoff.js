@@ -35,8 +35,13 @@ module.exports = function (RED) {
 			const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 			const apiKey = await evaluatePropertyAsync(RED, config.apiKey, config.apiKeyType, node, msg);
 
-			if (!apiKey || !email) {
-				handleError(node, msg, 'Missing API key or email');
+			if (!apiKey) {
+				handleError(node, msg, 'Login failed');
+				return node.send(msg);
+			}
+
+			if (!email) {
+				handleError(node, msg, 'Email is missing');
 				return node.send(msg);
 			}
 
@@ -52,14 +57,14 @@ module.exports = function (RED) {
 					node,
 					msg,
 					response,
-					'Unsubscription successful',
-					'Failed to unsubscribe email',
+					'Contact signed off',
+					'Contact could not be signed off',
 					() => {
 						msg.payload = { success: true };
 					},
 				);
 			} catch (error) {
-				handleError(node, msg, 'Failed to unsubscribe email', error.message);
+				handleError(node, msg, 'Contact could not be signed off', error.message);
 			}
 
 			node.send(msg);

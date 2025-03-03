@@ -3,10 +3,10 @@
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-    <div class="form-row">
-        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
-        <select id="node-input-tagId"></select>
-    </div>
+	   <div class="form-row">
+	       <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
+	       <select id="node-input-tagId"></select>
+	   </div>
 	<div class="form-row">
 	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
@@ -14,8 +14,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tagged">
-	<p>Returns an associative array in the format <code>{ subscriber_id: subscription_timestamp }</code>, where each key represents the unique ID of a tagged subscriber,
-	and the value is the timestamp when the subscription occurred. Use the <code>Subscriber Get</code> node to retrieve detailed information about a subscriber.</p>
+	<p>Lists the IDs and tagging timestamps of all tagged contacts</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -63,31 +62,37 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			tagId: {
 				value: 0,
-				validate: RED.validators.number()
+				validate: RED.validators.number(),
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber tagged';
+			return this.name || 'List Tagged Contacts';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber tagged',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'List Tagged Contacts',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
-			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			ktBindDropdownToInput(
+				klicktippInput,
+				tagDropdown,
+				this.tagId,
+				this.klicktipp,
+				`/klicktipp/tags/${this.id}`,
+			);
 		},
 		// When the node editor is saved, capture the selected tagId
-		oneditsave: function() {
+		oneditsave: function () {
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
-		}
+		},
 	});
 </script>

@@ -4,12 +4,12 @@
 	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
-        <select id="node-input-listId"></select>
-    </div>
+	       <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in Process</span></label>
+	       <select id="node-input-listId"></select>
+	   </div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address (required)">
 	    <input type="hidden" id="node-input-emailType">
 	</div>
 	<div class="form-row">
@@ -19,7 +19,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscription-process-get-redirect">
-	<p>Returns the URL of the opt-in confirmation page for a subscriber's opt-in process.</p>
+	<p>Gets the redirection URL for a specific opt-in process</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -69,39 +69,45 @@
 			email: {
 				value: 'payload.email',
 				required: true,
-				validate: RED.validators.typedInput('emailType')
+				validate: RED.validators.typedInput('emailType'),
 			},
 			emailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			listId: {
 				value: '',
-				validate: RED.validators.number()
+				validate: RED.validators.number(),
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Opt-in process redirect URL';
+			return this.name || 'Get Redirect URL';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Opt\u2013in process redirect URL',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Get Redirect URL',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			const listIdDropdown = $('#node-input-listId');
-			ktBindDropdownToInput(klicktippInput, listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+			ktBindDropdownToInput(
+				klicktippInput,
+				listIdDropdown,
+				this.listId,
+				this.klicktipp,
+				`/klicktipp/subscription-processes/${this.id}`,
+			);
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 		},
 		// When the node editor is saved, capture the selected tagId
-		oneditsave: function() {
+		oneditsave: function () {
 			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
-		}
+		},
 	});
 </script>

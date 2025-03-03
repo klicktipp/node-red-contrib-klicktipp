@@ -29,8 +29,8 @@ module.exports = function (RED) {
 				node,
 				msg,
 				response,
-				'Subscriber ID retrieved',
-				'Failed to search for subscriber',
+				'Contact ID retrieved',
+				'Contact ID could not be retrieved',
 				(response) => {
 					const enhancedData = {
 						id: response?.data?.[0] || null,
@@ -39,7 +39,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to search for subscriber', error.message);
+			handleError(node, msg, 'Contact ID could not be retrieved', error.message);
 		}
 	};
 

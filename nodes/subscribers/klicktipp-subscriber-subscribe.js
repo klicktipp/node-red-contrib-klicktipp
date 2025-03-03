@@ -25,7 +25,7 @@ module.exports = function (RED) {
 		);
 		// Ensure at least one parameter (email or phone number) is provided
 		if (!email && !smsNumber) {
-			handleError(node, msg, 'Missing email or phone number', 'Invalid input');
+			handleError(node, msg, 'Email or SMS number is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
@@ -44,14 +44,14 @@ module.exports = function (RED) {
 				node,
 				msg,
 				response,
-				'Subscribed successfully',
-				'Failed to subscribe',
+				'Contact created',
+				'Contact could not be created',
 				(response) => {
 					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to subscribe', error.message);
+			handleError(node, msg, 'Contact could not be created', error.message);
 		}
 	};
 
