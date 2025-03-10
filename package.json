@@ -49,10 +49,7 @@
       "klicktipp-subscription-process-index": "nodes/subscription-processes/klicktipp-subscription-process-index.js",
       "klicktipp-subscription-process-get-redirect": "nodes/subscription-processes/klicktipp-subscription-process-get-redirect.js",
       "klicktipp-field-get": "nodes/fields/klicktipp-field-get.js",
-      "klicktipp-field-index": "nodes/fields/klicktipp-field-index.js",
-      "klicktipp-subscriber-signout": "nodes/subscribers/klicktipp-subscriber-signout.js",
-      "klicktipp-subscriber-signoff": "nodes/subscribers/klicktipp-subscriber-signoff.js",
-      "klicktipp-subscriber-signin": "nodes/subscribers/klicktipp-subscriber-signin.js"
+      "klicktipp-field-index": "nodes/fields/klicktipp-field-index.js"
     }
   },
   "dependencies": {

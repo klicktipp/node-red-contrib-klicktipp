@@ -19,7 +19,6 @@ For more detailed information on the KlickTipp API, including available function
     - [Opt-in process](#opt-in-process-nodes)
     - [Tag](#tag-nodes)
     - [Subscriber](#subscriber-nodes)
-    - [Sign-out/Sign-off/Sign-in](#sign-out-sign-off-and-sign-in-nodes)
     - [Data fields](#field-index-node)
 - [Credentials](#credentials)
 - [Error Handling](#error-handling)
@@ -77,14 +76,6 @@ This package includes various nodes to interact with the KlickTipp API. Below is
   - `Subscriber unsubscribe`
   - `Subscriber delete`
 - **Description:** These nodes allow you to manage subscribers, including retrieving, searching, updating, deleting subscriber data.
-
-### Sign-out Sign-off and Sign-in nodes
-
-- **Node Names:**
-  - `Subscriber signout`
-  - `Subscriber signoff`
-  - `Subscriber signin`
-- **Description:** These nodes allow you to sign in or sign off a subscriber using their email or SMS number and an API key. You can also untag subscribers with these nodes.
 
 ### Field index node
 - **Node Name**: `Field index`
