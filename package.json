@@ -50,7 +50,7 @@
       "klicktipp-subscription-process-get-redirect": "nodes/subscription-processes/klicktipp-subscription-process-get-redirect.js",
       "klicktipp-field-get": "nodes/fields/klicktipp-field-get.js",
       "klicktipp-field-index": "nodes/fields/klicktipp-field-index.js",
-      "klicktipp-webhook-trigger": "nodes/trigers/klicktipp-webhook-trigger.js"
+      "klicktipp-webhook-trigger": "nodes/triggers/klicktipp-webhook-trigger.js"
     }
   },
   "dependencies": {
