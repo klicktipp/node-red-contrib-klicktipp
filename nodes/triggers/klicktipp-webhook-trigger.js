@@ -19,7 +19,6 @@ module.exports = function(RED) {
         // Register an HTTP POST endpoint.
         const endpoint = '/klicktipp-webhook/' + node.token;
         RED.httpNode.post(endpoint, function(req, res) {
-            node.log("Received a POST request at " + endpoint);
             // Use the request body as the payload (or an empty object if none).
             const payload = req.body || {};
             node.send({ payload: payload });

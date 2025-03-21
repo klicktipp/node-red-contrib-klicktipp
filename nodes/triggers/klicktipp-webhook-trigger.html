@@ -8,7 +8,7 @@
       <input type="text" id="node-input-klicktipp" data-i18n="config node">
   </div>
   <div class="form-row">
-      <label>Webhook URL</label>
+      <label for="node-input-webhookUrl">Webhook URL</label>
       <input type="text" id="node-input-webhookUrl" readonly>
       <button type="button" id="copy-webhook-btn">Copy</button>
   </div>
@@ -28,7 +28,7 @@
       This node acts as a trigger for new events from KlickTipp via webhook.
       When deployed, it automatically generates a unique webhook URL.
       Configure this URL in your KlickTipp account so that when the webhook is triggered,
-      the incoming data is sent to Node‑RED.
+      the incoming data is sent to Node-RED.
   </p>
   <h3>Outputs</h3>
   <dl class="message-properties">
@@ -69,7 +69,7 @@
           
           // Set up one-click copy functionality.
           $('#copy-webhook-btn').on('click', function() {
-              var copyText = document.getElementById('node-input-webhookUrl');
+              var copyText = $('#node-input-webhookUrl')[0];
               copyText.select();
               document.execCommand("copy");
           });
