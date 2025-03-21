@@ -1,78 +1,78 @@
 <script type="text/x-red" data-template-name="klicktipp-webhook-trigger">
-  <div class="form-row">
-      <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-      <input type="text" id="node-input-name" placeholder="Enter node name">
-  </div>
-  <div class="form-row">
-      <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-      <input type="text" id="node-input-klicktipp" data-i18n="config node">
-  </div>
-  <div class="form-row">
-      <label for="node-input-webhookUrl">Webhook URL</label>
-      <input type="text" id="node-input-webhookUrl" readonly>
-      <button type="button" id="copy-webhook-btn">Copy</button>
-  </div>
-  <!-- Hidden field to store the token -->
-  <input type="hidden" id="node-input-token">
-  <div class="form-row">
-      <p class="help">
-        The webhook URL needs to be set up in KlickTipp.
-        For more information on how to create a webhook in KlickTipp, see online 
-        <a href="https://www.klicktipp.com/de/support/wissensdatenbank/outbound-erstellen-und-nutzen/" target="_blank" style="color: red;"">Help</a>.
-      </p>
-  </div>
+	<div class="form-row">
+	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row">
+	    <label for="node-input-webhookUrl">Webhook URL</label>
+	    <input type="text" id="node-input-webhookUrl" readonly>
+	    <button type="button" id="copy-webhook-btn">Copy</button>
+	</div>
+	<!-- Hidden field to store the token -->
+	<input type="hidden" id="node-input-token">
+	<div class="form-row">
+	    <p class="help">
+	      The webhook URL needs to be set up in KlickTipp.
+	      For more information on how to create a webhook in KlickTipp, see online
+	      <a href="https://www.klicktipp.com/de/support/wissensdatenbank/outbound-erstellen-und-nutzen/" target="_blank" style="color: red;"">Help</a>.
+	    </p>
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-webhook-trigger">
-  <p>
-      This node acts as a trigger for new events from KlickTipp via webhook.
-      When deployed, it automatically generates a unique webhook URL.
-      Configure this URL in your KlickTipp account so that when the webhook is triggered,
-      the incoming data is sent to Node-RED.
-  </p>
-  <h3>Outputs</h3>
-  <dl class="message-properties">
-      <dt>msg.payload <span class="property-type">object</span></dt>
-      <dd>
-          The incoming request data (parameters) from KlickTipp.
-      </dd>
-  </dl>
+	<p>
+	    This node acts as a trigger for new events from KlickTipp via webhook.
+	    When deployed, it automatically generates a unique webhook URL.
+	    Configure this URL in your KlickTipp account so that when the webhook is triggered,
+	    the incoming data is sent to Node-RED.
+	</p>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+	    <dt>msg.payload <span class="property-type">object</span></dt>
+	    <dd>
+	        The incoming request data (parameters) from KlickTipp.
+	    </dd>
+	</dl>
 </script>
 
 <script type="text/javascript">
-  RED.nodes.registerType('klicktipp-webhook-trigger', {
-      category: 'KlickTipp',
-      color: '#DAE1FC',
-      defaults: {
-          klicktipp: { type: 'klicktipp-config', required: true },
-          name: { value: '' },
-          token: { value: '' } // token will be saved here
-      },
-      inputs: 0,
-      outputs: 1,
-      icon: 'klicktipp.svg',
-      label: function() {
-          return this.name || 'Watch New Events';
-      },
-      paletteLabel: 'Watch New Events',
-      oneditprepare: function() {
-          var baseUrl = window.location.origin;
-          // Retrieve the token from the hidden field
-          var token = $("#node-input-token").val();
-          // If no token exists, generate one and save it to the hidden field
-          if (!token) {
-              token = Math.random().toString(36).substr(2, 16);
-              $("#node-input-token").val(token);
-          }
-          // Update the webhook URL field using the token
-          $("#node-input-webhookUrl").val(baseUrl + '/klicktipp-webhook/' + token);
-          
-          // Set up one-click copy functionality.
-          $('#copy-webhook-btn').on('click', function() {
-              var copyText = $('#node-input-webhookUrl')[0];
-              copyText.select();
-              document.execCommand("copy");
-          });
-      }
-  });
+	RED.nodes.registerType('klicktipp-webhook-trigger', {
+		category: 'KlickTipp',
+		color: '#DAE1FC',
+		defaults: {
+			klicktipp: { type: 'klicktipp-config', required: true },
+			name: { value: '' },
+			token: { value: '' }, // token will be saved here
+		},
+		inputs: 0,
+		outputs: 1,
+		icon: 'klicktipp.svg',
+		label: function () {
+			return this.name || 'Watch New Events';
+		},
+		paletteLabel: 'Watch New Events',
+		oneditprepare: function () {
+			var baseUrl = window.location.origin;
+			// Retrieve the token from the hidden field
+			var token = $('#node-input-token').val();
+			// If no token exists, generate one and save it to the hidden field
+			if (!token) {
+				token = Math.random().toString(36).substr(2, 16);
+				$('#node-input-token').val(token);
+			}
+			// Update the webhook URL field using the token
+			$('#node-input-webhookUrl').val(baseUrl + '/klicktipp-webhook/' + token);
+
+			// Set up one-click copy functionality.
+			$('#copy-webhook-btn').on('click', function () {
+				var copyText = $('#node-input-webhookUrl')[0];
+				copyText.select();
+				document.execCommand('copy');
+			});
+		},
+	});
 </script>
