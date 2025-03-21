@@ -1,20 +1,20 @@
 <script type="text/x-red" data-template-name="klicktipp-field-get">
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
-    <div class="form-row">
-        <label for="node-input-apiFieldId"><i class="fa fa-tag"></i> <span>Field</span></label>
-        <select id="node-input-apiFieldId"></select>
-    </div>
 	<div class="form-row">
-	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	    <input type="text" id="node-input-name" placeholder="Enter node name">
+			<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+			<input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
+			<div class="form-row">
+						<label for="node-input-apiFieldId"><i class="fa fa-tag"></i> <span>Data Field</span></label>
+						<select id="node-input-apiFieldId"></select>
+			</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-field-get">
-	<p>Returns the ID and the name of a field.</p>
+	<p>Gets the ID and the name of a data field</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -61,33 +61,39 @@
 		defaults: {
 			klicktipp: {
 				type: 'klicktipp-config',
-				required: true
+				required: true,
 			},
 			apiFieldId: {
 				value: '',
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Field get';
+			return this.name || 'Get Data Field';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Field get',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Get Data Field',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			const fieldDropdown = $('#node-input-apiFieldId');
-			ktBindDropdownToInput(klicktippInput, fieldDropdown, this.apiFieldId, this.klicktipp, `/klicktipp/contact-fields/${this.id}`);
+			ktBindDropdownToInput(
+				klicktippInput,
+				fieldDropdown,
+				this.apiFieldId,
+				this.klicktipp,
+				`/klicktipp/contact-fields/${this.id}`,
+			);
 		},
-		oneditsave: function() {
+		oneditsave: function () {
 			this.apiFieldId = Number($('#node-input-apiFieldId').val());
-		}
+		},
 	});
 </script>

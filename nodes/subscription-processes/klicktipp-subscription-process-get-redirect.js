@@ -15,12 +15,12 @@ module.exports = function (RED) {
 		const listId = config.listId;
 
 		if (!listId) {
-			handleError(node, msg, 'Missing list ID ', 'Invalid input');
+			handleError(node, msg, 'Opt-in process ID is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
 		if (!email) {
-			handleError(node, msg, 'Missing email', 'Invalid input');
+			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
@@ -41,8 +41,8 @@ module.exports = function (RED) {
 				node,
 				msg,
 				response,
-				'Fetched redirection URL',
-				'Failed to fetch redirection URL',
+				'Opt-in process redirect URL retrieved',
+				'Opt-in process redirect URL could not be retrieved',
 				(response) => {
 					const enhancedData = {
 						redirectUrl: response?.data?.[0] || null,
@@ -52,7 +52,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to fetch redirection URL', error.message);
+			handleError(node, msg, 'Opt-in process redirect URL could not be retrieved', error.message);
 		}
 	};
 

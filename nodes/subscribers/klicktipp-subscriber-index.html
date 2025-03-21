@@ -1,16 +1,16 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-index">
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	    <input type="text" id="node-input-name" placeholder="Enter node name">
+	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-index">
-	<p>Returns an associative array in the format <code>{ subscriber_id: ID }</code>, where each key corresponds to a unique subscriber ID. Use the <code>Subscriber Get</code> node to retrieve detailed information about a subscriber.</p>
+	<p>Lists the IDs of all active contacts</p>
 
 	<h3>Outputs</h3>
 	<dl class="message-properties">
@@ -18,7 +18,7 @@
 	   <dd>
 		   On success:
 		   <ul>
-			   <li>An array containing the subscriber IDs of all active subscribers.</li>
+			   <li>An array containing the contact IDs of all active contacts.</li>
 		   </ul>
 	   </dd>
 	   <dd>
@@ -34,8 +34,8 @@
 
 	<h3>Node Status</h3>
 	<ul>
-	    <li><strong>Green (dot)</strong> - Successfully fetched the subscriber list.</li>
-	    <li><strong>Red (ring)</strong> - Failed to fetch subscribers (e.g., API error).</li>
+	    <li><strong>Green (dot)</strong> - Successfully fetched the contact list.</li>
+	    <li><strong>Red (ring)</strong> - Failed to fetch contacts (e.g., API error).</li>
 	</ul>
 </script>
 
@@ -51,11 +51,11 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber index';
+			return this.name || 'List Contacts';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber index',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'List Contacts',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
 	});

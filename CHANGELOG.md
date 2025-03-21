@@ -28,3 +28,10 @@
 ## Version 1.0.5 (2025-01-24)
 - **Changes**
   - Removed the Autoresponder node.
+
+## Version 1.0.6 (2025-03-21)
+- **New Features**
+	- Added "KlickTipp Trigger" node. 
+- **Changes**
+	- Updated the wording in nodes: names, descriptions, parameters, placeholders, error handling.
+	- Removed Sing-in, Sign-off and Sign-out nodes.

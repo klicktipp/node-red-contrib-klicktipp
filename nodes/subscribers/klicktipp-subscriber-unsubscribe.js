@@ -14,7 +14,7 @@ module.exports = function (RED) {
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 
 		if (!email) {
-			handleError(node, msg, 'Missing email', 'Invalid input');
+			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
@@ -31,14 +31,14 @@ module.exports = function (RED) {
 				node,
 				msg,
 				response,
-				'Unsubscribed successfully',
-				'Failed to unsubscribe',
+				'Contact unsubscribed',
+				'Contact could not be unsubscribed',
 				() => {
 					msg.payload = { success: true };
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to unsubscribe', error.message);
+			handleError(node, msg, 'Contact could not be unsubscribed', error.message);
 		}
 	};
 

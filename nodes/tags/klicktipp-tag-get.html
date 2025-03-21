@@ -1,20 +1,20 @@
 <script type="text/x-red" data-template-name="klicktipp-tag-get">
 	<div class="form-row">
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-    <div class="form-row">
-        <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
-        <select id="node-input-tagId"></select>
-    </div>
 	<div class="form-row">
-	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	    <input type="text" id="node-input-name" placeholder="Enter node name">
+			<label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
+			<select id="node-input-tagId"></select>
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-tag-get">
-	<p>Returns the name and description of a tag.</p>
+	<p>Returns the name and description of a tag</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -62,31 +62,37 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			tagId: {
 				value: '',
-				validate: RED.validators.number()
+				validate: RED.validators.number(),
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Tag get';
+			return this.name || 'Get Tag';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Tag get',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Get Tag',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
-			ktBindDropdownToInput(klicktippInput, tagDropdown, this.tagId, this.klicktipp, `/klicktipp/tags/${this.id}`);
+			ktBindDropdownToInput(
+				klicktippInput,
+				tagDropdown,
+				this.tagId,
+				this.klicktipp,
+				`/klicktipp/tags/${this.id}`,
+			);
 		},
 		// When the node editor is saved, capture the selected tagId
-		oneditsave: function() {
+		oneditsave: function () {
 			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
-		}
+		},
 	});
 </script>

@@ -1,21 +1,21 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-unsubscribe">
 	<div class="form-row">
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address (required)">
 	    <input type="hidden" id="node-input-emailType">
-	</div>
-	<div class="form-row">
-	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-unsubscribe">
-	<p>Unsubscribes a subscriber.</p>
+	<p>Unsubscribes a contact, preventing further communication</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -23,7 +23,7 @@
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-	            <li><code>email</code> - (Required) the subscriber's email address</li>
+	            <li><code>email</code> - (Required) the contact's email address</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -64,28 +64,28 @@
 			email: {
 				value: 'payload.email',
 				required: true,
-				validate: RED.validators.typedInput('emailType')
+				validate: RED.validators.typedInput('emailType'),
 			},
 			emailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber unsubscribe';
+			return this.name || 'Unsubscribe Contact';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber unsubscribe',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Unsubscribe Contact',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+		oneditprepare: function () {
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 		},
 	});
 </script>

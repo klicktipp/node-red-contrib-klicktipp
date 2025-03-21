@@ -1,17 +1,16 @@
 <script type="text/x-red" data-template-name="klicktipp-tag-index">
 	<div class="form-row">
-	       <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	       <input type="text" id="node-input-klicktipp" data-i18n="config node">
-	   </div>
-	   <div class="form-row">
-	       <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	       <input type="text" id="node-input-name" placeholder="Enter node name">
-	   </div>
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+	<div class="form-row">
+			<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+			<input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-tag-index">
-	<p>Returns an associative array in the format <code>{ tag_id: tag_name }</code>, where each key represents the unique ID of a manual tag or SmartLink, and the value is the corresponding tag name.
-	Use the <code>Tag get</code> node to retrieve the name and description of a tag.</p>
+	<p>Lists the IDs and names of all tags</p>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 		<dt>msg.payload <span class="property-type">object</span></dt>
@@ -51,11 +50,11 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Tag index';
+			return this.name || 'List Tags';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Tag index',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'List Tags',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
 	});

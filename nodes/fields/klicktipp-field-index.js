@@ -15,15 +15,15 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched data fields',
-				'Failed to fetch data fields',
+				'Data fields retrieved',
+				'Data fields could not be retrieved',
 				(response) => {
 					const transformedData = objectToIdValueArray(response.data);
 					msg.payload = transformedData;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to subscribe', error.message);
+			handleError(this, msg, 'Data fields could not be retrieved', error.message);
 		}
 	};
 

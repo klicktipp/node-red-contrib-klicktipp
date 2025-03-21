@@ -1,20 +1,20 @@
 <script type="text/x-red" data-template-name="klicktipp-subscription-process-get">
 	<div class="form-row">
-	   <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	   <input type="text" id="node-input-klicktipp" data-i18n="config node">
+		  <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+		  <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-        <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in process</span></label>
-        <select id="node-input-listId"></select>
-    </div>
+	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
 	<div class="form-row">
-	   <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	   <input type="text" id="node-input-name" placeholder="Enter node name">
+			<label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in Process</span></label>
+			<select id="node-input-listId"></select>
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscription-process-get">
-	<p>Returns the name of an opt-in process.</p>
+	<p>Returns the complete data of an opt-in process</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -62,31 +62,37 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			listId: {
 				value: '',
-				validate: RED.validators.number()
+				validate: RED.validators.number(),
 			},
 			name: {
-				value: ''
+				value: '',
 			},
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Opt-in process get';
+			return this.name || 'Get Opt-in Process';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Opt\u2013in process get',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Get Opt\u2013in Process',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
+		oneditprepare: function () {
 			const klicktippInput = $('#node-input-klicktipp');
 			const listIdDropdown = $('#node-input-listId');
-			ktBindDropdownToInput(klicktippInput, listIdDropdown, this.listId, this.klicktipp, `/klicktipp/subscription-processes/${this.id}`);
+			ktBindDropdownToInput(
+				klicktippInput,
+				listIdDropdown,
+				this.listId,
+				this.klicktipp,
+				`/klicktipp/subscription-processes/${this.id}`,
+			);
 		},
 		// When the node editor is saved, capture the selected tagId
-		oneditsave: function() {
+		oneditsave: function () {
 			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
-		}
+		},
 	});
 </script>

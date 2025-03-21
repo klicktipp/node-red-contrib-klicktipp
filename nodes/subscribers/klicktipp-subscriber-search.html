@@ -1,21 +1,21 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-search">
 	<div class="form-row">
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
+	</div>
+	<div class="form-row">
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address">
+	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+	    <input type="text" id="node-input-email" placeholder="Enter email address (required)">
 	    <input type="hidden" id="node-input-emailType">
-	</div>
-	<div class="form-row">
-	    <label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-search">
-	<p>Returns the subscriber ID for an email address. Use the <code>Subscriber get</code> node to retrieve detailed information about this subscriber.</p>
+	<p>Returns the contact ID for an email address</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -23,7 +23,7 @@
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-	            <li><code>email</code> - (Required) the subscriber's email address</li>
+	            <li><code>email</code> - (Required) the contact's email address</li>
 	        </ul>
 	    </dd>
 	</dl>
@@ -34,7 +34,7 @@
 	   <dd>
 		   On success:
 		   <ul>
-			   <li>An object containing the subscriber's details (e.g., subscriber ID) if found.</li>
+			   <li>An object containing the contact's details (e.g., contact ID) if found.</li>
 		   </ul>
 	   </dd>
 	   <dd>
@@ -50,8 +50,8 @@
 
 	<h3>Node Status</h3>
 	<ul>
-	    <li><strong>Green (dot)</strong> - Subscriber search was successful, and the subscriber ID was retrieved.</li>
-	    <li><strong>Red (ring)</strong> - Failed to search for subscriber (e.g., missing email or API error).</li>
+	    <li><strong>Green (dot)</strong> - Contact search was successful, and the contact ID was retrieved.</li>
+	    <li><strong>Red (ring)</strong> - Failed to search for contact (e.g., missing email or API error).</li>
 	</ul>
 </script>
 
@@ -64,10 +64,10 @@
 			email: {
 				value: 'payload.email',
 				required: true,
-				validate: RED.validators.typedInput('emailType')
+				validate: RED.validators.typedInput('emailType'),
 			},
 			emailType: {
-				value: 'msg'
+				value: 'msg',
 			},
 			name: { value: '' },
 		},
@@ -75,15 +75,15 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'Subscriber search';
+			return this.name || 'Get Contact ID';
 		},
-		labelStyle: "klicktipp_label_style",
-		paletteLabel: 'Subscriber search',
-		onadd: function() {
+		labelStyle: 'klicktipp_label_style',
+		paletteLabel: 'Get Contact ID',
+		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function() {
-			ktInitializeTypedInput("#node-input-email", "#node-input-emailType", 'str', ['str']);
+		oneditprepare: function () {
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 		},
 	});
 </script>

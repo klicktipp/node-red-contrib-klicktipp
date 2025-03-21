@@ -15,15 +15,15 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched opt-in processes',
-				'Failed to fetch opt-in processes',
+				'Opt-in processes retrieved',
+				'Opt-in processes could not be retrieved',
 				(response) => {
 					const transformedData = objectToIdValueArray(response.data);
 					msg.payload = transformedData;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch opt-in processes', error.message);
+			handleError(this, msg, 'Opt-in processes could not be retrieved', error.message);
 		}
 	};
 

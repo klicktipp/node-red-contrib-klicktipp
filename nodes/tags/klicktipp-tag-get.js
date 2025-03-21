@@ -10,7 +10,7 @@ module.exports = function (RED) {
 		const tagId = config.tagId || msg?.payload?.tagId;
 
 		if (!tagId) {
-			handleError(this, msg, 'Missing tag ID', 'Invalid input');
+			handleError(this, msg, 'Tag ID is missing', 'Invalid input');
 			return this.send(msg);
 		}
 
@@ -26,14 +26,14 @@ module.exports = function (RED) {
 				this,
 				msg,
 				response,
-				'Fetched tag definition',
-				'Failed to fetch tag definition',
+				'Tag retrieved',
+				'Tag could not be retrieved',
 				(response) => {
 					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Failed to fetch tag definition', error.message);
+			handleError(this, msg, 'Tag could not be retrieved', error.message);
 		}
 	};
 

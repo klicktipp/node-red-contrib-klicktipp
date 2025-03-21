@@ -6,8 +6,8 @@ What is the KlickTipp Marketing Suite?
 
 <a href="https://www.klicktipp.com/de?source=nodered" title="E-Mail-Marketing" target="_blank" rel="noopener noreferrer">KlickTipp Marketing Suite</a> is a digital marketing platform that empowers creators and small businesses to generate leads and turn them into passionate customers. It boosts growth with GDPR-compliant tools for email and SMS marketing, marketing automation, landing pages, and conversion rate optimization.
 
-This package provides a set of nodes for interacting with the KlickTipp API, allowing you to manage subscribers, tags, subscription processes, and more directly from Node-RED.
-For more detailed information on the KlickTipp API, including available functions for managing subscribers, tags, fields, and more, please refer to the <a href="https://www.klicktipp.com/de/support/wissensdatenbank/application-programming-interface-api?source=nodered" target="_blank" rel="noopener" title="E-Mail-Marketing API">official KlickTipp API client documentation</a>.
+This package provides a set of nodes for interacting with the KlickTipp API, allowing you to manage contacts, tags, subscription processes, and more directly from Node-RED.
+For more detailed information on the KlickTipp API, including available functions for managing contacts, tags, fields, and more, please refer to the <a href="https://www.klicktipp.com/de/support/wissensdatenbank/application-programming-interface-api?source=nodered" target="_blank" rel="noopener" title="E-Mail-Marketing API">official KlickTipp API client documentation</a>.
 
 ---
 
@@ -15,12 +15,13 @@ For more detailed information on the KlickTipp API, including available function
 
 - [Installation](#installation)
 - [Nodes Overview](#nodes-overview)
-    - [KlickTipp config](#klicktipp-config)
-    - [Opt-in process](#opt-in-process-nodes)
-    - [Tag](#tag-nodes)
-    - [Subscriber](#subscriber-nodes)
-    - [Sign-out/Sign-off/Sign-in](#sign-out-sign-off-and-sign-in-nodes)
-    - [Data fields](#field-index-node)
+  - [KlickTipp config](#klicktipp-config)
+  - [Contact](#contact)
+  - [Contact Tagging](#contact-tagging)
+  - [Data Field](#data-field)
+  - [Opt-In Process](#opt-in-process)
+  - [Tag](#tag)
+  - [Triggers](#triggers)
 - [Credentials](#credentials)
 - [Error Handling](#error-handling)
 - [License](#license)
@@ -45,50 +46,56 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 - **Node Name:** `klicktipp-config`
 - **Description:** This is a configuration node used to store your KlickTipp API credentials (username and password). You will use this node to authenticate other KlickTipp nodes.
 
-### Opt-in process nodes
+### Contact
 
-- **Node Names:**
-  - `Opt-in process index`
-  - `Opt-in process get`
-  - `Opt-in process redirect URL`
-- **Description:** These nodes are used to manage and interact with opt-in processes in KlickTipp.
+- **Node Names:**:
+  - `Add or update contact`
+  - `Delete contact`
+  - `Get contact`
+  - `Get contact id`
+  - `List contacts`
+  - `List tagged contacts`
+  - `Unsubscribe contact`
+  - `Update contact`
+- **Description**: Provides management capabilities for contacts, such as searching, updating, and deleting contact data.
 
-### Tag nodes
+### Contact Tagging
 
-- **Node Names:**
-  - `Tag index`
-  - `Tag get`
-  - `Tag create`
-  - `Tag update`
-  - `Tag delete`
-- **Description:** These nodes allow you to manage and interact with tags within KlickTipp. You can create, update, and delete tags.
+- **Node Names:**:
+  - `Tag contact`
+  - `Untag contact`
+- **Description**: Provides management capabilities for contacts tagging.
 
-### Subscriber nodes
+### Data Field
 
-- **Node Names:**
-  - `Subscriber index`
-  - `Subscriber search`
-  - `Subscriber tagged`
-  - `Subscriber get`
-  - `Subscriber subscribe`
-  - `Subscriber update`
-  - `Subscriber tag`
-  - `Subscriber untag`
-  - `Subscriber unsubscribe`
-  - `Subscriber delete`
-- **Description:** These nodes allow you to manage subscribers, including retrieving, searching, updating, deleting subscriber data.
+- **Node Names:**:
+  - `Get data field`
+  - `List data fields`
+- **Description**: Manages data fields, including retrieving all available data fields for contacts, and obtaining data field information.
 
-### Sign-out Sign-off and Sign-in nodes
+### Opt-in Process
 
-- **Node Names:**
-  - `Subscriber signout`
-  - `Subscriber signoff`
-  - `Subscriber signin`
-- **Description:** These nodes allow you to sign in or sign off a subscriber using their email or SMS number and an API key. You can also untag subscribers with these nodes.
+- **Node Names:**:
+  - `Get opt-in process`
+  - `Get redirect url`
+  - `list opt in process`
+- **Description**: Manages opt-in processes, including listing all processes, retrieving details of a specific process, and obtaining redirect URLs.
 
-### Field index node
-- **Node Name**: `Field index`
-- **Description:**  Retrieves all available data fields for the subscriber.
+### Tag
+
+- **Node Names:**:
+  - `Create tag`
+  - `Delete tag`
+  - `Get tag`
+  - `List tags`
+  - `Update tag`
+- **Description**: Manages tags within KlickTipp, enabling operations to list, create, update, and delete tags.
+
+### Triggers
+
+- **Node Name:**: `Watch new events`
+- **Description**: Triggers on a new event.
+
 ---
 
 ## Credentials

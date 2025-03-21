@@ -12,7 +12,7 @@ module.exports = function (RED) {
 		const tagId = config.tagId || msg?.payload?.tagId;
 
 		if (!tagId) {
-			handleError(this, msg, 'Missing tag ID', 'Invalid input');
+			handleError(this, msg, 'Tag ID is missing', 'Invalid input');
 			return this.send(msg);
 		}
 
@@ -24,14 +24,14 @@ module.exports = function (RED) {
 				msg.sessionData,
 			);
 
-			handleResponse(this, msg, response, 'Tag deleted', 'Failed to delete tag', () => {
+			handleResponse(this, msg, response, 'Tag deleted', 'Tag could not be deleted', () => {
 				msg.payload = { success: true };
 
 				// Clear the cache after a successful delete
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(this, msg, 'Failed to delete tag', error.message);
+			handleError(this, msg, 'Tag could not be deleted', error.message);
 		}
 	};
 

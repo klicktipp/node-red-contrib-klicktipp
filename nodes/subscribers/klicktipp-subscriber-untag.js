@@ -15,12 +15,12 @@ module.exports = function (RED) {
 		const tagId = config.tagId;
 
 		if (!email) {
-			handleError(node, msg, 'Missing email', 'Invalid input');
+			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
 		if (!tagId) {
-			handleError(node, msg, 'Missing tag ID', 'Invalid input');
+			handleError(node, msg, 'Tag ID is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
@@ -36,14 +36,14 @@ module.exports = function (RED) {
 				node,
 				msg,
 				response,
-				'Email untagged successfully',
-				'Failed to untag email',
+				'Tag removed from contact',
+				'Tag could not be removed from contact',
 				() => {
 					msg.payload = { success: true };
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Failed to untag email', error.message);
+			handleError(node, msg, 'Tag could not be removed from contact', error.message);
 		}
 	};
 	/**
