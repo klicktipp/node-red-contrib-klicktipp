@@ -46,7 +46,7 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 - **Node Name:** `klicktipp-config`
 - **Description:** This is a configuration node used to store your KlickTipp API credentials (username and password). You will use this node to authenticate other KlickTipp nodes.
 
-### Contact nodes
+### Contact
 
 - **Node Names:**:
   - `Add or update contact`
@@ -59,21 +59,21 @@ This package includes various nodes to interact with the KlickTipp API. Below is
   - `Update contact`
 - **Description**: Provides management capabilities for contacts, such as searching, updating, and deleting contact data.
 
-### Contact Tagging nodes
+### Contact Tagging
 
 - **Node Names:**:
   - `Tag contact`
   - `Untag contact`
 - **Description**: Provides management capabilities for contacts tagging.
 
-### Data Field nodes
+### Data Field
 
 - **Node Names:**:
   - `Get data field`
   - `List data fields`
 - **Description**: Manages data fields, including retrieving all available data fields for contacts, and obtaining data field information.
 
-### Opt-in Process nodes
+### Opt-in Process
 
 - **Node Names:**:
   - `Get opt-in process`
@@ -81,7 +81,7 @@ This package includes various nodes to interact with the KlickTipp API. Below is
   - `list opt in process`
 - **Description**: Manages opt-in processes, including listing all processes, retrieving details of a specific process, and obtaining redirect URLs.
 
-### Tag nodes
+### Tag
 
 - **Node Names:**:
   - `Create tag`
@@ -91,7 +91,7 @@ This package includes various nodes to interact with the KlickTipp API. Below is
   - `Update tag`
 - **Description**: Manages tags within KlickTipp, enabling operations to list, create, update, and delete tags.
 
-### Triggers nodes
+### Triggers
 
 - **Node Name:**: `Watch new events`
 - **Description**: Triggers on a new event.
