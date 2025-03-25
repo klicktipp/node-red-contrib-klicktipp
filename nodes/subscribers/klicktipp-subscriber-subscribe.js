@@ -12,7 +12,18 @@ const qs = require('qs');
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		const { listId, tagId } = config;
+
+		let listId = config.manualListEnabled
+			? config.manualListId || msg?.payload?.manualListId
+			: config.listId || msg?.payload?.listId;
+
+		listId = listId !== undefined ? Number(listId) : undefined;
+
+		let tagId = config.manualTagEnabled
+			? config.manualTagId || msg?.payload?.manualTagId
+			: config.tagId || msg?.payload?.tagId;
+
+		tagId = tagId !== undefined ? Number(tagId) : undefined;
 
 		const fields = await getContactFields(RED, config, node, msg);
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);

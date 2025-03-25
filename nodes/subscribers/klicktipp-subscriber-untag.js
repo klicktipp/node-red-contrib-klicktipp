@@ -12,7 +12,9 @@ module.exports = function (RED) {
 		const node = this;
 
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const tagId = config.tagId;
+		const tagId = config.manualFieldEnabled
+			? config.manualTagId || msg?.payload?.manualTagId || []
+			: config.tagId || msg?.payload?.tagId || [];
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');

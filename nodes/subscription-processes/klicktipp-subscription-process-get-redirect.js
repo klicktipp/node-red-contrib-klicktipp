@@ -12,7 +12,9 @@ module.exports = function (RED) {
 		const node = this;
 
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const listId = config.listId;
+		const listId = config.manualFieldEnabled
+			? config.manualListId || msg?.payload?.manualListId
+			: config.listId || msg?.payload?.listId;
 
 		if (!listId) {
 			handleError(node, msg, 'Opt-in process ID is missing', 'Invalid input');

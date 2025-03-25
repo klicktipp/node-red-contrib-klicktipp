@@ -7,7 +7,9 @@ const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode'
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const listId = config.listId || msg?.payload?.listId;
+		const listId = config.manualFieldEnabled
+			? config.manualListId || msg?.payload?.manualListId
+			: config.listId || msg?.payload?.listId;
 
 		if (!listId) {
 			handleError(this, msg, 'Opt-in process ID is missing');

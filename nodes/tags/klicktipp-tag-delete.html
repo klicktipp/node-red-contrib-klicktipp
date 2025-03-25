@@ -1,15 +1,28 @@
 <script type="text/x-red" data-template-name="klicktipp-tag-delete">
 	<div class="form-row">
-			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-			<input type="text" id="node-input-name" placeholder="Enter node name">
+		<label for="node-input-name">
+			<i class="fa fa-tag"></i> <span>Name</span>
+		</label>
+		<input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+		<label for="node-input-klicktipp">
+			<i class="fa fa-cog"></i> <span>KlickTipp Config</span>
+		</label>
+		<input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-	<div class="form-row">
-			<label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
-			<select id="node-input-tagId"></select>
+	<div class="form-row" style="display: flex; align-items: center;">
+		<label style="flex: 0 0 auto;" for="node-input-tagId">
+			<i class="fa fa-tag"></i> <span>Tag</span>
+		</label>
+		<div style="flex: 1; display: flex; margin-left: 4px;">
+			<select id="node-input-tagId" style="flex: 1;"></select>
+			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag ID">
+		</div>
+		<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+			<div>Map</div>
+			<input style="margin-top: 0 !important;" type="checkbox" id="node-input-toggleFieldType">
+		</div>
 	</div>
 </script>
 
@@ -64,9 +77,9 @@
 				value: '',
 				validate: RED.validators.number(),
 			},
-			name: {
-				value: '',
-			},
+			manualTagId: { value: '', validate: RED.validators.number() },
+			manualFieldEnabled: { value: false },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -80,18 +93,76 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
+			var self = this;
 			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
-			ktBindDropdownToInput(
-				klicktippInput,
-				tagDropdown,
-				this.tagId,
-				this.klicktipp,
-				`/klicktipp/tags/${this.id}`,
-			);
+			const tagManual = $('#node-input-tagIdManual');
+			const toggle = $('#node-input-toggleFieldType');
+
+			// Bind change event: if toggle is checked, show manual input; otherwise, show dropdown.
+			toggle.on('change', function () {
+				if (toggle.prop('checked')) {
+					tagManual.show();
+					tagDropdown.hide();
+				} else {
+					tagManual.hide();
+					tagDropdown.show();
+					// If switching to dropdown mode and it's not yet populated, bind it.
+					if (!tagDropdown.children().length) {
+						ktBindDropdownToInput(
+							klicktippInput,
+							tagDropdown,
+							self.tagId,
+							self.klicktipp,
+							`/klicktipp/tags/${self.id}`,
+						);
+					}
+				}
+			});
+
+			// Function to enforce the UI state based on persisted configuration.
+			const forceToggleState = function () {
+				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
+				toggle.prop('checked', isManual);
+				if (isManual) {
+					tagManual.show();
+					tagDropdown.hide();
+					tagManual.val(self.manualTagId);
+				} else {
+					tagManual.hide();
+					tagDropdown.show();
+				}
+				toggle.trigger('change');
+			};
+
+			// If manual mode is off, bind the dropdown.
+			if (!(self.manualFieldEnabled === true || self.manualFieldEnabled === 'true')) {
+				ktBindDropdownToInput(
+					klicktippInput,
+					tagDropdown,
+					self.tagId,
+					self.klicktipp,
+					`/klicktipp/tags/${self.id}`,
+				);
+			}
+
+			// Enforce the state immediately and again after a delay.
+			forceToggleState();
+			setTimeout(forceToggleState, 200);
 		},
 		oneditsave: function () {
-			this.tagId = Number($('#node-input-tagId').val()); // Save the selected tagId
+			const manualEnabled = $('#node-input-toggleFieldType').is(':checked');
+			this.manualFieldEnabled = manualEnabled;
+			if (manualEnabled) {
+				const manualVal = $('#node-input-tagIdManual').val();
+				this.manualTagId = manualVal;
+				// Store the manual value in tagId so that runtime uses it.
+				this.tagId = Number(manualVal);
+			} else {
+				const selectVal = $('#node-input-tagId').val();
+				this.tagId = Number(selectVal);
+				this.manualTagId = '';
+			}
 		},
 	});
 </script>

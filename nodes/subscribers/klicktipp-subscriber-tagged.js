@@ -10,7 +10,9 @@ const qs = require('qs');
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		const tagId = config.tagId || msg?.payload?.tagId;
+		const tagId = config.manualFieldEnabled
+			? config.manualTagId || msg?.payload?.manualTagId || []
+			: config.tagId || msg?.payload?.tagId || [];
 
 		if (!tagId) {
 			handleError(this, msg, 'Tag ID is missing');

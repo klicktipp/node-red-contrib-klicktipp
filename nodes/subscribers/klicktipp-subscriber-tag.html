@@ -1,21 +1,36 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-tag">
 	<div class="form-row">
-			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-			<input type="text" id="node-input-name" placeholder="Enter node name">
+		<label for="node-input-name">
+			<i class="fa fa-tag"></i> <span>Name</span>
+		</label>
+		<input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+		<label for="node-input-klicktipp">
+			<i class="fa fa-cog"></i> <span>KlickTipp Config</span>
+		</label>
+		<input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address (required)">
-	    <input type="hidden" id="node-input-emailType">
+		<label for="node-input-email">
+			<i class="fa fa-envelope"></i> <span>Email Address</span>
+		</label>
+		<input type="text" id="node-input-email" placeholder="Enter email address (required)">
+		<input type="hidden" id="node-input-emailType">
 	</div>
-	   <div class="form-row">
-	       <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag IDs</span></label>
-	       <select id="node-input-tagId" multiple style="height: auto; width: 100%;"></select>
-	   </div>
+	<div class="form-row" style="display: flex; align-items: center;">
+		<label style="flex: 0 0 auto;" for="node-input-tagId">
+			<i class="fa fa-tag"></i> <span>Tag IDs</span>
+		</label>
+		<div style="flex: 1; display: flex; margin-left: 4px;">
+			<select id="node-input-tagId" multiple style="height: auto; width: 100%;"></select>
+			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag IDs (comma separated)">
+		</div>
+		<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+			<div>Map</div>
+			<input style="margin-top: 0 !important;" type="checkbox" id="node-input-toggleFieldType">
+		</div>
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tag">
@@ -74,15 +89,11 @@
 				required: true,
 				validate: RED.validators.typedInput('emailType'),
 			},
-			emailType: {
-				value: 'msg',
-			},
-			tagId: {
-				value: [],
-			},
-			name: {
-				value: '',
-			},
+			emailType: { value: 'msg' },
+			tagId: { value: [] },
+			manualTagId: { value: '' },
+			manualFieldEnabled: { value: false },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -96,19 +107,84 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
+			var self = this;
 			const klicktippInput = $('#node-input-klicktipp');
 			const tagDropdown = $('#node-input-tagId');
-			ktBindDropdownToInput(
-				klicktippInput,
-				tagDropdown,
-				this.tagId,
-				this.klicktipp,
-				`/klicktipp/tags/${this.id}`,
-			);
+			const tagManual = $('#node-input-tagIdManual');
+			const toggle = $('#node-input-toggleFieldType');
+
+			// Bind toggle event: if checked, show manual input; otherwise, show dropdown.
+			toggle.on('change', function () {
+				if (toggle.prop('checked')) {
+					tagManual.show();
+					tagDropdown.hide();
+				} else {
+					tagManual.hide();
+					tagDropdown.show();
+					// If switching to select mode and dropdown is empty, bind it.
+					if (!tagDropdown.children().length) {
+						ktBindDropdownToInput(
+							klicktippInput,
+							tagDropdown,
+							self.tagId,
+							self.klicktipp,
+							`/klicktipp/tags/${self.id}`,
+						);
+					}
+				}
+			});
+
+			// Function to enforce UI state based on saved configuration.
+			const forceToggleState = function () {
+				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
+				toggle.prop('checked', isManual);
+				if (isManual) {
+					tagManual.show();
+					tagDropdown.hide();
+					tagManual.val(self.manualTagId);
+				} else {
+					tagManual.hide();
+					tagDropdown.show();
+				}
+				toggle.trigger('change');
+			};
+
+			// Bind the dropdown only if manual mode is not active.
+			if (!(self.manualFieldEnabled === true || self.manualFieldEnabled === 'true')) {
+				ktBindDropdownToInput(
+					klicktippInput,
+					tagDropdown,
+					self.tagId,
+					self.klicktipp,
+					`/klicktipp/tags/${self.id}`,
+				);
+			}
+
+			// Enforce the UI state immediately and after a short delay.
+			forceToggleState();
+			setTimeout(forceToggleState, 200);
+
+			// Initialize the typed input for the email field.
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 		},
 		oneditsave: function () {
-			this.tagId = $('#node-input-tagId').val(); // Save the selected tagId(s)
-		},
+			const manualEnabled = $('#node-input-toggleFieldType').is(':checked');
+			this.manualFieldEnabled = manualEnabled;
+			if (manualEnabled) {
+				const manualVal = $('#node-input-tagIdManual').val();
+				this.manualTagId = manualVal;
+				// Split the input string by comma, trim, convert each to a number, and filter out NaN values.
+				this.tagId = manualVal
+					.split(',')
+					.map(s => Number(s.trim()))
+					.filter(n => !isNaN(n));
+			} else {
+				const selectVal = $('#node-input-tagId').val() || [];
+				// Ensure we have an array, then convert each value to a number.
+				this.tagId = (Array.isArray(selectVal) ? selectVal : [selectVal])
+					.map(v => Number(v));
+				this.manualTagId = '';
+			}
+		}
 	});
 </script>
