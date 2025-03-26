@@ -176,15 +176,14 @@
 				// Split the input string by comma, trim, convert each to a number, and filter out NaN values.
 				this.tagId = manualVal
 					.split(',')
-					.map(s => Number(s.trim()))
-					.filter(n => !isNaN(n));
+					.map((s) => Number(s.trim()))
+					.filter((n) => !isNaN(n));
 			} else {
 				const selectVal = $('#node-input-tagId').val() || [];
 				// Ensure we have an array, then convert each value to a number.
-				this.tagId = (Array.isArray(selectVal) ? selectVal : [selectVal])
-					.map(v => Number(v));
+				this.tagId = (Array.isArray(selectVal) ? selectVal : [selectVal]).map((v) => Number(v));
 				this.manualTagId = '';
 			}
-		}
+		},
 	});
 </script>
