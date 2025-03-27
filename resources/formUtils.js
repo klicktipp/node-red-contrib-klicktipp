@@ -135,18 +135,19 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 			let itemExists = false;
 
 			if (ktIsObject(items)) {
-				// Convert items into an array of objects {id, name}
+				// Convert items into an array with the computed label
 				let sortedItems = Object.keys(items).map((id) => {
-					return { id: id, name: items[id] };
+					const rawName = items[id];
+					const label = ktGetOptionLabel(rawName, actionUrl);
+					return { id: id, label: label };
 				});
 
-				// Sort the array alphabetically by tag name (case-insensitive)
-				sortedItems.sort((a, b) => a.name.localeCompare(b.name));
+				// Sort the array alphabetically by the computed label (case-insensitive)
+				sortedItems.sort((a, b) => a.label.localeCompare(b.label));
 
 				// Populate the dropdown with sorted items
 				sortedItems.forEach((item) => {
-					const optionLabel = ktGetOptionLabel(item.name, actionUrl);
-					$dropdown.append(new Option(optionLabel, item.id));
+					$dropdown.append(new Option(item.label, item.id));
 				});
 
 				// Check if selectedItemId exists in the items list
