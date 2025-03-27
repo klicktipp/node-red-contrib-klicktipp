@@ -55,6 +55,9 @@
 			return this.name || 'Watch New Events';
 		},
 		paletteLabel: 'Watch New Events',
+		onadd: function () {
+			ktPopulateConfig(this);
+		},
 		oneditprepare: function () {
 			var baseUrl = window.location.origin;
 			// Retrieve the token from the hidden field
