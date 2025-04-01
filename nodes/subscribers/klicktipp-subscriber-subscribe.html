@@ -167,17 +167,17 @@
 			var self = this;
 			const klicktippInput = $('#node-input-klicktipp');
 			const fieldsInput = $('#node-input-fields');
-			// For opt-in process field:
+			const contactFieldsSection = $('#contact-fields-section');
+			// For opt-in process dual input:
 			const listIdDropdown = $('#node-input-listId');
 			const listIdManual = $('#node-input-listIdManual');
 			const listToggle = $('#node-input-toggleListId');
-			// For tag field:
+			// For tag dual input:
 			const tagDropdown = $('#node-input-tagId');
 			const tagManual = $('#node-input-tagIdManual');
 			const tagToggle = $('#node-input-toggleTagId');
-			const contactFieldsSection = $('#contact-fields-section');
 
-			// Initialize typed inputs
+			// Initialize typed inputs for email, smsNumber, and fields.
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-smsNumber', '#node-input-smsNumberType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', [
@@ -185,7 +185,7 @@
 				KT_CUSTOM_CONTACT_FIELDS_TYPE,
 			]);
 
-			// Initialize the contact fields section logic
+			// Initialize the contact fields section and user select handler.
 			ktInitializeContactFieldsSection(
 				fieldsInput,
 				contactFieldsSection,
@@ -193,6 +193,7 @@
 				self.fieldsData,
 				self.id,
 			);
+
 			ktInitializeUserSelectHandler(
 				klicktippInput,
 				'#node-input-fieldsType',
@@ -201,95 +202,94 @@
 				self.id,
 			);
 
-			// --- Dual input for listId ---
-			listToggle.on('change', function () {
-				if (listToggle.prop('checked')) {
-					listIdManual.show();
-					listIdDropdown.hide();
-				} else {
-					listIdManual.hide();
-					listIdDropdown.show();
-					if (!listIdDropdown.children().length) {
-						ktBindDropdownToInput(
-							klicktippInput,
-							listIdDropdown,
-							self.listId,
-							self.klicktipp,
-							`/klicktipp/subscription-processes/${self.id}`,
-						);
-					}
-				}
-			});
-			const forceListToggleState = function () {
-				// Hide both first
-				listIdManual.hide();
-				listIdDropdown.hide();
+			// --- Dual input for listId (Opt-in Process) ---
+			function updateListDisplay() {
 				const isManual = self.manualListEnabled === true || self.manualListEnabled === 'true';
 				listToggle.prop('checked', isManual);
 				if (isManual) {
 					listIdManual.show();
+					listIdDropdown.hide();
 					listIdManual.val(self.manualListId);
 				} else {
+					listIdManual.hide();
 					listIdDropdown.show();
 				}
-				listToggle.trigger('change');
-			};
-			if (!(self.manualListEnabled === true || self.manualListEnabled === 'true')) {
-				ktBindDropdownToInput(
-					klicktippInput,
-					listIdDropdown,
-					self.listId,
-					self.klicktipp,
-					`/klicktipp/subscription-processes/${self.id}`,
-				);
 			}
-			forceListToggleState();
-			setTimeout(forceListToggleState, 200);
 
-			// --- Dual input for tagId ---
-			tagToggle.on('change', function () {
-				if (tagToggle.prop('checked')) {
-					tagManual.show();
-					tagDropdown.hide();
-				} else {
-					tagManual.hide();
-					tagDropdown.show();
-					if (!tagDropdown.children().length) {
-						ktBindDropdownToInput(
-							klicktippInput,
-							tagDropdown,
-							self.tagId,
-							self.klicktipp,
-							`/klicktipp/tags/${self.id}`,
-						);
-					}
-				}
+			listToggle.on('change', function () {
+				self.manualListEnabled = listToggle.prop('checked');
+				updateListDisplay();
 			});
-			const forceTagToggleState = function () {
-				// Hide both first
-				tagManual.hide();
-				tagDropdown.hide();
+
+			// Always bind the dropdown so its options load.
+			ktBindDropdownToInput(
+				klicktippInput,
+				listIdDropdown,
+				self.listId,
+				self.klicktipp,
+				`/klicktipp/subscription-processes/${self.id}`,
+			);
+
+			// Listen for changes on the manual input so its value is saved.
+			listIdManual.on('input', function () {
+				self.manualListId = $(this).val();
+			});
+
+			updateListDisplay();
+			setTimeout(updateListDisplay, 200);
+
+			// --- Dual input for tagId (Tag) ---
+			function updateTagDisplay() {
 				const isManual = self.manualTagEnabled === true || self.manualTagEnabled === 'true';
 				tagToggle.prop('checked', isManual);
 				if (isManual) {
 					tagManual.show();
+					tagDropdown.hide();
 					tagManual.val(self.manualTagId);
 				} else {
+					tagManual.hide();
 					tagDropdown.show();
 				}
-				tagToggle.trigger('change');
-			};
-			if (!(self.manualTagEnabled === true || self.manualTagEnabled === 'true')) {
-				ktBindDropdownToInput(
-					klicktippInput,
-					tagDropdown,
-					self.tagId,
-					self.klicktipp,
-					`/klicktipp/tags/${self.id}`,
-				);
 			}
-			forceTagToggleState();
-			setTimeout(forceTagToggleState, 200);
+
+			tagToggle.on('change', function () {
+				self.manualTagEnabled = tagToggle.prop('checked');
+				updateTagDisplay();
+			});
+
+			// Listen for changes on the manual input so its value is saved.
+			tagManual.on('input', function () {
+				self.manualTagId = $(this).val();
+			});
+
+			ktBindDropdownToInput(
+				klicktippInput,
+				tagDropdown,
+				self.tagId,
+				self.klicktipp,
+				`/klicktipp/tags/${self.id}`,
+			);
+
+			updateTagDisplay();
+			setTimeout(updateTagDisplay, 200);
+
+			// Combined update function for both list and tag displays.
+			function updateDisplay() {
+				updateListDisplay();
+				updateTagDisplay();
+			}
+
+			// Bind input and change events on the KlickTipp config field.
+			klicktippInput.on('input change', updateDisplay);
+
+			// Use a MutationObserver to catch any re-rendering in the dialog.
+			const observer = new MutationObserver((mutationsList, observer) => {
+				updateDisplay();
+			});
+			const container = $('#dialog-form')[0];
+			if (container) {
+				observer.observe(container, { childList: true, subtree: true });
+			}
 		},
 		oneditsave: function () {
 			// Save listId value based on toggle
