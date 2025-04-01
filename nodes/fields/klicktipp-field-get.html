@@ -94,33 +94,24 @@
 			const toggle = $('#node-input-toggleFieldType');
 			const select = $('#node-input-apiFieldId');
 			const manualIn = $('#node-input-apiFieldIdManual');
+			const configInput = $('#node-input-klicktipp');
 
-			// Bind change event: show manual input if checked, otherwise show select.
-			toggle.on('change', function () {
-				if (toggle.prop('checked')) {
-					manualIn.show();
-					select.hide();
-				} else {
-					manualIn.hide();
-					select.show();
-					// If switching to select mode and the dropdown isn’t populated, bind it.
-					if (!select.children().length) {
-						const klicktippInput = $('#node-input-klicktipp');
-						ktBindDropdownToInput(
-							klicktippInput,
-							select,
-							self.apiFieldId,
-							self.klicktipp,
-							`/klicktipp/contact-fields/${self.id}`,
-						);
-					}
-				}
-			});
+			// Always bind the dropdown regardless of manual mode so its options load.
+			ktBindDropdownToInput(
+				configInput,
+				select,
+				self.apiFieldId,
+				self.klicktipp,
+				`/klicktipp/contact-fields/${self.id}`,
+			);
 
-			// Function to enforce the display state based on persisted configuration.
-			const forceToggleState = function () {
+			// This function sets the proper UI display.
+			function updateDisplay() {
+				// Force manual mode if either the toggle is checked
+				// or if there's an existing manual API field value.
 				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
 				toggle.prop('checked', isManual);
+
 				if (isManual) {
 					manualIn.show();
 					select.hide();
@@ -129,24 +120,28 @@
 					manualIn.hide();
 					select.show();
 				}
-				toggle.trigger('change');
-			};
+			}
 
-			// Only bind the dropdown if manual mode is off.
-			if (!(self.manualFieldEnabled === true || self.manualFieldEnabled === 'true')) {
-				const klicktippInput = $('#node-input-klicktipp');
-				ktBindDropdownToInput(
-					klicktippInput,
-					select,
-					self.apiFieldId,
-					self.klicktipp,
-					`/klicktipp/contact-fields/${self.id}`,
-				);
+			// Bind change event on the manual toggle.
+			toggle.on('change', function () {
+				self.manualFieldEnabled = toggle.prop('checked');
+				updateDisplay();
+			});
+			// Bind both 'input' and 'change' events on the config field.
+			configInput.on('input change', updateDisplay);
+
+			// Use a MutationObserver to catch any re-rendering of the dialog.
+			const observer = new MutationObserver((mutationsList, observer) => {
+				updateDisplay();
+			});
+			const container = $('#dialog-form')[0];
+			if (container) {
+				observer.observe(container, { childList: true, subtree: true });
 			}
 
 			// Enforce state immediately and again after a delay.
-			forceToggleState();
-			setTimeout(forceToggleState, 200);
+			updateDisplay();
+			setTimeout(updateDisplay, 200);
 		},
 		oneditsave: function () {
 			const manualEnabled = $('#node-input-toggleFieldType').is(':checked');
