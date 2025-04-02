@@ -45,7 +45,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Tag could not be removed from contact', error.message);
+			handleError(node, msg, 'Tag could not be removed from contact', error?.response?.data?.error || error.message);
 		}
 	};
 	/**

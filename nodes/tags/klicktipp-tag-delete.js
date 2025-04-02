@@ -33,7 +33,7 @@ module.exports = function (RED) {
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(this, msg, 'Tag could not be deleted', error.message);
+			handleError(this, msg, 'Tag could not be deleted', error?.response?.data?.error || error.message);
 		}
 	};
 

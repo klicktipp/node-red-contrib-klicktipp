@@ -45,7 +45,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Contacts could not be retrieved', error.message);
+			handleError(node, msg, 'Contacts could not be retrieved', error?.response?.data?.error || error.message);
 		}
 	};
 

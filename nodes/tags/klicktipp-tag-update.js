@@ -55,7 +55,7 @@ module.exports = function (RED) {
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(node, msg, 'Tag could not be updated', error.message);
+			handleError(node, msg, 'Tag could not be updated', error?.response?.data?.error || error.message);
 		}
 	};
 
