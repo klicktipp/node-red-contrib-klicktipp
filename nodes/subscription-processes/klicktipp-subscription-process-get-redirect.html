@@ -106,31 +106,21 @@
 			const manualIn = $('#node-input-listIdManual');
 			const toggle = $('#node-input-toggleFieldType');
 
-			// Bind the toggle event to show/hide the manual input vs. dropdown.
-			toggle.on('change', function () {
-				if (toggle.prop('checked')) {
-					manualIn.show();
-					select.hide();
-				} else {
-					manualIn.hide();
-					select.show();
-					// If switching to select mode and the dropdown isn't populated, bind it.
-					if (!select.children().length) {
-						ktBindDropdownToInput(
-							klicktippInput,
-							select,
-							self.listId,
-							self.klicktipp,
-							`/klicktipp/subscription-processes/${self.id}`,
-						);
-					}
-				}
-			});
+			// Always bind the dropdown so its options load regardless of UI state.
+			ktBindDropdownToInput(
+				klicktippInput,
+				select,
+				self.listId,
+				self.klicktipp,
+				`/klicktipp/subscription-processes/${self.id}`,
+			);
 
-			// Function to enforce UI state based on persisted configuration.
-			const forceToggleState = function () {
+			// Function to update the display state.
+			function updateDisplay() {
+				// Determine manual mode based solely on the saved flag.
 				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
 				toggle.prop('checked', isManual);
+
 				if (isManual) {
 					manualIn.show();
 					select.hide();
@@ -139,23 +129,29 @@
 					manualIn.hide();
 					select.show();
 				}
-				toggle.trigger('change');
-			};
-
-			// If manual mode is off, bind the dropdown.
-			if (!(self.manualFieldEnabled === true || self.manualFieldEnabled === 'true')) {
-				ktBindDropdownToInput(
-					klicktippInput,
-					select,
-					self.listId,
-					self.klicktipp,
-					`/klicktipp/subscription-processes/${self.id}`,
-				);
 			}
 
-			// Enforce the UI state immediately and again after a short delay.
-			forceToggleState();
-			setTimeout(forceToggleState, 200);
+			// Bind the toggle change event and update internal state.
+			toggle.on('change', function () {
+				self.manualFieldEnabled = toggle.prop('checked');
+				updateDisplay();
+			});
+
+			// Bind input and change events on the config field.
+			klicktippInput.on('input change', updateDisplay);
+
+			// Use a MutationObserver to catch any re-rendering of the dialog.
+			const observer = new MutationObserver((mutationsList, observer) => {
+				updateDisplay();
+			});
+			const container = $('#dialog-form')[0];
+			if (container) {
+				observer.observe(container, { childList: true, subtree: true });
+			}
+
+			// Enforce the UI state immediately and after a short delay.
+			updateDisplay();
+			setTimeout(updateDisplay, 200);
 
 			// Initialize the typed input for the email field.
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
