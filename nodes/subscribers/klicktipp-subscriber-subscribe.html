@@ -167,7 +167,7 @@
 			var self = this;
 			const klicktippInput = $('#node-input-klicktipp');
 			const fieldsInput = $('#node-input-fields');
-			const contactFieldsSection = $('#contact-fields-section');
+			this.contactFieldsSection = $('#contact-fields-section');
 			// For opt-in process dual input:
 			const listIdDropdown = $('#node-input-listId');
 			const listIdManual = $('#node-input-listIdManual');
@@ -185,21 +185,22 @@
 				KT_CUSTOM_CONTACT_FIELDS_TYPE,
 			]);
 
-			// Initialize the contact fields section and user select handler.
+			// Initialize the contact fields section logic
 			ktInitializeContactFieldsSection(
 				fieldsInput,
-				contactFieldsSection,
+				this.contactFieldsSection,
 				klicktippInput,
-				self.fieldsData,
-				self.id,
+				this.fieldsData,
+				this.id,
 			);
 
+			// Initialize the select handler with user change detection
 			ktInitializeUserSelectHandler(
 				klicktippInput,
 				'#node-input-fieldsType',
-				contactFieldsSection,
-				self.fieldsData,
-				self.id,
+				this.contactFieldsSection,
+				this.fieldsData,
+				this.id,
 			);
 
 			// --- Dual input for listId (Opt-in Process) ---
