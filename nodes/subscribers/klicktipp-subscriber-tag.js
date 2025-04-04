@@ -56,7 +56,12 @@ module.exports = function (RED) {
 				msg.payload = { success: true };
 			});
 		} catch (error) {
-			handleError(node, msg, 'Contact could not be tagged', error?.response?.data?.error || error.message);
+			handleError(
+				node,
+				msg,
+				'Contact could not be tagged',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

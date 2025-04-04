@@ -35,7 +35,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Tag could not be retrieved', error?.response?.data?.error || error.message);
+			handleError(
+				this,
+				msg,
+				'Tag could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

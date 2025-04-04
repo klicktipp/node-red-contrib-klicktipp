@@ -43,7 +43,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Data field could not be retrieved', error?.response?.data?.error || error.message);
+			handleError(
+				this,
+				msg,
+				'Data field could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

@@ -54,7 +54,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Opt-in process redirect URL could not be retrieved', error?.response?.data?.error || error.message);
+			handleError(
+				node,
+				msg,
+				'Opt-in process redirect URL could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

@@ -46,7 +46,12 @@ function createCachedApiEndpoint(RED, options) {
 			res.json(data);
 		} catch (error) {
 			console.error('Error fetching data:', error);
-			res.status(500).json({ error: 'Failed to fetch data', message: error?.response?.data?.error || error.message });
+			res
+				.status(500)
+				.json({
+					error: 'Failed to fetch data',
+					message: error?.response?.data?.error || error.message,
+				});
 		}
 	});
 }

@@ -23,7 +23,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Contacts could not be retrieved', error?.response?.data?.error || error.message);
+			handleError(
+				this,
+				msg,
+				'Contacts could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

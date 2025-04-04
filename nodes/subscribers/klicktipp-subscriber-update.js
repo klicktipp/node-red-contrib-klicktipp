@@ -54,7 +54,12 @@ module.exports = function (RED) {
 				msg.payload = { success: true };
 			});
 		} catch (error) {
-			handleError(node, msg, 'Contact could not be updated', error?.response?.data?.error || error.message);
+			handleError(
+				node,
+				msg,
+				'Contact could not be updated',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

@@ -49,7 +49,12 @@ module.exports = function (RED) {
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(node, msg, 'Tag could not be created', error?.response?.data?.error || error.message);
+			handleError(
+				node,
+				msg,
+				'Tag could not be created',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 
