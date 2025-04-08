@@ -6,7 +6,7 @@
  * @param {Object} [fields={}] - An object containing additional custom fields for the subscriber.
  * @returns {Object} The prepared update subscriber data object containing the new email, and optionally, the new SMS number and filtered fields.
  */
-function prepareUpdateSubscriberData(newEmail, newSmsNumber = '', fields = {}) {
+function prepareUpdateSubscriberData(newEmail = '', newSmsNumber = '', fields = {}) {
 	const data = {
 		newemail: newEmail.trim(),
 	};
