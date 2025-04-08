@@ -149,7 +149,11 @@ module.exports = function (RED) {
 				);
 				res.json(searchResponse.data);
 			} catch (err) {
-				res.status(500).json(err.toString());
+				if (err.response && err.response.status === 404) {
+					res.status(404).json({ error: `404: Email Address ${email} not found` });
+				} else {
+					res.status(500).json({ error: err.toString() });
+				}
 			} finally {
 				// Logout to clean up the session.
 				try {

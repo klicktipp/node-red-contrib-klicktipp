@@ -172,7 +172,11 @@
 										}
 									},
 									error: function (err) {
-										RED.notify('Error: ' + err.responseText, 'error');
+										var message =
+											err.responseJSON && err.responseJSON.error
+												? err.responseJSON.error
+												: err.responseText || err.statusText;
+										RED.notify(message, 'error');
 									},
 								});
 							},
