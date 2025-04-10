@@ -7,6 +7,7 @@ const prepareSubscriptionData = require('../utils/transformers/prepareCreateSubs
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
+const transformCustomFields = require('../utils/transformCustomFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -44,21 +45,30 @@ module.exports = function (RED) {
 		const data = prepareSubscriptionData(email, smsNumber, listId, tagId, fields);
 
 		try {
-			const response = await makeRequest(
+			// Create the subscriber using the POST request.
+			const subscriberResponse = await makeRequest(
 				'/subscriber',
 				'POST',
 				qs.stringify(data),
 				msg.sessionData,
 			);
 
+			// Fetch the field definitions. The response is an object mapping field keys to labels.
+			const fieldResponse = await makeRequest('/field', 'GET', {}, msg.sessionData);
+			const fieldsMapping = fieldResponse.data;
+
+			// Transform the subscriber response data using the utility function
+			const updatedData = transformCustomFields(subscriberResponse.data, fieldsMapping);
+
+			// Handle the response by passing the transformed data.
 			handleResponse(
 				node,
 				msg,
-				response,
+				subscriberResponse,
 				'Contact created',
 				'Contact could not be created',
-				(response) => {
-					msg.payload = response.data;
+				() => {
+					msg.payload = updatedData;
 				},
 			);
 		} catch (error) {

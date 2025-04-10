@@ -1,61 +1,61 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-subscribe">
-	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-		<input type="text" id="node-input-name" placeholder="Enter node name">
-	</div>
-	<div class="form-row">
-		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-		<input type="text" id="node-input-klicktipp" data-i18n="config node">
-	</div>
-	<div class="form-row" style="margin: 12px 0;">
-		<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">
-				<i class="fa fa-info-circle" style="margin-right: 5px;"></i>
-				If a contact with the same email address or SMS number already exists, it will be updated.
-		</p>
-</div>
-	<div class="form-row">
-		<label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
-		<input type="text" id="node-input-email" placeholder="Enter email address">
-		<input type="hidden" id="node-input-emailType">
-	</div>
-	<div class="form-row">
-		<label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
-		<input type="text" id="node-input-smsNumber" placeholder="Enter SMS number">
-		<input type="hidden" id="node-input-smsNumberType">
-	</div>
-	<!-- Dual input for Opt-in Process (listId) -->
-	<div class="form-row" style="display: flex; align-items: center;">
-		<label style="flex: 0 0 auto;" for="node-input-listId">
-			<i class="fa fa-tags"></i> <span>Opt-in Process</span>
-		</label>
-		<div style="flex: 1; display: flex; margin-left: 4px;">
-			<select id="node-input-listId" style="flex: 1;"></select>
-			<input type="text" id="node-input-listIdManual" style="flex: 1; display: none;" placeholder="Enter process ID">
+		<div class="form-row">
+			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
+			<input type="text" id="node-input-name" placeholder="Enter node name">
 		</div>
-		<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
-			<div>Map</div>
-			<input type="checkbox" id="node-input-toggleListId" style="margin-top:0 !important;">
+		<div class="form-row">
+			<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+			<input type="text" id="node-input-klicktipp" data-i18n="config node">
 		</div>
+		<div class="form-row" style="margin: 12px 0;">
+			<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">
+					<i class="fa fa-info-circle" style="margin-right: 5px;"></i>
+					If a contact with the same email address or SMS number already exists, it will be updated.
+			</p>
 	</div>
-	<div class="form-row" style="display: flex; align-items: center;">
-		<label style="flex: 0 0 auto;" for="node-input-tagId">
-			<i class="fa fa-tag"></i> <span>Tag</span>
-		</label>
-		<div style="flex: 1; display: flex; margin-left: 4px;">
-			<select id="node-input-tagId" style="flex: 1;"></select>
-			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag ID">
+		<div class="form-row">
+			<label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+			<input type="text" id="node-input-email" placeholder="Enter email address">
+			<input type="hidden" id="node-input-emailType">
 		</div>
-		<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
-			<div>Map</div>
-			<input type="checkbox" id="node-input-toggleTagId" style="margin-top:0 !important;">
+		<div class="form-row">
+			<label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+			<input type="text" id="node-input-smsNumber" placeholder="Enter SMS number">
+			<input type="hidden" id="node-input-smsNumberType">
 		</div>
-	</div>
-	<div class="form-row">
-		<label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
-		<input type="text" id="node-input-fields" placeholder="Data fields">
-		<input type="hidden" id="node-input-fieldsType">
-	</div>
-	<div id="contact-fields-section" class="form-row" style="display: none"></div>
+		<!-- Dual input for Opt-in Process (listId) -->
+		<div class="form-row" style="display: flex; align-items: center;">
+			<label style="flex: 0 0 auto;" for="node-input-listId">
+				<i class="fa fa-tags"></i> <span>Opt-in Process</span>
+			</label>
+			<div style="flex: 1; display: flex; margin-left: 4px;">
+				<select id="node-input-listId" style="flex: 1;"></select>
+				<input type="text" id="node-input-listIdManual" style="flex: 1; display: none;" placeholder="Enter process ID">
+			</div>
+			<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+				<div>Map</div>
+				<input type="checkbox" id="node-input-toggleListId" style="margin-top:0 !important;">
+			</div>
+		</div>
+		<div class="form-row" style="display: flex; align-items: center;">
+			<label style="flex: 0 0 auto;" for="node-input-tagId">
+				<i class="fa fa-tag"></i> <span>Tag</span>
+			</label>
+			<div style="flex: 1; display: flex; margin-left: 4px;">
+				<select id="node-input-tagId" style="flex: 1;"></select>
+				<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag ID">
+			</div>
+			<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+				<div>Map</div>
+				<input type="checkbox" id="node-input-toggleTagId" style="margin-top:0 !important;">
+			</div>
+		</div>
+		<div class="form-row">
+			<label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
+			<input type="text" id="node-input-fields" placeholder="Data fields">
+			<input type="hidden" id="node-input-fieldsType">
+		</div>
+		<div id="contact-fields-section" class="form-row" style="display: none"></div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
