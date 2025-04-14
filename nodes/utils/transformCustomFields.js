@@ -1,26 +1,30 @@
 /**
- * Transforms custom field keys in the API response using the field mapping.
+ * Transforms keys in the response object that start with "field" based on the provided fieldMappings.
+ * For custom fields (where the part after "field" is numeric only), the new key will have the format "Label (fieldID)".
+ * For standard fields (with text after "field"), the new key will simply be the label.
  *
- * @param {object} data - The API response data that contains custom fields.
- * @param {object} fieldsMapping - The mapping object where keys are the original field keys (e.g. "field213329")
- *                                 and values are the corresponding friendly labels.
- * @returns {object} - The updated data with custom field keys replaced by their friendly labels.
+ * @param {object} responseData - The original response object that contains field keys.
+ * @param {object} fieldMappings - The mapping object with keys as field ids and values as user-friendly labels.
+ * @returns {object} - The transformed response object with updated field keys.
  */
-function transformCustomFields(data, fieldsMapping) {
-	// Create a shallow copy to avoid mutating original data
-	const updatedData = { ...data };
-
-	// Iterate over each key in the object
-	Object.keys(updatedData).forEach((key) => {
-		// Check if the key starts with "field" and exists in the mapping
-		if (key.startsWith('field') && fieldsMapping[key]) {
-			// Add a new key with the friendly label and assign the original value
-			updatedData[fieldsMapping[key]] = updatedData[key];
-			// Remove the original numeric field key from the data
-			delete updatedData[key];
-		}
-	});
-	return updatedData;
+function transformFieldNames(responseData, fieldMappings) {
+  // Iterate over each key in the response object
+  for (const key in responseData) {
+    if (key.startsWith('field') && fieldMappings[key]) {
+      let newKey;
+      // Check if it is a custom field: "field" followed by digits only (e.g. "field213737")
+      if (/^field\d+$/.test(key)) {
+        newKey = `${fieldMappings[key]} (${key})`;
+      } else {
+        // For standard fields like "fieldCity", use the label directly.
+        newKey = fieldMappings[key];
+      }
+      // Assign the value to the new key and remove the original key.
+      responseData[newKey] = responseData[key];
+      delete responseData[key];
+    }
+  }
+  return responseData;
 }
 
-module.exports = transformCustomFields;
+module.exports = transformFieldNames;

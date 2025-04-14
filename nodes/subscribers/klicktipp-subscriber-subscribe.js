@@ -58,7 +58,7 @@ module.exports = function (RED) {
 			const fieldsMapping = fieldResponse.data;
 
 			// Transform the subscriber response data using the utility function
-			const updatedData = transformCustomFields(subscriberResponse.data, fieldsMapping);
+			const updatedData = transformCustomFields({ ...subscriberResponse.data }, fieldsMapping);
 
 			// Handle the response by passing the transformed data.
 			handleResponse(
