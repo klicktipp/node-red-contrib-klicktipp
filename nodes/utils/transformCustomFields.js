@@ -8,23 +8,23 @@
  * @returns {object} - The transformed response object with updated field keys.
  */
 function transformFieldNames(responseData, fieldMappings) {
-  // Iterate over each key in the response object
-  for (const key in responseData) {
-    if (key.startsWith('field') && fieldMappings[key]) {
-      let newKey;
-      // Check if it is a custom field: "field" followed by digits only (e.g. "field213737")
-      if (/^field\d+$/.test(key)) {
-        newKey = `${fieldMappings[key]} (${key})`;
-      } else {
-        // For standard fields like "fieldCity", use the label directly.
-        newKey = fieldMappings[key];
-      }
-      // Assign the value to the new key and remove the original key.
-      responseData[newKey] = responseData[key];
-      delete responseData[key];
-    }
-  }
-  return responseData;
+	// Iterate over each key in the response object
+	for (const key in responseData) {
+		if (key.startsWith('field') && fieldMappings[key]) {
+			let newKey;
+			// Check if it is a custom field: "field" followed by digits only (e.g. "field213737")
+			if (/^field\d+$/.test(key)) {
+				newKey = `${fieldMappings[key]} (${key})`;
+			} else {
+				// For standard fields like "fieldCity", use the label directly.
+				newKey = fieldMappings[key];
+			}
+			// Assign the value to the new key and remove the original key.
+			responseData[newKey] = responseData[key];
+			delete responseData[key];
+		}
+	}
+	return responseData;
 }
 
 module.exports = transformFieldNames;
