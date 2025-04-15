@@ -5,7 +5,6 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const transformCustomFields = require('../utils/transformCustomFields');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -24,29 +23,22 @@ module.exports = function (RED) {
 		}
 
 		try {
-			const subscriberResponse = await makeRequest(
+			const response = await makeRequest(
 				`/subscriber/${encodeURIComponent(subscriberId)}`,
 				'GET',
 				{},
 				msg.sessionData,
 			);
 
-			// Fetch the field definitions. The response is an object mapping field keys to labels.
-			const fieldResponse = await makeRequest('/field', 'GET', {}, msg.sessionData);
-			const fieldsMapping = fieldResponse.data;
-
-			// Transform the subscriber response data using the utility function
-			const updatedData = transformCustomFields({ ...subscriberResponse.data }, fieldsMapping);
-
 			// Handle the response using handleResponse utility
 			handleResponse(
 				node,
 				msg,
-				subscriberResponse,
+				response,
 				'Contact information retrieved',
 				'Contact information could not be retrieved',
-				() => {
-					msg.payload = updatedData;
+				(response) => {
+					msg.payload = response.data;
 				},
 			);
 		} catch (error) {
