@@ -91,12 +91,7 @@ module.exports = function (RED) {
 				return res.status(400).json({ error: 'Invalid config node' });
 			}
 			// Retrieve credentials from the config node.
-			const username = configNode.credentials
-				? configNode.credentials.username
-				: configNode.username;
-			const password = configNode.credentials
-				? configNode.credentials.password
-				: configNode.password;
+			const { username, password } = configNode.credentials || {};
 			if (!username || !password) {
 				return res.status(400).json({ error: 'Missing username or password in config node' });
 			}
