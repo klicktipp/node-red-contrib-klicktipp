@@ -29,11 +29,8 @@
 	    <input type="hidden" id="node-input-fieldsType">
 	</div>
 	<div id="contact-fields-section" class="form-row" style="display: none"></div>
-</script>
-
-<script type="text/html" id="modal-find-contact">
-	<div class="form-row">
-		<div id="find-contact-modal" style="display: flex; align-items: center;">
+	<div id="find-contact-modal" title="Find Contact ID" style="display: none;">
+		<div class="form-row" style="display: flex; align-items: center;">
 			<label for="find-contact-email" style="padding-right: 8px; white-space: nowrap;">
 				<i class="fa fa-envelope"></i> <span>Email Address</span>
 			</label>
@@ -185,87 +182,71 @@
 
 			// Click handler for "Find Contact ID" button
 			$('#btn-find-contact').on('click', function () {
-				// Get modal content from the hidden template.
-				var modalContent = $('#modal-find-contact').html();
-				// Create a temporary container and open it as a dialog.
-				var $dialog = $('<div></div>')
-					.html(modalContent)
-					.dialog({
-						modal: true,
-						title: 'Find Contact ID',
-						width: 400,
-						buttons: {
-							OK: function () {
-								var $thisDialog = $(this);
-								var email = $thisDialog.find('#find-contact-email').val();
-								if (!email) {
-									RED.notify('Please enter an email address', 'error');
-									return;
-								}
-								// Retrieve the config node id from the config input field.
-								var configId = $('#node-input-klicktipp').val();
-								if (!configId) {
-									RED.notify('Missing KlickTipp Config', 'error');
-									return;
-								}
-								$.ajax({
-									url: '/klicktipp/contactSearch?configId=' + encodeURIComponent(configId),
-									method: 'POST',
-									dataType: 'json',
-									data: { email: email },
-									success: function (response) {
-										if (response && response[0]) {
-											var id = response[0];
-											// Update the hidden type field so that the widget uses "num"
-											$('#node-input-subscriberIdType').val('num');
+				$('#find-contact-modal').dialog({
+					modal: true,
+					title: 'Find Contact ID',
+					width: 400,
+					buttons: {
+						OK: function () {
+							const email = $('#find-contact-email').val();
+							if (!email) {
+								RED.notify('Please enter an email address', 'error');
+								return;
+							}
 
-											// Locate the old input element.
-											var $oldInput = $('#node-input-subscriberId');
+							const configId = $('#node-input-klicktipp').val();
+							if (!configId) {
+								RED.notify('Missing KlickTipp Config', 'error');
+								return;
+							}
 
-											// Create a new input element with the same id, placeholder, and set its value.
-											var $newInput = $(
-												'<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)" value="' +
-													id +
-													'" style="width: 393px' +
-													'">',
-											);
+							const $dialog = $(this);
 
-											// Replace the old input with the new input, preserving its placement.
-											$oldInput.replaceWith($newInput);
+							$.ajax({
+								url: '/klicktipp/contactSearch?configId=' + encodeURIComponent(configId),
+								method: 'POST',
+								dataType: 'json',
+								data: { email },
+								success: function (response) {
+									if (response && response[0]) {
+										const id = response[0];
+										$('#node-input-subscriberIdType').val('num');
 
-											// Reinitialize the typed input widget on the new element.
-											ktInitializeTypedInput(
-												'#node-input-subscriberId',
-												'#node-input-subscriberIdType',
-												'num',
-												['num'],
-											);
+										const $oldInput = $('#node-input-subscriberId');
+										const $newInput = $(
+											'<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)" value="' +
+											id +
+											'" style="width: 393px;">',
+										);
 
-											// Trigger a change event.
-											$newInput.trigger('change');
+										$oldInput.replaceWith($newInput);
 
-											$thisDialog.dialog('close');
-										} else {
-											RED.notify('Contact not found', 'error');
-										}
-									},
-									error: function (err) {
-										var message =
-											err.responseJSON && err.responseJSON.error
-												? err.responseJSON.error
-												: err.responseText || err.statusText;
-										RED.notify(message, 'error');
-									},
-								});
-							},
-							Cancel: function () {
-								$(this).dialog('close');
-							},
+										ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', ['num']);
+										$newInput.trigger('change');
+
+										$dialog.dialog('close');
+									} else {
+										RED.notify('Contact not found', 'error');
+									}
+								},
+								error: function (err) {
+									const message =
+										err.responseJSON && err.responseJSON.error
+											? err.responseJSON.error
+											: err.responseText || err.statusText;
+									RED.notify(message, 'error');
+								},
+							});
 						},
-						close: function () {
-							$(this).remove();
+						Cancel: function () {
+							$(this).dialog('close');
 						},
-					});
+					},
+					close: function () {
+						// Optional: reset the input
+						$('#find-contact-email').val('');
+					},
+				});
 			});
 		},
 		oneditsave: function () {
