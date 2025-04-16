@@ -105,6 +105,7 @@
 </script>
 
 <script type="text/javascript">
+	var optionalNumberValidator = (value) => value === '' || RED.validators.number()(value);
 	RED.nodes.registerType('klicktipp-subscriber-subscribe', {
 		category: 'KlickTipp',
 		color: '#DAE1FC',
@@ -123,29 +124,21 @@
 			// For the opt-in process select:
 			listId: {
 				value: '',
-				validate: function (value) {
-					return value === '' || RED.validators.number()(value);
-				},
+				validate: optionalNumberValidator,
 			},
 			manualListId: {
 				value: '',
-				validate: function (v) {
-					return v === '' || RED.validators.number()(v);
-				},
+				validate: optionalNumberValidator,
 			},
 			manualListEnabled: { value: false },
 			// For the tag select:
 			tagId: {
 				value: '',
-				validate: function (value) {
-					return value === '' || RED.validators.number()(value);
-				},
+				validate: optionalNumberValidator,
 			},
 			manualTagId: {
 				value: '',
-				validate: function (v) {
-					return v === '' || RED.validators.number()(v);
-				},
+				validate: optionalNumberValidator,
 			},
 			manualTagEnabled: { value: false },
 			fields: {
