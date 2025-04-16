@@ -675,3 +675,30 @@ function ktInitializeUserSelectHandler(
 		);
 	});
 }
+
+/**
+ * Saves the value from a dual input (select/manual) based on toggle state.
+ *
+ * @param {Object} selectEl - jQuery object for the select input.
+ * @param {Object} manualEl - jQuery object for the manual input.
+ * @param {Object} toggleEl - jQuery object for the toggle checkbox.
+ * @param {Object} nodeRef - The node instance (`this`) to store values into.
+ * @param {string} valueKey - Property name to store the final value to use at runtime.
+ * @param {string} manualKey - Property name to store the manual value for editing.
+ * @param {string} toggleKey - Property name to track whether manual mode is enabled.
+ * @param {Function} [castFn] - Optional function to cast the value (e.g., Number, String).
+ */
+function ktSaveDualInput(selectEl, manualEl, toggleEl, nodeRef, valueKey, manualKey, toggleKey, castFn = Number) {
+	const isManual = toggleEl.is(':checked');
+	nodeRef[toggleKey] = isManual;
+
+	if (isManual) {
+		const manualVal = manualEl.val();
+		nodeRef[manualKey] = manualVal;
+		nodeRef[valueKey] = manualVal !== '' ? castFn(manualVal) : '';
+	} else {
+		const selectVal = selectEl.val();
+		nodeRef[manualKey] = '';
+		nodeRef[valueKey] = selectVal !== '' ? castFn(selectVal) : '';
+	}
+}

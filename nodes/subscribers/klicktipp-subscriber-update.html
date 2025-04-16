@@ -215,13 +215,18 @@
 										const $oldInput = $('#node-input-subscriberId');
 										const $newInput = $(
 											'<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)" value="' +
-											id +
-											'" style="width: 393px;">',
+												id +
+												'" style="width: 393px;">',
 										);
 
 										$oldInput.replaceWith($newInput);
 
-										ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', ['num']);
+										ktInitializeTypedInput(
+											'#node-input-subscriberId',
+											'#node-input-subscriberIdType',
+											'num',
+											['num'],
+										);
 										$newInput.trigger('change');
 
 										$dialog.dialog('close');

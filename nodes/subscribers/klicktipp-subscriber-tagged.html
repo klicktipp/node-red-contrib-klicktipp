@@ -146,18 +146,15 @@
 			setTimeout(updateDisplay, 200);
 		},
 		oneditsave: function () {
-			const manualEnabled = $('#node-input-toggleFieldType').is(':checked');
-			this.manualFieldEnabled = manualEnabled;
-			if (manualEnabled) {
-				const manualVal = $('#node-input-tagIdManual').val();
-				this.manualTagId = manualVal;
-				// Store the manual value in tagId so that runtime uses it.
-				this.tagId = Number(manualVal);
-			} else {
-				const selectVal = $('#node-input-tagId').val();
-				this.tagId = Number(selectVal);
-				this.manualTagId = '';
-			}
+			ktSaveDualInput(
+				$('#node-input-tagId'),
+				$('#node-input-tagIdManual'),
+				$('#node-input-toggleFieldType'),
+				this,
+				'tagId',
+				'manualTagId',
+				'manualFieldEnabled',
+			);
 		},
 	});
 </script>

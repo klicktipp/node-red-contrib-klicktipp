@@ -292,30 +292,25 @@
 			}
 		},
 		oneditsave: function () {
-			// Save listId value based on toggle
-			const listManualEnabled = $('#node-input-toggleListId').is(':checked');
-			this.manualListEnabled = listManualEnabled;
-			if (listManualEnabled) {
-				const manualVal = $('#node-input-listIdManual').val();
-				this.manualListId = manualVal;
-				this.listId = Number(manualVal);
-			} else {
-				const selectVal = $('#node-input-listId').val();
-				this.listId = Number(selectVal);
-				this.manualListId = '';
-			}
-			// Save tagId value based on toggle
-			const tagManualEnabled = $('#node-input-toggleTagId').is(':checked');
-			this.manualTagEnabled = tagManualEnabled;
-			if (tagManualEnabled) {
-				const manualVal = $('#node-input-tagIdManual').val();
-				this.manualTagId = manualVal;
-				this.tagId = Number(manualVal);
-			} else {
-				const selectVal = $('#node-input-tagId').val();
-				this.tagId = Number(selectVal);
-				this.manualTagId = '';
-			}
+			ktSaveDualInput(
+				$('#node-input-listId'),
+				$('#node-input-listIdManual'),
+				$('#node-input-toggleListId'),
+				this,
+				'listId',
+				'manualListId',
+				'manualListEnabled',
+			);
+
+			ktSaveDualInput(
+				$('#node-input-tagId'),
+				$('#node-input-tagIdManual'),
+				$('#node-input-toggleTagId'),
+				this,
+				'tagId',
+				'manualTagId',
+				'manualTagEnabled',
+			);
 			// Save contact fields values
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},
