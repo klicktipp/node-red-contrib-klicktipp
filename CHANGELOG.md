@@ -35,3 +35,12 @@
 - **Changes**
 	- Updated the wording in nodes: names, descriptions, parameters, placeholders, error handling.
 	- Removed Sing-in, Sign-off and Sign-out nodes.
+
+## Version 1.0.7 (2025-04-17)
+- **New Features**
+	- Added optional ID input instead of drop-downs.
+  - Added search contact ID by email button.
+- **Improvements**
+    - Added sorting by label for options in drop-down.
+		- Added help banner for "Add or Update Contact" node.
+		- Added functionality of displaying error messages from KlickTipp API.
