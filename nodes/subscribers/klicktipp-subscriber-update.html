@@ -180,78 +180,73 @@
 				this.id,
 			);
 
-			// Click handler for "Find Contact ID" button
-			$('#btn-find-contact').on('click', function () {
-				$('#find-contact-modal').dialog({
-					modal: true,
-					title: 'Find Contact ID',
-					width: 400,
-					buttons: {
-						OK: function () {
-							const email = $('#find-contact-email').val();
-							if (!email) {
-								RED.notify('Please enter an email address', 'error');
-								return;
+			const $findModal = $('#find-contact-modal').dialog({
+				autoOpen: false,
+				modal: true,
+				title: 'Find Contact ID',
+				width: 400,
+				buttons: {
+					OK: function () {
+						const email = $findModal.find('#find-contact-email').val().trim();
+						if (!email) {
+							RED.notify('Please enter an email address', 'error');
+							return;
+						}
+						const configId = $('#node-input-klicktipp').val();
+						if (!configId) {
+							RED.notify('Missing KlickTipp Config', 'error');
+							return;
+						}
+
+						$.ajax({
+							url: '/klicktipp/contactSearch?configId=' + encodeURIComponent(configId),
+							method: 'POST',
+							dataType: 'json',
+							data: { email },
+							success: function (response) {
+								if (response && response[0]) {
+									const id = response[0];
+									$('#node-input-subscriberIdType').val('num');
+									const $old = $('#node-input-subscriberId');
+									const $new = $(
+										'<input type="text" id="node-input-subscriberId" ' +
+										'placeholder="Enter contact ID (required)" value="' +
+										id + '" style="width:216px;">'
+									);
+									$old.replaceWith($new);
+									ktInitializeTypedInput(
+										'#node-input-subscriberId',
+										'#node-input-subscriberIdType',
+										'num',
+										['num']
+									);
+									$new.trigger('change');
+									$findModal.dialog('close');
+								}
+								else {
+									RED.notify('Contact not found', 'error');
+								}
+							},
+							error: function (err) {
+								const msg = (err.responseJSON && err.responseJSON.error)
+									|| err.responseText
+									|| err.statusText;
+								RED.notify(msg, 'error');
 							}
-
-							const configId = $('#node-input-klicktipp').val();
-							if (!configId) {
-								RED.notify('Missing KlickTipp Config', 'error');
-								return;
-							}
-
-							const $dialog = $(this);
-
-							$.ajax({
-								url: '/klicktipp/contactSearch?configId=' + encodeURIComponent(configId),
-								method: 'POST',
-								dataType: 'json',
-								data: { email },
-								success: function (response) {
-									if (response && response[0]) {
-										const id = response[0];
-										$('#node-input-subscriberIdType').val('num');
-
-										const $oldInput = $('#node-input-subscriberId');
-										const $newInput = $(
-											'<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)" value="' +
-												id +
-												'" style="width: 216px;">',
-										);
-
-										$oldInput.replaceWith($newInput);
-
-										ktInitializeTypedInput(
-											'#node-input-subscriberId',
-											'#node-input-subscriberIdType',
-											'num',
-											['num'],
-										);
-										$newInput.trigger('change');
-
-										$dialog.dialog('close');
-									} else {
-										RED.notify('Contact not found', 'error');
-									}
-								},
-								error: function (err) {
-									const message =
-										err.responseJSON && err.responseJSON.error
-											? err.responseJSON.error
-											: err.responseText || err.statusText;
-									RED.notify(message, 'error');
-								},
-							});
-						},
-						Cancel: function () {
-							$(this).dialog('close');
-						},
+						});
 					},
-					close: function () {
-						// Optional: reset the input
-						$('#find-contact-email').val('');
-					},
-				});
+					Cancel: function () {
+						$findModal.dialog('close');
+					}
+				},
+				close: function () {
+					// clear input each time it closes
+					$findModal.find('#find-contact-email').val('');
+				}
+			});
+
+			$('#btn-find-contact').click(function () {
+				$findModal.dialog('open');
 			});
 		},
 		oneditsave: function () {
