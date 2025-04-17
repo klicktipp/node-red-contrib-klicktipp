@@ -1,31 +1,31 @@
 // Constants
 const KLICKTIPP_ICON_MAP = {
-	fieldFirstName: "fa-user",
-	fieldLastName: "fa-user",
-	fieldCompanyName: "fa-building",
-	fieldStreet1: "fa-home",
-	fieldStreet2: "fa-home",
-	fieldCity: "fa-home",
-	fieldState: "fa-globe",
-	fieldZip: "fa-envelope",
-	fieldCountry: "fa-globe",
-	fieldPrivatePhone: "fa-phone",
-	fieldMobilePhone: "fa-mobile",
-	fieldPhone: "fa-phone",
-	fieldFax: "fa-fax",
-	fieldWebsite: "fa-globe",
-	fieldBirthday: "fa-birthday-cake",
-	fieldLeadValue: "fa-usd",
+	fieldFirstName: 'fa-user',
+	fieldLastName: 'fa-user',
+	fieldCompanyName: 'fa-building',
+	fieldStreet1: 'fa-home',
+	fieldStreet2: 'fa-home',
+	fieldCity: 'fa-home',
+	fieldState: 'fa-globe',
+	fieldZip: 'fa-envelope',
+	fieldCountry: 'fa-globe',
+	fieldPrivatePhone: 'fa-phone',
+	fieldMobilePhone: 'fa-mobile',
+	fieldPhone: 'fa-phone',
+	fieldFax: 'fa-fax',
+	fieldWebsite: 'fa-globe',
+	fieldBirthday: 'fa-birthday-cake',
+	fieldLeadValue: 'fa-usd',
 };
 
-const KT_CONTACT_FIELDS_API_TYPE = "fieldsFromApi"
+const KT_CONTACT_FIELDS_API_TYPE = 'fieldsFromApi';
 
 const KT_CUSTOM_CONTACT_FIELDS_TYPE = {
 	value: KT_CONTACT_FIELDS_API_TYPE,
-	label: "Data fields list",
-	icon: "fa fa-cog",
-	hasValue: false
-}
+	label: 'Data fields list',
+	icon: 'fa fa-cog',
+	hasValue: false,
+};
 
 const PREDEFINED_OPT_IN_PROCESS_NAME = 'Predefined double opt-in process';
 
@@ -80,9 +80,9 @@ function ktIsObject(item) {
 function ktGetOptionLabel(name, actionUrl) {
 	return name && name.trim() !== ''
 		? name
-		: (actionUrl.includes(SUBSCRIPTION_PROCESS)
+		: actionUrl.includes(SUBSCRIPTION_PROCESS)
 			? PREDEFINED_OPT_IN_PROCESS_NAME
-			: 'N/A');
+			: 'N/A';
 }
 
 /**
@@ -115,42 +115,48 @@ function ktGetErrorMessage(jqXHR) {
  */
 function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 	const $spinner = ktCreateSpinner();
-	
+
 	$dropdown.before($spinner);
 	$spinner.show();
 	$dropdown.hide();
-	
+
 	// Always reinsert the placeholder option at the top
-	$dropdown.empty().append(
-		new Option('Select an option', '', !selectedItemId)
-	);
-	
+	$dropdown.empty().append(new Option('Select an option', '', !selectedItemId));
+
 	$.ajax({
-			url: actionUrl,
-			method: 'GET',
-			headers: {
-				'config-id': configId
-			},
-			dataType: 'json'
-		})
+		url: actionUrl,
+		method: 'GET',
+		headers: {
+			'config-id': configId,
+		},
+		dataType: 'json',
+	})
 		.done((items) => {
 			let itemExists = false;
-			
+
 			if (ktIsObject(items)) {
-				$.each(items, (id, name) => {
-					const optionLabel = ktGetOptionLabel(name, actionUrl);
-					$dropdown.append(new Option(optionLabel, id));
+				// Convert items into an array with the computed label
+				let sortedItems = Object.keys(items).map((id) => {
+					const rawName = items[id];
+					const label = ktGetOptionLabel(rawName, actionUrl);
+					return { id: id, label: label };
 				});
-				
-				// Check if selectedItemId is an array
+
+				// Sort the array alphabetically by the computed label (case-insensitive)
+				sortedItems.sort((a, b) => a.label.localeCompare(b.label));
+
+				// Populate the dropdown with sorted items
+				sortedItems.forEach((item) => {
+					$dropdown.append(new Option(item.label, item.id));
+				});
+
+				// Check if selectedItemId exists in the items list
 				if (Array.isArray(selectedItemId)) {
-					// If selectedItemId is an array, check if each ID exists in items
-					itemExists = selectedItemId.some(id => items[id] !== undefined);
+					itemExists = selectedItemId.some((id) => items[id] !== undefined);
 				} else {
-					// If selectedItemId is a single ID, check if it exists in items
 					itemExists = items[selectedItemId] !== undefined;
 				}
-				
+
 				// Set the dropdown value based on selectedItemId; fallback to placeholder if not found
 				$dropdown.val(itemExists ? selectedItemId : '');
 			} else {
@@ -181,24 +187,24 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 	$container.before($spinner);
 	$spinner.show();
 	$container.hide();
-	
+
 	// Clear previous content and error messages
 	$container.empty();
 	$container.siblings('.kt-error-message').remove();
-	
+
 	$.ajax({
-			url: actionUrl,
-			method: 'GET',
-			headers: {
-				'config-id': configId
-			},
-			dataType: 'json'
-		})
+		url: actionUrl,
+		method: 'GET',
+		headers: {
+			'config-id': configId,
+		},
+		dataType: 'json',
+	})
 		.done((items) => {
 			// Clear fields on each request to avoid duplicates
 			const standardFields = {};
 			const customFields = {};
-			
+
 			if (ktIsObject(items)) {
 				$.each(items, (key, label) => {
 					if (ktIsCustomField(key)) {
@@ -207,7 +213,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 						standardFields[key] = label;
 					}
 				});
-				
+
 				ktGenerateFormFields($container, standardFields, defaultValues);
 				ktGenerateCustomFieldsDropdown($container, customFields, defaultValues);
 				$container.show();
@@ -238,15 +244,15 @@ function ktGenerateFormFields($container, fields, defaultValues = {}) {
 	if (!$container.length) {
 		return;
 	}
-	
+
 	if (!ktIsObject(fields)) {
 		return;
 	}
-	
+
 	$.each(fields, (key, label) => {
 		const iconClass = KLICKTIPP_ICON_MAP[key] || 'fa-question-circle';
 		const defaultValue = defaultValues[key] || '';
-		
+
 		const formRow = `
       <div class="form-row">
         <label for="node-input-${key}">
@@ -275,28 +281,28 @@ function ktGenerateCustomFieldsDropdown($container, customFields, defaultValues)
 	if (!$container.length) {
 		return;
 	}
-	
+
 	if ($.isEmptyObject(customFields)) {
 		return;
 	}
-	
+
 	// Create and append the custom fields dropdown row
 	const $dropdownRow = ktCreateDropdownRow();
 	$container.append($dropdownRow);
-	
+
 	const $dropdown = $container.find('.custom-fields-dropdown');
 	const $addButton = $container.find('.add-custom-field-btn');
-	
+
 	if (!$dropdown.length) {
 		return;
 	}
-	
+
 	// Populate the dropdown with custom field options
 	ktPopulateDropdownOptions($dropdown, customFields);
-	
+
 	// Restore any previously added custom fields
 	ktRestoreCustomFields($container, $dropdown, customFields, defaultValues);
-	
+
 	// Add functionality to the "Add Custom Field" button
 	$addButton.on('click', () => {
 		ktHandleAddCustomField($container, $dropdown);
@@ -345,12 +351,12 @@ function ktPopulateDropdownOptions($dropdown, customFields) {
 function ktHandleAddCustomField($container, $dropdown) {
 	const selectedFieldKey = $dropdown.val();
 	const selectedFieldLabel = $dropdown.find('option:selected').text();
-	
+
 	// Exit if no field is selected or the field is already added
 	if (!selectedFieldKey || $container.find(`#node-input-${selectedFieldKey}`).length) {
 		return;
 	}
-	
+
 	// Generate the selected custom field and remove it from the dropdown
 	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel, '', $dropdown);
 	$dropdown.find(`option[value="${selectedFieldKey}"]`).remove();
@@ -369,11 +375,11 @@ function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = 
 	if (!$container.length) {
 		return;
 	}
-	
+
 	// Create and append the custom field row
 	const $formRow = ktCreateFormRow(fieldKey, fieldLabel, defaultValue);
 	$container.append($formRow);
-	
+
 	// Add functionality to the remove button
 	$formRow.find('.remove-custom-field-btn').on('click', () => {
 		ktHandleRemoveCustomField($dropdown, $formRow, fieldKey, fieldLabel);
@@ -437,7 +443,7 @@ function ktRestoreCustomFields($container, dropdown, customFields, defaultValues
 	if (!dropdown.length) {
 		return;
 	}
-	
+
 	$.each(defaultValues, (fieldKey, value) => {
 		if (ktIsCustomField(fieldKey)) {
 			const fieldLabel = customFields[fieldKey] || 'Custom Field';
@@ -459,19 +465,19 @@ function ktInitializeTypedInput(
 	inputSelector,
 	typeFieldSelector,
 	defaultType = 'str',
-	additionalTypes = []
+	additionalTypes = [],
 ) {
 	// Default types available for selection in the input field
 	const defaultTypeOptions = ['msg', 'flow', 'global', 'jsonata', 'env'];
-	
+
 	// Combine default types with any additional types, ensuring no duplicates
 	const combinedTypeOptions = [...new Set([...defaultTypeOptions, ...additionalTypes])];
-	
+
 	// Initialize the typed input with the combined options
 	$(inputSelector).typedInput({
 		default: defaultType,
 		typeField: $(typeFieldSelector),
-		types: combinedTypeOptions
+		types: combinedTypeOptions,
 	});
 }
 
@@ -480,25 +486,25 @@ function ktInitializeTypedInput(
  *
  * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
  */
-function ktSaveContactFieldValues($container ) {
+function ktSaveContactFieldValues($container) {
 	// Ensure the container is valid
 	if (!$container || !$container.length) {
 		return {};
 	}
-	
+
 	let fields = {};
-	
+
 	// Collect values from all input, select, and textarea elements
 	$container.find('input, select, textarea').each((index, element) => {
 		const $element = $(element);
 		const fieldId = $element.attr('id') ? $element.attr('id').replace('node-input-', '') : null;
-		
+
 		// Proceed only if fieldId is valid
 		if (fieldId) {
 			fields[fieldId] = $element.val().trim(); // Trim whitespace from values
 		}
 	});
-	
+
 	return fields;
 }
 
@@ -508,20 +514,20 @@ function ktSaveContactFieldValues($container ) {
  * @param {Object} node - The Node-RED node object where the configuration will be set.
  */
 function ktPopulateConfig(node) {
-	const configs = []
-	
+	const configs = [];
+
 	if (!node) {
-		console.warn("ktPopulateConfig: No node provided.");
+		console.warn('ktPopulateConfig: No node provided.');
 		return;
 	}
-	
+
 	// Find 'klicktipp-config' configs
-	RED.nodes.eachConfig(function(config) {
-		if (config.type === "klicktipp-config") {
+	RED.nodes.eachConfig(function (config) {
+		if (config.type === 'klicktipp-config') {
 			configs.push(config);
 		}
 	});
-	
+
 	// Sort the configs alphabetically by name
 	configs.sort((a, b) => {
 		const nameA = a.name.toLowerCase();
@@ -530,7 +536,7 @@ function ktPopulateConfig(node) {
 		if (nameA > nameB) return 1;
 		return 0;
 	});
-	
+
 	// Automatically set the config ID if a 'klicktipp-config' node was found
 	if (configs.length > 0) {
 		node.klicktipp = configs[0].id; // Set the first one from the sorted array
@@ -549,13 +555,13 @@ function ktPopulateConfig(node) {
 function ktBindDropdownToInput($input, $dropdown, selectedItemId, configId, actionUrl) {
 	let lastValue = $input.val();
 	ktPopulateDropdown($dropdown, selectedItemId, lastValue, actionUrl);
-	
+
 	// Event listener for input changes
 	$input.on('change', () => {
 		const newValue = $input.val();
 		if (newValue !== lastValue) {
 			lastValue = newValue;
-			
+
 			// Populate the dropdown based on the new input value
 			ktPopulateDropdown($dropdown, selectedItemId, newValue, actionUrl);
 		}
@@ -571,10 +577,21 @@ function ktBindDropdownToInput($input, $dropdown, selectedItemId, configId, acti
  * @param {Object} klicktippInput - jQuery object representing the input field related to KlickTipp.
  * @param {string} nodeId - Unique identifier for the node to fetch contact fields data.
  */
-function ktToggleContactFieldsSection(show, contactFieldsSection, fieldsData, klicktippInput, nodeId) {
+function ktToggleContactFieldsSection(
+	show,
+	contactFieldsSection,
+	fieldsData,
+	klicktippInput,
+	nodeId,
+) {
 	if (show) {
 		contactFieldsSection.show();
-		ktPopulateContactFields(contactFieldsSection, fieldsData, klicktippInput.val(), `/klicktipp/contact-fields/${nodeId}`);
+		ktPopulateContactFields(
+			contactFieldsSection,
+			fieldsData,
+			klicktippInput.val(),
+			`/klicktipp/contact-fields/${nodeId}`,
+		);
 	} else {
 		contactFieldsSection.hide();
 	}
@@ -589,19 +606,25 @@ function ktToggleContactFieldsSection(show, contactFieldsSection, fieldsData, kl
  * @param {Object} fieldsData - Data for contact fields to populate the section.
  * @param {string} nodeId - Unique identifier for the node to fetch contact fields data.
  */
-function ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, klicktippInput, fieldsData, nodeId) {
+function ktInitializeContactFieldsSection(
+	fieldsInput,
+	contactFieldsSection,
+	klicktippInput,
+	fieldsData,
+	nodeId,
+) {
 	// Event listener for fields input changes
 	fieldsInput.on('change', (event, type) => {
 		// Remove any previous error messages
 		contactFieldsSection.siblings('.kt-error-message').remove();
-		
+
 		// Toggle and populate the contact fields section based on input type
 		ktToggleContactFieldsSection(
 			type === KT_CONTACT_FIELDS_API_TYPE,
 			contactFieldsSection,
 			fieldsData,
 			klicktippInput,
-			nodeId
+			nodeId,
 		);
 	});
 }
@@ -615,34 +638,67 @@ function ktInitializeContactFieldsSection(fieldsInput, contactFieldsSection, kli
  * @param {Object} fieldsData - Data for contact fields to populate the section.
  * @param {string} nodeId - Unique identifier for the node to fetch contact fields data.
  */
-function ktInitializeUserSelectHandler(klicktippInput, fieldsTypeSelector, contactFieldsSection, fieldsData, nodeId) {
+function ktInitializeUserSelectHandler(
+	klicktippInput,
+	fieldsTypeSelector,
+	contactFieldsSection,
+	fieldsData,
+	nodeId,
+) {
 	let userChangedSelect = false;
-	
+
 	// Set the flag for user interaction on mousedown
 	klicktippInput.on('mousedown', () => {
 		userChangedSelect = true;
 	});
-	
+
 	// Handle select changes with differentiation for user vs. programmatic
 	klicktippInput.on('change', () => {
 		// Dynamically fetch the current fieldsType value from the DOM
 		const currentFieldsType = $(fieldsTypeSelector).val();
-		
+
 		if (!userChangedSelect) {
 			// Ignore programmatic changes
 			return;
 		}
-		
+
 		// Reset the flag after handling the user change
 		userChangedSelect = false;
-		
+
 		// Toggle the contact fields section if the current fieldsType is 'fieldsFromApi'
 		ktToggleContactFieldsSection(
 			currentFieldsType === KT_CONTACT_FIELDS_API_TYPE,
 			contactFieldsSection,
 			fieldsData,
 			klicktippInput,
-			nodeId
+			nodeId,
 		);
 	});
+}
+
+/**
+ * Saves the value from a dual input (select/manual) based on toggle state.
+ *
+ * @param {Object} selectEl - jQuery object for the select input.
+ * @param {Object} manualEl - jQuery object for the manual input.
+ * @param {Object} toggleEl - jQuery object for the toggle checkbox.
+ * @param {Object} nodeRef - The node instance (`this`) to store values into.
+ * @param {string} valueKey - Property name to store the final value to use at runtime.
+ * @param {string} manualKey - Property name to store the manual value for editing.
+ * @param {string} toggleKey - Property name to track whether manual mode is enabled.
+ * @param {Function} [castFn] - Optional function to cast the value (e.g., Number, String).
+ */
+function ktSaveDualInput(selectEl, manualEl, toggleEl, nodeRef, valueKey, manualKey, toggleKey, castFn = Number) {
+	const isManual = toggleEl.is(':checked');
+	nodeRef[toggleKey] = isManual;
+
+	if (isManual) {
+		const manualVal = manualEl.val();
+		nodeRef[manualKey] = manualVal;
+		nodeRef[valueKey] = manualVal !== '' ? castFn(manualVal) : '';
+	} else {
+		const selectVal = selectEl.val();
+		nodeRef[manualKey] = '';
+		nodeRef[valueKey] = selectVal !== '' ? castFn(selectVal) : '';
+	}
 }

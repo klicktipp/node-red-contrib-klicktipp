@@ -23,7 +23,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(this, msg, 'Opt-in processes could not be retrieved', error.message);
+			handleError(
+				this,
+				msg,
+				'Opt-in processes could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

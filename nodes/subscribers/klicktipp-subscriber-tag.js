@@ -11,19 +11,30 @@ module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		let tagIds = config.tagId || [];
+
+		// Use config.tagId (which is already prepared as an array in oneditsave)
+		let tagIds = config.manualFieldEnabled
+			? config.manualTagId || msg?.payload?.manualTagId
+			: config.tagId || msg?.payload?.tagId;
+
+		// If tagIds is a string (as an extra precaution), split it.
+		if (typeof tagIds === 'string') {
+			tagIds = tagIds.split(',').map((s) => Number(s.trim()));
+		} else if (!Array.isArray(tagIds)) {
+			tagIds = [tagIds];
+		}
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
-		// Ensure tagIds is an array, even if a single value, and convert all to numbers
-		tagIds = (Array.isArray(tagIds) ? tagIds : [tagIds]).map((tagId) => Number(tagId));
 
-		// Remove any invalid or NaN entries
-		tagIds = tagIds.filter((tagId) => !isNaN(tagId));
+		// Filter out any NaN entries
+		tagIds = tagIds
+			.filter((v) => v !== '')
+			.map((v) => Number(v))
+			.filter((tagId) => !isNaN(tagId));
 
-		// Validate that we have valid tag IDs to proceed
 		if (tagIds.length === 0) {
 			handleError(node, msg, 'Tag ID is missing', 'Invalid input');
 			return node.send(msg);
@@ -45,7 +56,12 @@ module.exports = function (RED) {
 				msg.payload = { success: true };
 			});
 		} catch (error) {
-			handleError(node, msg, 'Contact could not be tagged', error.message);
+			handleError(
+				node,
+				msg,
+				'Contact could not be tagged',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

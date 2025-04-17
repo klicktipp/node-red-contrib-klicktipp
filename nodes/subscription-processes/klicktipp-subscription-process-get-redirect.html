@@ -1,62 +1,73 @@
 <script type="text/x-red" data-template-name="klicktipp-subscription-process-get-redirect">
-	 <div class="form-row">
-			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-			<input type="text" id="node-input-name" placeholder="Enter node name">
-	 </div>
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	  <label for="node-input-name">
+	    <i class="fa fa-tag"></i> <span>Name</span>
+	  </label>
+	  <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-			<label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in Process</span></label>
-			<select id="node-input-listId"></select>
+	  <label for="node-input-klicktipp">
+	    <i class="fa fa-cog"></i> <span>KlickTipp Config</span>
+	  </label>
+	  <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	</div>
+	<div class="form-row" style="display: flex; align-items: center;">
+	  <label style="flex: 0 0 auto;" for="node-input-listId">
+	    <i class="fa fa-tags"></i> <span>Opt-in Process</span>
+	  </label>
+	  <div style="flex: 1; display: flex; margin-left: 4px;">
+	    <select id="node-input-listId" style="flex: 1;"></select>
+	    <input type="text" id="node-input-listIdManual" style="flex: 1; display: none;" placeholder="Enter process ID">
+	  </div>
+	  <div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+	    <div>Map</div>
+	    <input style="margin-top: 0 !important;" type="checkbox" id="node-input-toggleFieldType">
+	  </div>
 	</div>
 	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address (required)">
-	    <input type="hidden" id="node-input-emailType">
+	  <label for="node-input-email">
+	    <i class="fa fa-envelope"></i> <span>Email Address</span>
+	  </label>
+	  <input type="text" id="node-input-email" placeholder="Enter email address (required)">
+	  <input type="hidden" id="node-input-emailType">
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscription-process-get-redirect">
 	<p>Gets the redirection URL for a specific opt-in process</p>
-
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	<dt>msg.payload <span class="property-type">object</span></dt>
-	<dd>
-	   Expected object with the following properties:
-	   <ul>
-		   <li><code>listId</code> - (Required) the ID of a opt-in process</li>
-		   <li><code>email</code> - (Required) the contact's email address</li>
-	   </ul>
-	</dd>
+	  <dt>msg.payload <span class="property-type">object</span></dt>
+	  <dd>
+	    Expected object with the following properties:
+	    <ul>
+	      <li><code>listId</code> - (Required) the ID of an opt-in process</li>
+	      <li><code>email</code> - (Required) the contact's email address</li>
+	    </ul>
+	  </dd>
 	</dl>
-
 	<h3>Outputs</h3>
 	<dl class="message-properties">
-		<dt>msg.payload <span class="property-type">object</span></dt>
-		<dd>
-			On success:
-			<ul>
-				<li>The URL to which the contact will be redirected for the specified opt-in process.</li>
-			</ul>
-		</dd>
-		<dd>
-			On failure:
-			<ul>
-				<li><code>{ success: false }</code></li>
-			</ul>
-		</dd>
-
-		<dt>msg.error <span class="property-type">string</span></dt>
-		<dd>An error message explaining why the request failed.</dd>
+	  <dt>msg.payload <span class="property-type">object</span></dt>
+	  <dd>
+	    On success:
+	    <ul>
+	      <li>The URL to which the contact will be redirected for the specified opt-in process.</li>
+	    </ul>
+	  </dd>
+	  <dd>
+	    On failure:
+	    <ul>
+	      <li><code>{ success: false }</code></li>
+	    </ul>
+	  </dd>
+	  <dt>msg.error <span class="property-type">string</span></dt>
+	  <dd>An error message explaining why the request failed.</dd>
 	</dl>
-
 	<h3>Node Status</h3>
 	<ul>
-		<li><strong>Green (dot)</strong> - Successfully fetched the redirection URL.</li>
-		<li><strong>Red (ring)</strong> - Failed to fetch the redirection URL due to an error (e.g., missing list ID or email).</li>
+	  <li><strong>Green (dot)</strong> - Successfully fetched the redirection URL.</li>
+	  <li><strong>Red (ring)</strong> - Failed to fetch the redirection URL due to an error (e.g., missing list ID or email).</li>
 	</ul>
 </script>
 
@@ -71,16 +82,11 @@
 				required: true,
 				validate: RED.validators.typedInput('emailType'),
 			},
-			emailType: {
-				value: 'msg',
-			},
-			listId: {
-				value: '',
-				validate: RED.validators.number(),
-			},
-			name: {
-				value: '',
-			},
+			emailType: { value: 'msg' },
+			listId: { value: '', validate: RED.validators.number() },
+			manualListId: { value: '', validate: RED.validators.number() },
+			manualFieldEnabled: { value: false },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -94,20 +100,72 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
+			var self = this;
 			const klicktippInput = $('#node-input-klicktipp');
-			const listIdDropdown = $('#node-input-listId');
+			const select = $('#node-input-listId');
+			const manualIn = $('#node-input-listIdManual');
+			const toggle = $('#node-input-toggleFieldType');
+
+			// Always bind the dropdown so its options load regardless of UI state.
 			ktBindDropdownToInput(
 				klicktippInput,
-				listIdDropdown,
-				this.listId,
-				this.klicktipp,
-				`/klicktipp/subscription-processes/${this.id}`,
+				select,
+				self.listId,
+				self.klicktipp,
+				`/klicktipp/subscription-processes/${self.id}`,
 			);
+
+			// Function to update the display state.
+			function updateDisplay() {
+				// Determine manual mode based solely on the saved flag.
+				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
+				toggle.prop('checked', isManual);
+
+				if (isManual) {
+					manualIn.show();
+					select.hide();
+					manualIn.val(self.manualListId);
+				} else {
+					manualIn.hide();
+					select.show();
+				}
+			}
+
+			// Bind the toggle change event and update internal state.
+			toggle.on('change', function () {
+				self.manualFieldEnabled = toggle.prop('checked');
+				updateDisplay();
+			});
+
+			// Bind input and change events on the config field.
+			klicktippInput.on('input change', updateDisplay);
+
+			// Use a MutationObserver to catch any re-rendering of the dialog.
+			const observer = new MutationObserver((mutationsList, observer) => {
+				updateDisplay();
+			});
+			const container = $('#dialog-form')[0];
+			if (container) {
+				observer.observe(container, { childList: true, subtree: true });
+			}
+
+			// Enforce the UI state immediately and after a short delay.
+			updateDisplay();
+			setTimeout(updateDisplay, 200);
+
+			// Initialize the typed input for the email field.
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 		},
-		// When the node editor is saved, capture the selected tagId
 		oneditsave: function () {
-			this.listId = Number($('#node-input-listId').val()); // Save the selected tagId
+			ktSaveDualInput(
+				$('#node-input-listId'),
+				$('#node-input-listIdManual'),
+				$('#node-input-toggleFieldType'),
+				this,
+				'listId',
+				'manualListId',
+				'manualFieldEnabled',
+			);
 		},
 	});
 </script>

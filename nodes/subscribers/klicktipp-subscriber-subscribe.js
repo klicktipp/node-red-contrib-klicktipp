@@ -7,12 +7,24 @@ const prepareSubscriptionData = require('../utils/transformers/prepareCreateSubs
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
+
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
-		const { listId, tagId } = config;
+
+		let listId = config.manualListEnabled
+			? config.manualListId || msg?.payload?.manualListId
+			: config.listId || msg?.payload?.listId;
+
+		listId = listId !== undefined ? Number(listId) : undefined;
+
+		let tagId = config.manualTagEnabled
+			? config.manualTagId || msg?.payload?.manualTagId
+			: config.tagId || msg?.payload?.tagId;
+
+		tagId = tagId !== undefined ? Number(tagId) : undefined;
 
 		const fields = await getContactFields(RED, config, node, msg);
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
@@ -51,7 +63,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Contact could not be created', error.message);
+			handleError(
+				node,
+				msg,
+				'Contact could not be created',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

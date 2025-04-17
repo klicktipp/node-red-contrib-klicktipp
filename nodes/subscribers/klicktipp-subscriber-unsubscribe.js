@@ -38,7 +38,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Contact could not be unsubscribed', error.message);
+			handleError(
+				node,
+				msg,
+				'Contact could not be unsubscribed',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

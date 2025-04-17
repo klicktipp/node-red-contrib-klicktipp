@@ -12,7 +12,9 @@ module.exports = function (RED) {
 		const node = this;
 
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const listId = config.listId;
+		const listId = config.manualFieldEnabled
+			? config.manualListId || msg?.payload?.manualListId
+			: config.listId || msg?.payload?.listId;
 
 		if (!listId) {
 			handleError(node, msg, 'Opt-in process ID is missing', 'Invalid input');
@@ -52,7 +54,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Opt-in process redirect URL could not be retrieved', error.message);
+			handleError(
+				node,
+				msg,
+				'Opt-in process redirect URL could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

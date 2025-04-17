@@ -1,16 +1,29 @@
 <script type="text/x-red" data-template-name="klicktipp-field-get">
 	<div class="form-row">
-			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-			<input type="text" id="node-input-name" placeholder="Enter node name">
+	    <label for="node-input-name">
+	      <i class="fa fa-tag"></i> <span>Name</span>
+	    </label>
+	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-			<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-			<input type="text" id="node-input-klicktipp" data-i18n="config node">
+	    <label for="node-input-klicktipp">
+	      <i class="fa fa-cog"></i> <span>KlickTipp Config</span>
+	    </label>
+	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-			<div class="form-row">
-						<label for="node-input-apiFieldId"><i class="fa fa-tag"></i> <span>Data Field</span></label>
-						<select id="node-input-apiFieldId"></select>
-			</div>
+	<div class="form-row" style="display: flex; align-items: center;">
+	  <label style="flex: 0 0 auto;" for="node-input-apiFieldId">
+	    <i class="fa fa-tag"></i> <span>Data Field</span>
+	  </label>
+	  <div style="flex: 1; display: flex; margin-left: 4px">
+	    <select id="node-input-apiFieldId" style="flex: 1;"></select>
+	    <input type="text" id="node-input-apiFieldIdManual" style="flex: 1; display: none;" placeholder="Enter field ID">
+	  </div>
+	  <div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+	     <div>Map</div>
+	     <input style="margin-top: 0 !important;" type="checkbox" id="node-input-toggleFieldType">
+	  </div>
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-field-get">
@@ -59,16 +72,11 @@
 		category: 'KlickTipp',
 		color: '#DAE1FC',
 		defaults: {
-			klicktipp: {
-				type: 'klicktipp-config',
-				required: true,
-			},
-			apiFieldId: {
-				value: '',
-			},
-			name: {
-				value: '',
-			},
+			klicktipp: { type: 'klicktipp-config', required: true },
+			apiFieldId: { value: '' },
+			manualApiFieldId: { value: '' },
+			manualFieldEnabled: { value: false },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -82,18 +90,70 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
-			const klicktippInput = $('#node-input-klicktipp');
-			const fieldDropdown = $('#node-input-apiFieldId');
+			var self = this;
+			const toggle = $('#node-input-toggleFieldType');
+			const select = $('#node-input-apiFieldId');
+			const manualIn = $('#node-input-apiFieldIdManual');
+			const configInput = $('#node-input-klicktipp');
+
+			// Always bind the dropdown regardless of manual mode so its options load.
 			ktBindDropdownToInput(
-				klicktippInput,
-				fieldDropdown,
-				this.apiFieldId,
-				this.klicktipp,
-				`/klicktipp/contact-fields/${this.id}`,
+				configInput,
+				select,
+				self.apiFieldId,
+				self.klicktipp,
+				`/klicktipp/contact-fields/${self.id}`,
 			);
+
+			// This function sets the proper UI display.
+			function updateDisplay() {
+				// Force manual mode if either the toggle is checked
+				// or if there's an existing manual API field value.
+				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
+				toggle.prop('checked', isManual);
+
+				if (isManual) {
+					manualIn.show();
+					select.hide();
+					manualIn.val(self.manualApiFieldId);
+				} else {
+					manualIn.hide();
+					select.show();
+				}
+			}
+
+			// Bind change event on the manual toggle.
+			toggle.on('change', function () {
+				self.manualFieldEnabled = toggle.prop('checked');
+				updateDisplay();
+			});
+			// Bind both 'input' and 'change' events on the config field.
+			configInput.on('input change', updateDisplay);
+
+			// Use a MutationObserver to catch any re-rendering of the dialog.
+			const observer = new MutationObserver((mutationsList, observer) => {
+				updateDisplay();
+			});
+			const container = $('#dialog-form')[0];
+			if (container) {
+				observer.observe(container, { childList: true, subtree: true });
+			}
+
+			// Enforce state immediately and again after a delay.
+			updateDisplay();
+			setTimeout(updateDisplay, 200);
 		},
 		oneditsave: function () {
-			this.apiFieldId = Number($('#node-input-apiFieldId').val());
+			ktSaveDualInput(
+				$('#node-input-apiFieldId'),
+				$('#node-input-apiFieldIdManual'),
+				$('#node-input-toggleFieldType'),
+				this,
+				'apiFieldId',
+				'manualApiFieldId',
+				'manualFieldEnabled',
+				String,
+			);
 		},
 	});
 </script>

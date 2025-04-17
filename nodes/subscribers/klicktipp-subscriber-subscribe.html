@@ -1,36 +1,60 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-subscribe">
-	<div class="form-row">
+		<div class="form-row">
 			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 			<input type="text" id="node-input-name" placeholder="Enter node name">
+		</div>
+		<div class="form-row">
+			<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
+			<input type="text" id="node-input-klicktipp" data-i18n="config node">
+		</div>
+		<div class="form-row" style="margin: 12px 0;">
+			<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">
+				If a contact with the same email address or SMS number already exists, it will be updated.
+			</p>
 	</div>
-	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
-	</div>
-	<div class="form-row">
-	    <label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
-	    <input type="text" id="node-input-email" placeholder="Enter email address">
-	    <input type="hidden" id="node-input-emailType">
-	</div>
-	<div class="form-row">
-	    <label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
-	    <input type="text" id="node-input-smsNumber" placeholder="Enter SMS number">
-	     <input type="hidden" id="node-input-smsNumberType">
-	</div>
-	<div class="form-row">
-	       <label for="node-input-listId"><i class="fa fa-tags""></i> <span>Opt-in Process</span></label>
-	       <select id="node-input-listId"></select>
-	   </div>
-	   <div class="form-row">
-	       <label for="node-input-tagId"><i class="fa fa-tag"></i> <span>Tag</span></label>
-	       <select id="node-input-tagId"></select>
-	   </div>
-	<div class="form-row">
-	    <label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
-	    <input type="text" id="node-input-fields" placeholder="Data fields">
-	    <input type="hidden" id="node-input-fieldsType">
-	</div>
-	<div id="contact-fields-section" class="form-row" style="display: none"></div>
+		<div class="form-row">
+			<label for="node-input-email"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+			<input type="text" id="node-input-email" placeholder="Enter email address">
+			<input type="hidden" id="node-input-emailType">
+		</div>
+		<div class="form-row">
+			<label for="node-input-smsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
+			<input type="text" id="node-input-smsNumber" placeholder="Enter SMS number">
+			<input type="hidden" id="node-input-smsNumberType">
+		</div>
+		<!-- Dual input for Opt-in Process (listId) -->
+		<div class="form-row" style="display: flex; align-items: center;">
+			<label style="flex: 0 0 auto;" for="node-input-listId">
+				<i class="fa fa-tags"></i> <span>Opt-in Process</span>
+			</label>
+			<div style="flex: 1; display: flex; margin-left: 4px;">
+				<select id="node-input-listId" style="flex: 1;"></select>
+				<input type="text" id="node-input-listIdManual" style="flex: 1; display: none;" placeholder="Enter process ID">
+			</div>
+			<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+				<div>Map</div>
+				<input type="checkbox" id="node-input-toggleListId" style="margin-top:0 !important;">
+			</div>
+		</div>
+		<div class="form-row" style="display: flex; align-items: center;">
+			<label style="flex: 0 0 auto;" for="node-input-tagId">
+				<i class="fa fa-tag"></i> <span>Tag</span>
+			</label>
+			<div style="flex: 1; display: flex; margin-left: 4px;">
+				<select id="node-input-tagId" style="flex: 1;"></select>
+				<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag ID">
+			</div>
+			<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
+				<div>Map</div>
+				<input type="checkbox" id="node-input-toggleTagId" style="margin-top:0 !important;">
+			</div>
+		</div>
+		<div class="form-row">
+			<label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
+			<input type="text" id="node-input-fields" placeholder="Data fields">
+			<input type="hidden" id="node-input-fieldsType">
+		</div>
+		<div id="contact-fields-section" class="form-row" style="display: none"></div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
@@ -80,6 +104,7 @@
 </script>
 
 <script type="text/javascript">
+	var optionalNumberValidator = (value) => value === '' || RED.validators.number()(value);
 	RED.nodes.registerType('klicktipp-subscriber-subscribe', {
 		category: 'KlickTipp',
 		color: '#DAE1FC',
@@ -89,44 +114,41 @@
 				value: 'payload.email',
 				validate: RED.validators.typedInput('emailType'),
 			},
-			emailType: {
-				value: 'msg',
-			},
+			emailType: { value: 'msg' },
 			smsNumber: {
 				value: 'payload.smsNumber',
 				validate: RED.validators.typedInput('smsNumberType'),
 			},
-			smsNumberType: {
-				value: 'msg',
-			},
+			smsNumberType: { value: 'msg' },
+			// For the opt-in process select:
 			listId: {
 				value: '',
-				validate: function (value) {
-					return value === '' || RED.validators.number()(value); // Allows empty value
-				},
+				validate: optionalNumberValidator,
 			},
+			manualListId: {
+				value: '',
+				validate: optionalNumberValidator,
+			},
+			manualListEnabled: { value: false },
+			// For the tag select:
 			tagId: {
 				value: '',
-				validate: function (value) {
-					return value === '' || RED.validators.number()(value); // Allows empty value
-				},
+				validate: optionalNumberValidator,
 			},
+			manualTagId: {
+				value: '',
+				validate: optionalNumberValidator,
+			},
+			manualTagEnabled: { value: false },
 			fields: {
 				value: 'payload.fields',
 				validate: function (v) {
-					// Allow empty values
 					return v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v);
 				},
 			},
-			fieldsType: {
-				value: 'msg',
-			},
-			fieldsData: {
-				value: {},
-			},
-			name: {
-				value: '',
-			},
+			fieldsType: { value: 'msg' },
+			fieldsData: { value: {} },
+			name: { value: '' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -140,36 +162,26 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
+			var self = this;
 			const klicktippInput = $('#node-input-klicktipp');
 			const fieldsInput = $('#node-input-fields');
-
-			this.tagDropdown = $('#node-input-tagId');
-			this.listIdDropdown = $('#node-input-listId');
 			this.contactFieldsSection = $('#contact-fields-section');
+			// For opt-in process dual input:
+			const listIdDropdown = $('#node-input-listId');
+			const listIdManual = $('#node-input-listIdManual');
+			const listToggle = $('#node-input-toggleListId');
+			// For tag dual input:
+			const tagDropdown = $('#node-input-tagId');
+			const tagManual = $('#node-input-tagIdManual');
+			const tagToggle = $('#node-input-toggleTagId');
 
-			// Initialize typed inputs
+			// Initialize typed inputs for email, smsNumber, and fields.
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-smsNumber', '#node-input-smsNumberType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', [
 				'json',
 				KT_CUSTOM_CONTACT_FIELDS_TYPE,
 			]);
-
-			// Bind dropdowns for tags and lists
-			ktBindDropdownToInput(
-				klicktippInput,
-				this.tagDropdown,
-				this.tagId,
-				this.klicktipp,
-				`/klicktipp/tags/${this.id}`,
-			);
-			ktBindDropdownToInput(
-				klicktippInput,
-				this.listIdDropdown,
-				this.listId,
-				this.klicktipp,
-				`/klicktipp/subscription-processes/${this.id}`,
-			);
 
 			// Initialize the contact fields section logic
 			ktInitializeContactFieldsSection(
@@ -188,13 +200,117 @@
 				this.fieldsData,
 				this.id,
 			);
+
+			// --- Dual input for listId (Opt-in Process) ---
+			function updateListDisplay() {
+				const isManual = self.manualListEnabled === true || self.manualListEnabled === 'true';
+				listToggle.prop('checked', isManual);
+				if (isManual) {
+					listIdManual.show();
+					listIdDropdown.hide();
+					listIdManual.val(self.manualListId);
+				} else {
+					listIdManual.hide();
+					listIdDropdown.show();
+				}
+			}
+
+			listToggle.on('change', function () {
+				self.manualListEnabled = listToggle.prop('checked');
+				updateListDisplay();
+			});
+
+			// Always bind the dropdown so its options load.
+			ktBindDropdownToInput(
+				klicktippInput,
+				listIdDropdown,
+				self.listId,
+				self.klicktipp,
+				`/klicktipp/subscription-processes/${self.id}`,
+			);
+
+			// Listen for changes on the manual input so its value is saved.
+			listIdManual.on('input', function () {
+				self.manualListId = $(this).val();
+			});
+
+			updateListDisplay();
+			setTimeout(updateListDisplay, 200);
+
+			// --- Dual input for tagId (Tag) ---
+			function updateTagDisplay() {
+				const isManual = self.manualTagEnabled === true || self.manualTagEnabled === 'true';
+				tagToggle.prop('checked', isManual);
+				if (isManual) {
+					tagManual.show();
+					tagDropdown.hide();
+					tagManual.val(self.manualTagId);
+				} else {
+					tagManual.hide();
+					tagDropdown.show();
+				}
+			}
+
+			tagToggle.on('change', function () {
+				self.manualTagEnabled = tagToggle.prop('checked');
+				updateTagDisplay();
+			});
+
+			// Listen for changes on the manual input so its value is saved.
+			tagManual.on('input', function () {
+				self.manualTagId = $(this).val();
+			});
+
+			ktBindDropdownToInput(
+				klicktippInput,
+				tagDropdown,
+				self.tagId,
+				self.klicktipp,
+				`/klicktipp/tags/${self.id}`,
+			);
+
+			updateTagDisplay();
+			setTimeout(updateTagDisplay, 200);
+
+			// Combined update function for both list and tag displays.
+			function updateDisplay() {
+				updateListDisplay();
+				updateTagDisplay();
+			}
+
+			// Bind input and change events on the KlickTipp config field.
+			klicktippInput.on('input change', updateDisplay);
+
+			// Use a MutationObserver to catch any re-rendering in the dialog.
+			const observer = new MutationObserver((mutationsList, observer) => {
+				updateDisplay();
+			});
+			const container = $('#dialog-form')[0];
+			if (container) {
+				observer.observe(container, { childList: true, subtree: true });
+			}
 		},
 		oneditsave: function () {
-			// Use the previously set common variables
-			this.tagId = Number(this.tagDropdown.val()); // Save the selected tagId
-			this.listId = Number(this.listIdDropdown.val()); // Save the selected listId
+			ktSaveDualInput(
+				$('#node-input-listId'),
+				$('#node-input-listIdManual'),
+				$('#node-input-toggleListId'),
+				this,
+				'listId',
+				'manualListId',
+				'manualListEnabled',
+			);
 
-			// Collect all field from API vales and store them in this.fieldsData
+			ktSaveDualInput(
+				$('#node-input-tagId'),
+				$('#node-input-tagIdManual'),
+				$('#node-input-toggleTagId'),
+				this,
+				'tagId',
+				'manualTagId',
+				'manualTagEnabled',
+			);
+			// Save contact fields values
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},
 	});

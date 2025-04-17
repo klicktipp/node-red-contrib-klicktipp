@@ -13,7 +13,9 @@ module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 
-		const tagId = config?.tagId;
+		const tagId = config.manualFieldEnabled
+			? config.manualTagId || msg?.payload?.manualTagId
+			: config.tagId || msg?.payload?.tagId;
 		const name = await evaluatePropertyAsync(RED, config.tagName, config.tagNameType, node, msg);
 		const text = await evaluatePropertyAsync(
 			RED,
@@ -53,7 +55,12 @@ module.exports = function (RED) {
 				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
-			handleError(node, msg, 'Tag could not be updated', error.message);
+			handleError(
+				node,
+				msg,
+				'Tag could not be updated',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

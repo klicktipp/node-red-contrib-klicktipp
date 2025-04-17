@@ -39,7 +39,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, 'Contact ID could not be retrieved', error.message);
+			handleError(
+				node,
+				msg,
+				'Contact ID could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 

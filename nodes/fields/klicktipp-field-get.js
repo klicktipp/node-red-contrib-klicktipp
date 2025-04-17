@@ -8,7 +8,9 @@ const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode'
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		try {
-			const apiFieldId = config.apiFieldId || msg?.payload?.apiFieldId;
+			const apiFieldId = config.manualFieldEnabled
+				? config.manualApiFieldId || msg?.payload?.manualApiFieldId
+				: config.apiFieldId || msg?.payload?.apiFieldId;
 
 			if (!apiFieldId) {
 				handleError(this, msg, 'Data field ID is required', 'Invalid input');
@@ -41,8 +43,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			console.log(error);
-			handleError(this, msg, 'Data field could not be retrieved', error.message);
+			handleError(
+				this,
+				msg,
+				'Data field could not be retrieved',
+				error?.response?.data?.error || error.message,
+			);
 		}
 	};
 
