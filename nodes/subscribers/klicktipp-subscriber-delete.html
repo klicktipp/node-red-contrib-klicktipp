@@ -98,12 +98,9 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
-			ktInitializeTypedInput(
-				'#node-input-subscriberId',
-				'#node-input-subscriberIdType',
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
 				'num',
-				['num']
-			);
+			]);
 
 			const $findModal = $('#find-contact-modal').dialog({
 				autoOpen: false,
@@ -135,44 +132,45 @@
 									const $old = $('#node-input-subscriberId');
 									const $new = $(
 										'<input type="text" id="node-input-subscriberId" ' +
-										'placeholder="Enter contact ID (required)" value="' +
-										id + '" style="width:216px;">'
+											'placeholder="Enter contact ID (required)" value="' +
+											id +
+											'" style="width:216px;">',
 									);
 									$old.replaceWith($new);
 									ktInitializeTypedInput(
 										'#node-input-subscriberId',
 										'#node-input-subscriberIdType',
 										'num',
-										['num']
+										['num'],
 									);
 									$new.trigger('change');
 									$findModal.dialog('close');
-								}
-								else {
+								} else {
 									RED.notify('Contact not found', 'error');
 								}
 							},
 							error: function (err) {
-								const msg = (err.responseJSON && err.responseJSON.error)
-									|| err.responseText
-									|| err.statusText;
+								const msg =
+									(err.responseJSON && err.responseJSON.error) ||
+									err.responseText ||
+									err.statusText;
 								RED.notify(msg, 'error');
-							}
+							},
 						});
 					},
 					Cancel: function () {
 						$findModal.dialog('close');
-					}
+					},
 				},
 				close: function () {
 					// clear input each time it closes
 					$findModal.find('#find-contact-email').val('');
-				}
+				},
 			});
 
 			$('#btn-find-contact').click(function () {
 				$findModal.dialog('open');
 			});
-		}
+		},
 	});
 </script>
