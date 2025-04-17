@@ -7,11 +7,11 @@
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-	 <div class="form-row">
-	   <label for="node-input-subscriberId"><i class="fa fa-tags"></i> <span>Contact ID</span></label>
+	 <div class="form-row" style="display: flex;">
+	   <label for="node-input-subscriberId" style="margin-right: 4px;"><i class="fa fa-tags"></i> <span>Contact ID</span></label>
 	   <input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 	   <input type="hidden" id="node-input-subscriberIdType">
-	   <button id="btn-find-contact" type="button">Find Contact ID</button>
+	   <button id="btn-find-contact" type="button" style="margin-left: 4px;">Find Contact ID</button>
 	 </div>
 	<div class="form-row">
 	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
@@ -216,7 +216,7 @@
 										const $newInput = $(
 											'<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)" value="' +
 												id +
-												'" style="width: 393px;">',
+												'" style="width: 216px;">',
 										);
 
 										$oldInput.replaceWith($newInput);
