@@ -221,8 +221,12 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 				const $addButton = $dropdownRow.find('.add-custom-field-btn');
 
 				// 2 populate dropdown with every field
+				const sortedCustomFields = Object.fromEntries(
+					Object.entries(customFields).sort((a, b) => a[1].localeCompare(b[1])),
+				);
+				
 				ktPopulateDropdownOptions($dropdown, standardFields);
-				ktPopulateDropdownOptions($dropdown, customFields);
+				ktPopulateDropdownOptions($dropdown, sortedCustomFields);
 
 				// 3 show the built-in rows (they remove themselves from the dropdown)
 				ktGenerateFormFields($container, standardFields, defaultValues, $dropdown);
