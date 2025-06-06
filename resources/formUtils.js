@@ -214,8 +214,26 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 					}
 				});
 
-				ktGenerateFormFields($container, standardFields, defaultValues);
-				ktGenerateCustomFieldsDropdown($container, customFields, defaultValues);
+				// 1 one shared dropdown (created once)
+				const $dropdownRow = ktCreateDropdownRow();
+				$container.append($dropdownRow);
+				const $dropdown = $dropdownRow.find('.custom-fields-dropdown');
+				const $addButton = $dropdownRow.find('.add-custom-field-btn');
+
+				// 2 populate dropdown with every field
+				ktPopulateDropdownOptions($dropdown, standardFields);
+				ktPopulateDropdownOptions($dropdown, customFields);
+
+				// 3 show the built-in rows (they remove themselves from the dropdown)
+				ktGenerateFormFields($container, standardFields, defaultValues, $dropdown);
+
+				// 4 restore any custom rows that already had data
+				ktRestoreCustomFields($container, $dropdown, customFields, defaultValues);
+
+				// 5 "" button keeps working for both kinds of fields
+				$addButton.on('click', () => {
+					ktHandleAddCustomField($container, $dropdown);
+				});
 				$container.show();
 			} else {
 				ktShowError($container, 'No valid items found');
@@ -239,8 +257,9 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
  * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} fields - An object where keys represent field IDs and values are the field labels.
  * @param {object} [defaultValues={}] - Optional object with default values for the form fields, keyed by field IDs.
+ * @param $dropdown
  */
-function ktGenerateFormFields($container, fields, defaultValues = {}) {
+function ktGenerateFormFields($container, fields, defaultValues = {}, $dropdown) {
 	if (!$container.length) {
 		return;
 	}
@@ -250,62 +269,21 @@ function ktGenerateFormFields($container, fields, defaultValues = {}) {
 	}
 
 	$.each(fields, (key, label) => {
+		// show it only when it existed in the previous config
+		if (!Object.prototype.hasOwnProperty.call(defaultValues, key)) {
+			return; // skip → stays hidden, option remains in the dropdown
+		}
+
 		const iconClass = KLICKTIPP_ICON_MAP[key] || 'fa-question-circle';
 		const defaultValue = defaultValues[key] || '';
 
-		const formRow = `
-      <div class="form-row">
-        <label for="node-input-${key}">
-          <i class="fa ${iconClass}"></i> ${label}
-        </label>
-        <input
-          type="text"
-          id="node-input-${key}"
-          placeholder="Enter ${label.toLowerCase()} (optional)"
-          value="${defaultValue}"
-        >
-      </div>
-    `;
-		$container.append(formRow);
-	});
-}
+		// create a removable row
+		ktGenerateCustomField($container, key, label, defaultValue, $dropdown, iconClass);
 
-/**
- * Generates a dropdown for custom fields, restores previously added custom fields, and adds functionality to add new fields.
- *
- * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
- * @param {object} customFields - An object where keys represent field IDs and values are the field labels.
- * @param {object} defaultValues - An object containing default values for any previously added custom fields, keyed by field ID.
- */
-function ktGenerateCustomFieldsDropdown($container, customFields, defaultValues) {
-	if (!$container.length) {
-		return;
-	}
-
-	if ($.isEmptyObject(customFields)) {
-		return;
-	}
-
-	// Create and append the custom fields dropdown row
-	const $dropdownRow = ktCreateDropdownRow();
-	$container.append($dropdownRow);
-
-	const $dropdown = $container.find('.custom-fields-dropdown');
-	const $addButton = $container.find('.add-custom-field-btn');
-
-	if (!$dropdown.length) {
-		return;
-	}
-
-	// Populate the dropdown with custom field options
-	ktPopulateDropdownOptions($dropdown, customFields);
-
-	// Restore any previously added custom fields
-	ktRestoreCustomFields($container, $dropdown, customFields, defaultValues);
-
-	// Add functionality to the "Add Custom Field" button
-	$addButton.on('click', () => {
-		ktHandleAddCustomField($container, $dropdown);
+		// built-in row is visible now → drop its option so it can return when user clicks “-”
+		if ($dropdown?.length) {
+			$dropdown.find(`option[value="${key}"]`).remove();
+		}
 	});
 }
 
@@ -358,7 +336,8 @@ function ktHandleAddCustomField($container, $dropdown) {
 	}
 
 	// Generate the selected custom field and remove it from the dropdown
-	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel, '', $dropdown);
+	const iconClass = KLICKTIPP_ICON_MAP[selectedFieldKey] || 'fa-question-circle';
+	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel, '', $dropdown, iconClass);
 	$dropdown.find(`option[value="${selectedFieldKey}"]`).remove();
 }
 
@@ -370,14 +349,22 @@ function ktHandleAddCustomField($container, $dropdown) {
  * @param {string} fieldLabel - The label to display for the custom field.
  * @param {string} [defaultValue=''] - Optional default value for the custom field input.
  * @param $dropdown
+ * @param {string} iconClass - The icon for field
  */
-function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = '', $dropdown) {
+function ktGenerateCustomField(
+	$container,
+	fieldKey,
+	fieldLabel,
+	defaultValue = '',
+	$dropdown,
+	iconClass,
+) {
 	if (!$container.length) {
 		return;
 	}
 
 	// Create and append the custom field row
-	const $formRow = ktCreateFormRow(fieldKey, fieldLabel, defaultValue);
+	const $formRow = ktCreateFormRow(fieldKey, fieldLabel, defaultValue, iconClass);
 	$container.append($formRow);
 
 	// Add functionality to the remove button
@@ -392,13 +379,14 @@ function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = 
  * @param {string} fieldKey - The unique key/ID for the custom field.
  * @param {string} fieldLabel - The label to display for the custom field.
  * @param {string} defaultValue - The default value for the custom field input.
+ * @param {string} iconClass - Optional, default 'fa-question-circle'.
  * @returns {object} - A jQuery-wrapped form row element.
  */
-function ktCreateFormRow(fieldKey, fieldLabel, defaultValue) {
+function ktCreateFormRow(fieldKey, fieldLabel, defaultValue, iconClass = 'fa-question-circle') {
 	return $(`
 		<div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">
 		  <label for="node-input-${fieldKey}">
-		    <i class="fa fa-question-circle"></i> ${fieldLabel}
+		    <i class="fa ${iconClass}"></i> ${fieldLabel}
 		  </label>
 		  <input
 		    type="text"
@@ -447,7 +435,8 @@ function ktRestoreCustomFields($container, dropdown, customFields, defaultValues
 	$.each(defaultValues, (fieldKey, value) => {
 		if (ktIsCustomField(fieldKey)) {
 			const fieldLabel = customFields[fieldKey] || 'Custom Field';
-			ktGenerateCustomField($container, fieldKey, fieldLabel, value, dropdown);
+			const iconClass = KLICKTIPP_ICON_MAP[fieldKey] || 'fa-question-circle';
+			ktGenerateCustomField($container, fieldKey, fieldLabel, value, dropdown, iconClass);
 			dropdown.find(`option[value="${fieldKey}"]`).remove();
 		}
 	});
@@ -688,7 +677,16 @@ function ktInitializeUserSelectHandler(
  * @param {string} toggleKey - Property name to track whether manual mode is enabled.
  * @param {Function} [castFn] - Optional function to cast the value (e.g., Number, String).
  */
-function ktSaveDualInput(selectEl, manualEl, toggleEl, nodeRef, valueKey, manualKey, toggleKey, castFn = Number) {
+function ktSaveDualInput(
+	selectEl,
+	manualEl,
+	toggleEl,
+	nodeRef,
+	valueKey,
+	manualKey,
+	toggleKey,
+	castFn = Number,
+) {
 	const isManual = toggleEl.is(':checked');
 	nodeRef[toggleKey] = isManual;
 
