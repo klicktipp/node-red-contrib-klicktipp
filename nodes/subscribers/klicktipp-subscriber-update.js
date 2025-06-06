@@ -6,13 +6,14 @@ const makeRequest = require('../utils/makeRequest');
 const prepareUpdateSubscriberData = require('../utils/transformers/prepareUpdateSubscriberData');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const getContactFields = require('../utils/getContactFields');
 const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 
-		const { fields } = config;
+		const fields = await getContactFields(RED, config, node, msg);
 		const newEmail = await evaluatePropertyAsync(
 			RED,
 			config.newEmail,
