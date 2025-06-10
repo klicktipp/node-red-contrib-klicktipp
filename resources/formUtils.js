@@ -263,12 +263,29 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 					if ($o.is(':disabled') || !$o.val()) return;
 					$('<li>').text($o.text()).attr('data-value', $o.val()).appendTo($list);
 				});
+
+				// add the placeholder once
+				if (!$list.find('.kt-no-results').length) {
+					$('<li class="kt-no-results" style="font-style:italic;color:#888">No results</li>')
+						.appendTo($list)
+						.hide();
+				}
 			}
+
 			function applyFilter(term) {
 				term = term.toLowerCase();
-				$list.children('li').each(function () {
-					$(this).toggle(term === '' || $(this).text().toLowerCase().includes(term));
-				});
+
+				// hide/show only real options
+				$list
+					.children('li')
+					.not('.kt-no-results')
+					.each(function () {
+						$(this).toggle(term === '' || $(this).text().toLowerCase().includes(term));
+					});
+
+				// show placeholder if nothing else is visible
+				const noneVisible = !$list.children('li').not('.kt-no-results').filter(':visible').length;
+				$list.find('.kt-no-results').toggle(noneVisible);
 			}
 
 			/* open / close */
