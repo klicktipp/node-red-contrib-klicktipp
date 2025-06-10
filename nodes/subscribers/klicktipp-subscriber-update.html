@@ -210,9 +210,9 @@
 									const $old = $('#node-input-subscriberId');
 									const $new = $(
 										'<input type="text" id="node-input-subscriberId" ' +
-											'placeholder="Enter contact ID (required)" value="' +
-											id +
-											'" style="width:216px;">',
+										'placeholder="Enter contact ID (required)" value="' +
+										id +
+										'" style="width:216px;">',
 									);
 									$old.replaceWith($new);
 									ktInitializeTypedInput(
@@ -250,7 +250,11 @@
 				$findModal.dialog('open');
 			});
 		},
+		oneditcancel: function () {
+			$(document).off('.kt-dd');      // removes keydown.kt-dd and mousedown.kt-dd
+		},
 		oneditsave: function () {
+			$(document).off('.kt-dd');
 			// Collect all field from API vales and store them in this.fieldsData
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},

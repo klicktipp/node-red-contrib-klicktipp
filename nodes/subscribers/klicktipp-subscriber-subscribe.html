@@ -290,7 +290,11 @@
 				observer.observe(container, { childList: true, subtree: true });
 			}
 		},
+		oneditcancel: function () {
+			$(document).off('.kt-dd');      // removes keydown.kt-dd and mousedown.kt-dd
+		},
 		oneditsave: function () {
+			$(document).off('.kt-dd');
 			ktSaveDualInput(
 				$('#node-input-listId'),
 				$('#node-input-listIdManual'),
