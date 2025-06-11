@@ -266,7 +266,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 
 				// add the placeholder once
 				if (!$list.find('.kt-no-results').length) {
-					$('<li class="kt-no-results" style="font-style:italic;color:#888">No results</li>')
+					$('<li class="kt-no-results" style="font-style:italic;color:#888"pointer-events:none;cursor:default;">No results</li>')
 						.appendTo($list)
 						.hide();
 				}
@@ -315,7 +315,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 
 			/* highlight navigation */
 			function highlight(i) {
-				const $vis = $list.children('li:visible');
+				const $vis = $list.children('li:visible').not('.kt-no-results');
 				if (!$vis.length) return;
 				idx = (i + $vis.length) % $vis.length;
 				$vis.removeClass('kt-active').eq(idx).addClass('kt-active');
@@ -344,7 +344,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 			});
 
 			/* click on list item */
-			$list.on('click', 'li', function () {
+			$list.on('click', 'li:not(.kt-no-results)', function () {
 				choose($(this));
 			});
 
@@ -362,7 +362,7 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 						e.preventDefault();
 					}
 					if (e.key === 'Enter') {
-						choose($list.children('li:visible').eq(idx));
+						choose($list.children('li:visible').not('.kt-no-results').eq(idx));
 					}
 					if (e.key === 'Escape') {
 						closePanel();
