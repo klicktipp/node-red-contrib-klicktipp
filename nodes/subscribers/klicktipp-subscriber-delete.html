@@ -3,69 +3,69 @@
 		<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 		<input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
+
 	<div class="form-row">
 		<label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 		<input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-	<div class="form-row" style="display: flex;">
-		<label for="node-input-subscriberId" style="margin-right: 4px;"><i class="fa fa-tags"></i> <span>Contact ID</span></label>
+
+  <div class="form-row">
+    <label for="node-input-identifierType">
+      <i class="fa fa-question-circle"></i>
+      <span>Identify contact by</span>
+    </label>
+    <select id="node-input-identifierType">
+      <option value="id">Contact ID</option>
+      <option value="email">Lookup email address</option>
+    </select>
+  </div>
+
+	<!-- ► Contact-ID input (visible when NOT searching by email)  -->
+	<div class="form-row id-row">  
+		<label for="node-input-subscriberId"><i class="fa fa-hashtag"></i> <span>Contact&nbsp;ID</span></label>
 		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 		<input type="hidden" id="node-input-subscriberIdType">
-		<button id="btn-find-contact" type="button" style="margin-left: 4px;">Find Contact ID</button>
 	</div>
-	<div id="find-contact-modal" title="Find Contact ID" style="display: none;">
-		<div class="form-row" style="display: flex; align-items: center;">
-			<label for="find-contact-email" style="padding-right: 8px; white-space: nowrap;">
-				<i class="fa fa-envelope"></i> <span>Email Address</span>
-			</label>
-			<input
-				type="text"
-				id="find-contact-email"
-				placeholder="Enter email address (required)"
-				style="flex: 1;"
-			/>
-		</div>
+
+	<!-- ► email lookup input (visible when searching by email) -->
+	<div class="form-row email-row">
+		<label for="node-input-lookupEmail"><i class="fa fa-envelope"></i> <span>Lookup email</span></label>
+		<input type="text" id="node-input-lookupEmail" placeholder="Enter lookup email address (required)">
+		<input type="hidden" id="node-input-lookupEmailType">
 	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-delete">
-	<p>Deletes a contact</p>
+	<p>Deletes a contact.  
+	   You can either supply the <strong>Contact ID</strong> directly or let the node
+	   <em>search for the ID by email address</em> first.</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	    <dt>msg.payload <span class="property-type">object</span></dt>
-	    <dd>
-	        Expected object with the following properties:
-	        <ul>
-	            <li><code>subscriberId</code> - (Required) the contact's ID</li>
-	        </ul>
-	    </dd>
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Optional when you fill the fields in the editor.<br>
+			If you prefer to set values at runtime you may pass:<br>
+			<ul>
+				<li><code>identifierType</code> - <code>"id"</code> | <code>"email"</code></li>
+				<li><code>subscriberId</code> - Contact ID (when identifierType = "id")</li>
+				<li><code>lookupEmail</code> - Lookup email address (when identifierType = "email")</li>
+			</ul>
+		</dd>
 	</dl>
 
-	  <h3>Outputs</h3>
-	  <dl class="message-properties">
-	   <dt>msg.payload <span class="property-type">object</span></dt>
-	   <dd>
-		   On success:
-		   <ul>
-			   <li><code>{ success: true }</code></li>
-		   </ul>
-	   </dd>
-	   <dd>
-		   On failure:
-		   <ul>
-			   <li><code>{ success: false }</code></li>
-		   </ul>
-	   </dd>
+	<h3>Outputs</h3>
+	<dl class="message-properties">
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd><code>{ success: true }</code> on success, <code>{ success: false }</code> on failure.</dd>
+		<dt>msg.error <span class="property-type">string</span></dt>
+		<dd>Error description if the call failed.</dd>
+	</dl>
 
-	   <dt>msg.error <span class="property-type">string</span></dt>
-	   <dd>An error message indicating why the request failed.</dd>
-	  </dl>
-
-	<h3>Node Status</h3>
+	<h3>Node status</h3>
 	<ul>
-	    <li><strong>Green (dot)</strong> - Contact was deleted successfully.</li>
-	    <li><strong>Red (ring)</strong> - Failed to delete contact (e.g., missing contact ID or API error).</li>
+		<li><strong>Green (dot)</strong> - Contact deleted.</li>
+		<li><strong>Red (ring)</strong> - Error (missing data or API failure).</li>
 	</ul>
 </script>
 
@@ -73,104 +73,70 @@
 	RED.nodes.registerType('klicktipp-subscriber-delete', {
 		category: 'KlickTipp',
 		color: '#DAE1FC',
+		/* ---------- editable properties -------------------------- */
 		defaults: {
-			prefix: {},
+			name: { value: '' },
 			klicktipp: { type: 'klicktipp-config', required: true },
+
+			/* dropdown: id | email */
+			identifierType: { value: 'id' },
+
+			/* ► Contact-ID ----------------------------------------- */
 			subscriberId: {
-				required: true,
 				value: 'payload.subscriberId',
+				required: false,
 				validate: RED.validators.typedInput('subscriberIdType'),
 			},
-			subscriberIdType: {
-				value: 'msg',
+			subscriberIdType: { value: 'msg' },
+
+			/* ► email lookup -------------------------------------- */
+			lookupEmail: {
+				value: 'payload.lookupEmail',
+				required: false,
+				validate: RED.validators.typedInput('lookupEmailType'),
 			},
-			name: { value: '' },
+			lookupEmailType: { value: 'msg' },
 		},
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
-		label: function () {
-			return this.name || 'Delete Contact';
-		},
-		labelStyle: 'klicktipp_label_style',
 		paletteLabel: 'Delete Contact',
-		onadd: function () {
+		labelStyle: 'klicktipp_label_style',
+		label() { return this.name || 'Delete Contact'; },
+
+		/* --------------------------------------------------------- */
+		onadd() {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function () {
-			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
-				'num',
-			]);
 
-			const $findModal = $('#find-contact-modal').dialog({
-				autoOpen: false,
-				modal: true,
-				title: 'Find Contact ID',
-				width: 400,
-				buttons: {
-					OK: function () {
-						const email = $findModal.find('#find-contact-email').val().trim();
-						if (!email) {
-							RED.notify('Please enter an email address', 'error');
-							return;
-						}
-						const configId = $('#node-input-klicktipp').val();
-						if (!configId) {
-							RED.notify('Missing KlickTipp Config', 'error');
-							return;
-						}
+		oneditprepare() {
+			// reference to the node being edited
+			const node = this;
 
-						$.ajax({
-							url: '/klicktipp/contactSearch?configId=' + encodeURIComponent(configId),
-							method: 'POST',
-							dataType: 'json',
-							data: { email },
-							success: function (response) {
-								if (response && response[0]) {
-									const id = response[0];
-									$('#node-input-subscriberIdType').val('num');
-									const $old = $('#node-input-subscriberId');
-									const $new = $(
-										'<input type="text" id="node-input-subscriberId" ' +
-											'placeholder="Enter contact ID (required)" value="' +
-											id +
-											'" style="width:216px;">',
-									);
-									$old.replaceWith($new);
-									ktInitializeTypedInput(
-										'#node-input-subscriberId',
-										'#node-input-subscriberIdType',
-										'num',
-										['num'],
-									);
-									$new.trigger('change');
-									$findModal.dialog('close');
-								} else {
-									RED.notify('Contact not found', 'error');
-								}
-							},
-							error: function (err) {
-								const msg =
-									(err.responseJSON && err.responseJSON.error) ||
-									err.responseText ||
-									err.statusText;
-								RED.notify(msg, 'error');
-							},
-						});
-					},
-					Cancel: function () {
-						$findModal.dialog('close');
-					},
-				},
-				close: function () {
-					// clear input each time it closes
-					$findModal.find('#find-contact-email').val('');
-				},
-			});
+			//  initialise typed-inputs (unchanged)
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType',
+				'num', ['num', 'msg', 'flow', 'global']);
+			ktInitializeTypedInput('#node-input-lookupEmail', '#node-input-lookupEmailType',
+				'str', ['str', 'msg', 'flow', 'global']);
 
-			$('#btn-find-contact').click(function () {
-				$findModal.dialog('open');
-			});
-		},
+			// rows we want to toggle
+			const idRow = $('#node-input-subscriberId').closest('.form-row');
+			const emailRow = $('#node-input-lookupEmail').closest('.form-row');
+
+			function toggleRows() {
+				const mode = $('#node-input-identifierType').val();   // "id" | "email"
+				idRow.toggle(mode === 'id');
+				emailRow.toggle(mode === 'email');
+			}
+
+			// set the select to the saved value (or default 'id')
+			$('#node-input-identifierType').val(node.identifierType || 'id');
+
+			// react to user changes
+			$('#node-input-identifierType').on('change', toggleRows);
+
+			// show correct row immediately
+			toggleRows();
+		}
 	});
 </script>
