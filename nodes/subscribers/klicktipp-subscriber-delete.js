@@ -25,7 +25,7 @@ module.exports = function (RED) {
 			);
 
 			if (!lookupEmail) {
-				handleError(node, msg, 'Lookup e-mail address is missing', 'Invalid input');
+				handleError(node, msg, 'Lookup email address is missing', 'Invalid input');
 				return node.send(msg);
 			}
 
@@ -42,11 +42,21 @@ module.exports = function (RED) {
 				if (Array.isArray(body) && body.length) {
 					subscriberId = body[0];
 				} else {
-					handleError(node, msg, `No contact found for the provided e-mail`, 'Not found');
+					handleError(
+						node,
+						msg,
+						'Contact ID could not be retrieved',
+						'Request failed with status code 404',
+					);
 					return node.send(msg);
 				}
 			} catch (err) {
-				handleError(node, msg, 'Lookup failed', err?.response?.data?.error || err.message);
+				handleError(
+					node,
+					msg,
+					'Contact ID could not be retrieved',
+					err?.response?.data?.error || err.message,
+				);
 				return node.send(msg);
 			}
 		} else {

@@ -41,11 +41,21 @@ module.exports = function (RED) {
 				if (Array.isArray(body) && body.length) {
 					subscriberId = body[0];
 				} else {
-					handleError(node, msg, 'No contact found for that email', 'Not found');
+					handleError(
+						node,
+						msg,
+						'Contact ID could not be retrieved',
+						'Request failed with status code 404',
+					);
 					return node.send(msg);
 				}
 			} catch (err) {
-				handleError(node, msg, 'Lookup failed', err?.response?.data?.error || err.message);
+				handleError(
+					node,
+					msg,
+					'Contact ID could not be retrieved',
+					err?.response?.data?.error || err.message,
+				);
 				return node.send(msg);
 			}
 		} else {
