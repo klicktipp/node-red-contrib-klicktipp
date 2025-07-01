@@ -12,25 +12,25 @@
   <div class="form-row">
     <label for="node-input-identifierType">
       <i class="fa fa-question-circle"></i>
-      <span>Identify contact by</span>
+      <span>Identify Contact By</span>
     </label>
     <select id="node-input-identifierType">
       <option value="id">Contact ID</option>
-      <option value="email">Lookup email address</option>
+      <option value="email">Email address</option>
     </select>
   </div>
 
 	<!-- ► Contact-ID input (visible when NOT searching by email)  -->
 	<div class="form-row id-row">  
-		<label for="node-input-subscriberId"><i class="fa fa-hashtag"></i> <span>Contact&nbsp;ID</span></label>
+		<label for="node-input-subscriberId"><i class="fa fa-hashtag"></i> <span>Contact ID</span></label>
 		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 		<input type="hidden" id="node-input-subscriberIdType">
 	</div>
 
 	<!-- ► email lookup input (visible when searching by email) -->
 	<div class="form-row email-row">
-		<label for="node-input-lookupEmail"><i class="fa fa-envelope"></i> <span>Lookup email</span></label>
-		<input type="text" id="node-input-lookupEmail" placeholder="Enter lookup email address (required)">
+		<label for="node-input-lookupEmail"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+		<input type="text" id="node-input-lookupEmail" placeholder="Enter email address (required)">
 		<input type="hidden" id="node-input-lookupEmailType">
 	</div>
 </script>
