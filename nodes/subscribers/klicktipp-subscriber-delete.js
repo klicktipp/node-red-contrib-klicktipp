@@ -16,16 +16,16 @@ module.exports = function (RED) {
 		let subscriberId;
 
 		if (identifierType === 'email') {
-			const lookupEmail = await evaluatePropertyAsync(
+			const emailAddress = await evaluatePropertyAsync(
 				RED,
-				config.lookupEmail,
-				config.lookupEmailType,
+				config.emailAddress,
+				config.emailAddressType,
 				node,
 				msg,
 			);
 
-			if (!lookupEmail) {
-				handleError(node, msg, 'Lookup email address is missing', 'Invalid input');
+			if (!emailAddress) {
+				handleError(node, msg, 'Email address is missing', 'Invalid input');
 				return node.send(msg);
 			}
 
@@ -33,7 +33,7 @@ module.exports = function (RED) {
 				const searchResp = await makeRequest(
 					'/subscriber/search',
 					'POST',
-					{ email: lookupEmail },
+					{ email: emailAddress },
 					msg.sessionData,
 				);
 

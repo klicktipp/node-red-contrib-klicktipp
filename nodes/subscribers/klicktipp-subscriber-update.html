@@ -23,9 +23,9 @@
 		<input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row email-row"> 
-		<label for="node-input-lookupEmail"><i class="fa fa-search"></i> <span>Email Address</span></label>
-		<input type="text" id="node-input-lookupEmail" placeholder="Enter email address (required)">
-		<input type="hidden" id="node-input-lookupEmailType">
+		<label for="node-input-emailAddress"><i class="fa fa-search"></i> <span>Email Address</span></label>
+		<input type="text" id="node-input-emailAddress" placeholder="Enter email address (required)">
+		<input type="hidden" id="node-input-emailAddressType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>New Email Address</span></label>
@@ -56,7 +56,7 @@
 	        <ul>
 							<li><code>identifierType</code> - <code>"id"</code> | <code>"email"</code></li>
 							<li><code>subscriberId</code> - required when <code>identifierType="id"</code></li>
-							<li><code>lookupEmail</code> - required when <code>identifierType="email"</code></li>
+							<li><code>emailAddress</code> - required when <code>identifierType="email"</code></li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
 	            structured as returned by the <code>Field index</code> node</li>
 	            <li><code>newEmail</code> - (Optional) the contact's new email address</li>
@@ -107,11 +107,11 @@
 			subscriberIdType: {
 				value: 'msg',
 			},
-			lookupEmail: {
-				value: 'payload.lookupEmail', required: false,
-				validate: RED.validators.typedInput('lookupEmailType')
+			emailAddress: {
+				value: 'payload.emailAddress', required: false,
+				validate: RED.validators.typedInput('emailAddressType')
 			},
-			lookupEmailType: { value: 'msg' },
+			emailAddressType: { value: 'msg' },
 			newEmail: {
 				value: 'payload.newEmail',
 				validate: RED.validators.typedInput('newEmailType'),
@@ -158,7 +158,7 @@
 			const node = this;
 			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType',
 				'num', ['num', 'msg', 'flow', 'global']);
-			ktInitializeTypedInput('#node-input-lookupEmail', '#node-input-lookupEmailType',
+			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType',
 				'str', ['str', 'msg', 'flow', 'global']);
 			ktInitializeTypedInput('#node-input-newEmail', '#node-input-newEmailType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-newSmsNumber', '#node-input-newSmsNumberType', 'str', [
@@ -171,7 +171,7 @@
 
 			// rows to toggle
 			const idRow = $('#node-input-subscriberId').closest('.form-row');
-			const emailRow = $('#node-input-lookupEmail').closest('.form-row');
+			const emailRow = $('#node-input-emailAddress').closest('.form-row');
 
 			function toggleRows() {
 				const mode = $('#node-input-identifierType').val() || 'id';

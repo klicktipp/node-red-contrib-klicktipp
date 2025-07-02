@@ -19,22 +19,22 @@ module.exports = function (RED) {
 			typeof msg.identifierType === 'string' ? msg.identifierType : config.identifierType || 'id';
 
 		if (mode === 'email') {
-			const lookupEmail = await evaluatePropertyAsync(
+			const emailAddress = await evaluatePropertyAsync(
 				RED,
-				config.lookupEmail,
-				config.lookupEmailType,
+				config.emailAddress,
+				config.emailAddressType,
 				node,
 				msg,
 			);
-			if (!lookupEmail) {
-				handleError(node, msg, 'Lookup email is missing', 'Invalid input');
+			if (!emailAddress) {
+				handleError(node, msg, 'Email address is missing', 'Invalid input');
 				return node.send(msg);
 			}
 			try {
 				const searchResp = await makeRequest(
 					'/subscriber/search',
 					'POST',
-					{ email: lookupEmail },
+					{ email: emailAddress },
 					msg.sessionData,
 				);
 				const body = searchResp?.data ?? searchResp;
