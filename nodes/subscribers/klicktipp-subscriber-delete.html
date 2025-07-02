@@ -36,31 +36,48 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-delete">
-	<p>Deletes a contact.  
-	   You can either supply the <strong>Contact ID</strong> directly or let the node
-	   <em>search for the ID by email address</em> first.</p>
+	<p>Deletes a contact</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
+    <dt>msg.identifierType <span class="property-type">string</span></dt>
+		<dd>
+			How the contact should be found:
+			<ul>
+				<li><code>"id"</code> - look up by contact ID (default)</li>
+				<li><code>"email"</code> - look up by email address</li>
+			</ul>
+		</dd>
+
 		<dt>msg.payload <span class="property-type">object</span></dt>
 		<dd>
-			Optional when you fill the fields in the editor.<br>
-			If you prefer to set values at runtime you may pass:<br>
+			Expected object with the following properties:
 			<ul>
-				<li><code>identifierType</code> - <code>"id"</code> | <code>"email"</code></li>
 				<li><code>subscriberId</code> - Contact ID (when identifierType = "id")</li>
 				<li><code>emailAddress</code> - Email address (when identifierType = "email")</li>
 			</ul>
 		</dd>
 	</dl>
 
-	<h3>Outputs</h3>
-	<dl class="message-properties">
-		<dt>msg.payload <span class="property-type">object</span></dt>
-		<dd><code>{ success: true }</code> on success, <code>{ success: false }</code> on failure.</dd>
-		<dt>msg.error <span class="property-type">string</span></dt>
-		<dd>Error description if the call failed.</dd>
-	</dl>
+	  <h3>Outputs</h3>
+	  <dl class="message-properties">
+	   <dt>msg.payload <span class="property-type">object</span></dt>
+	   <dd>
+		   On success:
+		   <ul>
+			   <li><code>{ success: true }</code></li>
+		   </ul>
+	   </dd>
+	   <dd>
+		   On failure:
+		   <ul>
+			   <li><code>{ success: false }</code></li>
+		   </ul>
+	   </dd>
+
+	   <dt>msg.error <span class="property-type">string</span></dt>
+	   <dd>An error message explaining why the request failed.</dd>
+	  </dl>
 
 	<h3>Node status</h3>
 	<ul>
