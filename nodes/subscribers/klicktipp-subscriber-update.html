@@ -50,11 +50,19 @@
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	    <dt>msg.payload <span class="property-type">object</span></dt>
+    	<dt>msg.identifierType <span class="property-type">string</span></dt>
+			<dd>
+				How the contact should be found:
+				<ul>
+					<li><code>"id"</code> - look up by contact ID (default)</li>
+					<li><code>"email"</code> - look up by email address</li>
+				</ul>
+			</dd>
+
+			<dt>msg.payload <span class="property-type">object</span></dt>
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-							<li><code>identifierType</code> - <code>"id"</code> | <code>"email"</code></li>
 							<li><code>subscriberId</code> - required when <code>identifierType="id"</code></li>
 							<li><code>emailAddress</code> - required when <code>identifierType="email"</code></li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
