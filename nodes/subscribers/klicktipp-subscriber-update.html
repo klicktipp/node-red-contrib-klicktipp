@@ -28,9 +28,9 @@
 		<input type="hidden" id="node-input-emailAddressType">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-newEmail"><i class="fa fa-envelope"></i> <span>New Email Address</span></label>
-	    <input type="text" id="node-input-newEmail" placeholder="Enter email address">
-	    <input type="hidden" id="node-input-newEmailType">
+	    <label for="node-input-newEmailAddress"><i class="fa fa-envelope"></i> <span>New Email Address</span></label>
+	    <input type="text" id="node-input-newEmailAddress" placeholder="Enter email address">
+	    <input type="hidden" id="node-input-newEmailAddressType">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-newSmsNumber"><i class="fa fa-mobile"></i> <span>SMS Number</span></label>
@@ -59,7 +59,7 @@
 							<li><code>emailAddress</code> - required when <code>identifierType="email"</code></li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
 	            structured as returned by the <code>Field index</code> node</li>
-	            <li><code>newEmail</code> - (Optional) the contact's new email address</li>
+	            <li><code>newEmailAddress</code> - (Optional) the contact's new email address</li>
 	            <li><code>newSmsNumber</code> - (Optional) the contact's new mobile number</li>
 	        </ul>
 	    </dd>
@@ -112,11 +112,11 @@
 				validate: RED.validators.typedInput('emailAddressType')
 			},
 			emailAddressType: { value: 'msg' },
-			newEmail: {
-				value: 'payload.newEmail',
-				validate: RED.validators.typedInput('newEmailType'),
+			newEmailAddress: {
+				value: 'payload.newEmailAddress',
+				validate: RED.validators.typedInput('newEmailAddressType'),
 			},
-			newEmailType: {
+			newEmailAddressType: {
 				value: 'msg',
 			},
 			newSmsNumber: {
@@ -160,7 +160,7 @@
 				'num', ['num', 'msg', 'flow', 'global']);
 			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType',
 				'str', ['str', 'msg', 'flow', 'global']);
-			ktInitializeTypedInput('#node-input-newEmail', '#node-input-newEmailType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-newEmailAddress', '#node-input-newEmailAddressType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-newSmsNumber', '#node-input-newSmsNumberType', 'str', [
 				'str',
 			]);
