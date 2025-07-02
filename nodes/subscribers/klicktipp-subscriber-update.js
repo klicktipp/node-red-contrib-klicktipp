@@ -73,10 +73,10 @@ module.exports = function (RED) {
 		}
 
 		// gather update data
-		const newEmail = await evaluatePropertyAsync(
+		const newEmailAddress = await evaluatePropertyAsync(
 			RED,
-			config.newEmail,
-			config.newEmailType,
+			config.newEmailAddress,
+			config.newEmailAddressType,
 			node,
 			msg,
 		);
@@ -89,7 +89,7 @@ module.exports = function (RED) {
 		);
 		const fields = await getContactFields(RED, config, node, msg);
 
-		const data = prepareUpdateSubscriberData(newEmail, newSmsNumber, fields);
+		const data = prepareUpdateSubscriberData(newEmailAddress, newSmsNumber, fields);
 
 		// update request
 		try {
@@ -123,7 +123,7 @@ module.exports = function (RED) {
 	 * - `msg.payload`: Expected object with the following properties
 	 *   - `subscriberId`: (Required) The ID of the subscriber to update.
 	 *   - `fields` (Optional): Fields of the subscriber to update.
-	 *   - `newEmail` (Optional): The new email address of the subscriber.
+	 *   - `newEmailAddress` (Optional): The new email address of the subscriber.
 	 *   - `newSmsNumber` (Optional): The new SMS number of the subscriber.
 	 *
 	 * Outputs:
