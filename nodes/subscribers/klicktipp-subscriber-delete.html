@@ -29,9 +29,9 @@
 
 	<!-- ► email lookup input (visible when searching by email) -->
 	<div class="form-row email-row">
-		<label for="node-input-lookupEmail"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
-		<input type="text" id="node-input-lookupEmail" placeholder="Enter email address (required)">
-		<input type="hidden" id="node-input-lookupEmailType">
+		<label for="node-input-emailAddress"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+		<input type="text" id="node-input-emailAddress" placeholder="Enter email address (required)">
+		<input type="hidden" id="node-input-emailAddressType">
 	</div>
 </script>
 
@@ -49,7 +49,7 @@
 			<ul>
 				<li><code>identifierType</code> - <code>"id"</code> | <code>"email"</code></li>
 				<li><code>subscriberId</code> - Contact ID (when identifierType = "id")</li>
-				<li><code>lookupEmail</code> - Lookup email address (when identifierType = "email")</li>
+				<li><code>emailAddress</code> - Email address (when identifierType = "email")</li>
 			</ul>
 		</dd>
 	</dl>
@@ -90,12 +90,12 @@
 			subscriberIdType: { value: 'msg' },
 
 			/* ► email lookup -------------------------------------- */
-			lookupEmail: {
-				value: 'payload.lookupEmail',
+			emailAddress: {
+				value: 'payload.emailAddress',
 				required: false,
-				validate: RED.validators.typedInput('lookupEmailType'),
+				validate: RED.validators.typedInput('emailAddressType'),
 			},
-			lookupEmailType: { value: 'msg' },
+			emailAddressType: { value: 'msg' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -116,12 +116,12 @@
 			//  initialise typed-inputs (unchanged)
 			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType',
 				'num', ['num', 'msg', 'flow', 'global']);
-			ktInitializeTypedInput('#node-input-lookupEmail', '#node-input-lookupEmailType',
+			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType',
 				'str', ['str', 'msg', 'flow', 'global']);
 
 			// rows we want to toggle
 			const idRow = $('#node-input-subscriberId').closest('.form-row');
-			const emailRow = $('#node-input-lookupEmail').closest('.form-row');
+			const emailRow = $('#node-input-emailAddress').closest('.form-row');
 
 			function toggleRows() {
 				const mode = $('#node-input-identifierType').val();   // "id" | "email"
