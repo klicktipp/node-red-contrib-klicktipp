@@ -1,5 +1,6 @@
 const axios = require('axios');
 const https = require('https');
+const pkg = require('../../package.json');
 
 const API_URL = 'https://api.klicktipp.com';
 
@@ -24,6 +25,9 @@ async function makeRequest(
 	// Build headers
 	const headers = {
 		'Content-Type': 'application/x-www-form-urlencoded',
+		'Client-Identifier': 'Node-RED-KlickTipp',
+		'Connector-Version': `${pkg.version}`,
+		'NodeJS-Version': process.versions.node,
 		...defaultHeaders,
 	};
 
