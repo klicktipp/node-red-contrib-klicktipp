@@ -7,19 +7,71 @@ const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode'
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 
 module.exports = function (RED) {
-	const coreFunction = async function (msg, config) {
+	async function coreFunction(msg, config) {
 		const node = this;
-		const subscriberId = await evaluatePropertyAsync(
-			RED,
-			config.subscriberId,
-			config.subscriberIdType,
-			node,
-			msg,
-		);
 
-		if (!subscriberId) {
-			handleError(this, msg, 'Contact ID is missing', 'Invalid input');
-			return this.send(msg);
+		const identifierType =
+			typeof msg.identifierType === 'string' ? msg.identifierType : config.identifierType || 'id';
+
+		let subscriberId;
+
+		if (identifierType === 'email') {
+			const emailAddress = await evaluatePropertyAsync(
+				RED,
+				config.emailAddress,
+				config.emailAddressType,
+				node,
+				msg,
+			);
+
+			if (!emailAddress) {
+				handleError(node, msg, 'Email address is missing', 'Invalid input');
+				return node.send(msg);
+			}
+
+			try {
+				const searchResp = await makeRequest(
+					'/subscriber/search',
+					'POST',
+					{ email: emailAddress },
+					msg.sessionData,
+				);
+
+				const body = searchResp?.data ?? searchResp;
+
+				if (Array.isArray(body) && body.length) {
+					subscriberId = body[0];
+				} else {
+					handleError(
+						node,
+						msg,
+						'Contact ID could not be retrieved',
+						'Request failed with status code 404',
+					);
+					return node.send(msg);
+				}
+			} catch (err) {
+				handleError(
+					node,
+					msg,
+					'Contact ID could not be retrieved',
+					err?.response?.data?.error || err.message,
+				);
+				return node.send(msg);
+			}
+		} else {
+			subscriberId = await evaluatePropertyAsync(
+				RED,
+				config.subscriberId,
+				config.subscriberIdType,
+				node,
+				msg,
+			);
+
+			if (!subscriberId) {
+				handleError(node, msg, 'Contact ID is missing', 'Invalid input');
+				return node.send(msg);
+			}
 		}
 
 		try {
@@ -49,7 +101,7 @@ module.exports = function (RED) {
 				error?.response?.data?.error || error.message,
 			);
 		}
-	};
+	}
 	/**
 	 * KlickTippSubscriberGetNode - A Node-RED node to retrieve information for a specific subscriber.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -57,8 +109,13 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
+	 * - `msg.identifierType`: How the contact should be found
+	 *   - `id`: look up by contact ID (default).
+	 *   - `email`: look up by email address
+	 * 
 	 * - `msg.payload`: Expected object with the following properties
-	 *   - `subscriberId`: (Required) The ID of the subscriber.
+	 *   - `subscriberId`: (Required) Contact ID (when identifierType = "id").
+	 *   - `emailAddress`: (Required) Email address (when identifierType = "email")
 	 *
 	 * Outputs:
 	 * - `msg.payload`: On success, an object representing the subscriber.
