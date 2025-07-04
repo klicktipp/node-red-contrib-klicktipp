@@ -97,6 +97,32 @@ module.exports = function (RED) {
 		}
 	}
 
+	/**
+	 * KlickTippSubscriberDeleteNode - A Node-RED node to delete a subscriber.
+	 * It requires a valid session ID and session name (obtained during login) to perform the request.
+	 *
+	 * @param {object} config - The configuration object passed from Node-RED.
+	 *
+	 * Inputs:
+	 * - `msg.identifierType`: How the contact should be found
+	 *   - `id`: look up by contact ID (default).
+	 *   - `email`: look up by email address
+	 *
+	 * - `msg.payload`: Expected object with the following properties
+	 *   - `subscriberId`: (Required) Contact ID (when identifierType = "id").
+	 *   - `emailAddress`: (Required) Email address (when identifierType = "email")
+	 *
+	 * Outputs:
+	 * - `msg.payload`: On success, an object containing `{ success: true }` indicating the subscriber was successfully deleted.
+	 *   On failure:
+	 *   - `msg.payload`: An object containing `{ success: false }`.
+	 *   - `msg.error`: An error message indicating what went wrong.
+	 *
+	 * Error Handling:
+	 * - If session credentials are missing or invalid, the node outputs `msg.error` and returns `{ success: false }`.
+	 * - If the API request fails, the node outputs `msg.error` and returns `{ success: false }`.
+	 */
+
 	function KlickTippSubscriberDeleteNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;

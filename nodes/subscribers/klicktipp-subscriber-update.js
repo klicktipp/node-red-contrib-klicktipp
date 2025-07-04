@@ -120,6 +120,10 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
+	 * - `msg.identifierType`: How the contact should be found
+	 *   - `id`: look up by contact ID (default).
+	 *   - `email`: look up by email address
+	 *
 	 * - `msg.payload`: Expected object with the following properties
 	 *   - `subscriberId`: (Required) The ID of the subscriber to update.
 	 *   - `fields` (Optional): Fields of the subscriber to update.
