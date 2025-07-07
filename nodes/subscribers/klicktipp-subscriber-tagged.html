@@ -27,7 +27,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tagged">
-	<p>Lists the IDs and tagging timestamps of all tagged contacts</p>
+	<p>Returns the IDs and tagging timestamps of all tagged contacts</p>
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
@@ -85,10 +85,10 @@
 		outputs: 1,
 		icon: 'klicktipp.svg',
 		label: function () {
-			return this.name || 'List Tagged Contacts';
+			return this.name || 'Search Tagged Contacts';
 		},
 		labelStyle: 'klicktipp_label_style',
-		paletteLabel: 'List Tagged Contacts',
+		paletteLabel: 'Search Tagged Contacts',
 		onadd: function () {
 			ktPopulateConfig(this);
 		},
