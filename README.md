@@ -52,9 +52,9 @@ This package includes various nodes to interact with the KlickTipp API. Below is
   - `Add or update contact`
   - `Delete contact`
   - `Get contact`
-  - `Get contact id`
+  - `Search contact id`
   - `List contacts`
-  - `List tagged contacts`
+  - `Search tagged contacts`
   - `Unsubscribe contact`
   - `Update contact`
 - **Description**: Provides management capabilities for contacts, such as searching, updating, and deleting contact data.
@@ -77,7 +77,7 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 
 - **Node Names:**:
   - `Get opt-in process`
-  - `Get redirect url`
+  - `Search redirect url`
   - `list opt in process`
 - **Description**: Manages opt-in processes, including listing all processes, retrieving details of a specific process, and obtaining redirect URLs.
 
