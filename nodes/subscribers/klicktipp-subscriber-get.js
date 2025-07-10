@@ -4,75 +4,14 @@ const handleResponse = require('../utils/handleResponse');
 const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const resolveSubscriberId = require('../utils/resolveSubscriberId');
 
 module.exports = function (RED) {
 	async function coreFunction(msg, config) {
 		const node = this;
 
-		const identifierType =
-			typeof msg.identifierType === 'string' ? msg.identifierType : config.identifierType || 'id';
-
-		let subscriberId;
-
-		if (identifierType === 'email') {
-			const emailAddress = await evaluatePropertyAsync(
-				RED,
-				config.emailAddress,
-				config.emailAddressType,
-				node,
-				msg,
-			);
-
-			if (!emailAddress) {
-				handleError(node, msg, 'Email address is missing', 'Invalid input');
-				return node.send(msg);
-			}
-
-			try {
-				const searchResp = await makeRequest(
-					'/subscriber/search',
-					'POST',
-					{ email: emailAddress },
-					msg.sessionData,
-				);
-
-				const body = searchResp?.data ?? searchResp;
-
-				if (Array.isArray(body) && body.length) {
-					subscriberId = body[0];
-				} else {
-					handleError(
-						node,
-						msg,
-						'Contact ID could not be retrieved',
-						'Request failed with status code 404',
-					);
-					return node.send(msg);
-				}
-			} catch (err) {
-				handleError(
-					node,
-					msg,
-					'Contact ID could not be retrieved',
-					err?.response?.data?.error || err.message,
-				);
-				return node.send(msg);
-			}
-		} else {
-			subscriberId = await evaluatePropertyAsync(
-				RED,
-				config.subscriberId,
-				config.subscriberIdType,
-				node,
-				msg,
-			);
-
-			if (!subscriberId) {
-				handleError(node, msg, 'Contact ID is missing', 'Invalid input');
-				return node.send(msg);
-			}
-		}
+		const subscriberId = await resolveSubscriberId(RED, node, config, msg);
+		if (!subscriberId) return node.send(msg);
 
 		try {
 			const response = await makeRequest(
@@ -112,7 +51,7 @@ module.exports = function (RED) {
 	 * - `msg.identifierType`: How the contact should be found
 	 *   - `id`: look up by contact ID (default).
 	 *   - `email`: look up by email address
-	 * 
+	 *
 	 * - `msg.payload`: Expected object with the following properties
 	 *   - `subscriberId`: (Required) Contact ID (when identifierType = "id").
 	 *   - `emailAddress`: (Required) Email address (when identifierType = "email")
