@@ -45,7 +45,7 @@
   - Added help banner for "Add or Update Contact" node.
   - Added functionality of displaying error messages from KlickTipp API.
 
-## Version 1.0.8 (2025-07-10)
+## Version 1.0.8 (2025-07-11)
 - **New Features**
 	- Added ability to update/delete/get contact by email
 - **Improvements**
