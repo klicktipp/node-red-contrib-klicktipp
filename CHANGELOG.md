@@ -41,6 +41,12 @@
 	- Added optional ID input instead of drop-downs.
   - Added search contact ID by email button.
 - **Improvements**
-    - Added sorting by label for options in drop-down.
-		- Added help banner for "Add or Update Contact" node.
-		- Added functionality of displaying error messages from KlickTipp API.
+  - Added sorting by label for options in drop-down.
+  - Added help banner for "Add or Update Contact" node.
+  - Added functionality of displaying error messages from KlickTipp API.
+
+## Version 1.0.8 (2025-07-10)
+- **New Features**
+	- Added ability to update/delete/get contact by email
+- **Improvements**
+  - Changed trigger description
