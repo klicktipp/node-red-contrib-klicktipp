@@ -213,7 +213,11 @@
 				this.id,
 			);
 		},
+		oneditcancel: function () {
+			$(document).off('.kt-dd');      // removes keydown.kt-dd and mousedown.kt-dd
+		},
 		oneditsave: function () {
+			$(document).off('.kt-dd');
 			// Collect all field from API vales and store them in this.fieldsData
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},

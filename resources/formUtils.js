@@ -177,57 +177,243 @@ function ktPopulateDropdown($dropdown, selectedItemId, configId, actionUrl) {
 /**
  * Populates contact fields in a container by fetching data from a given action URL.
  *
- * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
- * @param {object} [defaultValues={}] - Default values for the fields to pre-fill, where the keys are field IDs and values are the corresponding default values.
- * @param {string} configId - The KlickTipp config ID.
- * @param {string} actionUrl - The URL to fetch the items (in JSON format) for the dropdown.
+ * @param {object}  $container     jQuery-wrapped node where rows will be rendered
+ * @param {object}  defaultValues  keys = fieldId, values = saved value
+ * @param {string}  configId       KlickTipp config node id
+ * @param {string}  actionUrl      backend URL returning the field map
  */
 function ktPopulateContactFields($container, defaultValues = {}, configId, actionUrl) {
-	const $spinner = ktCreateSpinner();
-	$container.before($spinner);
-	$spinner.show();
-	$container.hide();
+	if (!$('#kt-dd-style').length) {
+		$('<style id="kt-dd-style">')
+			.text(
+				`
+      /* popup panel */
+      .kt-dd-panel{position:absolute;z-index:2;max-height:180px;width:100%;
+                   overflow-y:auto;background:#fff;border:1px solid #ccc;border-radius:4px;
+                   box-shadow:0 2px 6px rgb(5,5,5)}
+      .kt-dd-panel ul{list-style:none;margin:0;padding:4px 0}
+      .kt-dd-panel li{padding:4px 8px;cursor:pointer;white-space:nowrap}
+      .kt-dd-panel li:hover,.kt-dd-panel li.kt-active{background:#f0f7ff}
 
-	// Clear previous content and error messages
-	$container.empty();
-	$container.siblings('.kt-error-message').remove();
+      /* hide the real <select> */
+      .kt-dd-hidden{display:none!important}
+
+      /* row layout */
+      .kt-dd-row{display:flex;align-items:center;gap:6px;position:relative}
+      .kt-dd-combo {flex:0 0 44% !important;background:#fff!important;color:#000!important;
+                    cursor:pointer !important;border:1px solid var(--red-ui-form-input-border,#ccc)}
+			.kt-dd-filter{flex:0 0 25% !important}
+
+      /* make sure readonly combo still looks enabled on hover */
+      .kt-dd-combo:hover{background:#fff!important}
+    `,
+			)
+			.appendTo('head');
+	}
+
+	const $spinner = ktCreateSpinner();
+	$container.before($spinner).hide();
+	$spinner.show();
+	$container.empty().siblings('.kt-error-message').remove();
 
 	$.ajax({
 		url: actionUrl,
 		method: 'GET',
-		headers: {
-			'config-id': configId,
-		},
+		headers: { 'config-id': configId },
 		dataType: 'json',
 	})
 		.done((items) => {
-			// Clear fields on each request to avoid duplicates
-			const standardFields = {};
-			const customFields = {};
+			if (!ktIsObject(items)) {
+				ktShowError($container, 'No valid items found');
+				return;
+			}
 
-			if (ktIsObject(items)) {
-				$.each(items, (key, label) => {
-					if (ktIsCustomField(key)) {
-						customFields[key] = label;
-					} else {
-						standardFields[key] = label;
+			/* split into built-in vs custom */
+			const standardFields = {},
+				customFields = {};
+			$.each(items, (k, v) =>
+				ktIsCustomField(k) ? (customFields[k] = v) : (standardFields[k] = v),
+			);
+
+			/* ── 1  build the row ─────────────────────────────────────── */
+			const $row = ktCreateDropdownRow().appendTo($container).addClass('kt-dd-row');
+			const $select = $row.find('.custom-fields-dropdown').addClass('kt-dd-hidden');
+			const $addButton = $row.find('.add-custom-field-btn').addClass('kt-dd-addbtn');
+
+			/* filter input 30 % */
+			const $filterBox = $(
+				'<input type="text" placeholder="Type to filter…" ' + 'class="red-ui-input kt-dd-filter">',
+			).insertBefore($select);
+
+			/* visible combo 60 % */
+			const $combo = $(
+				'<input type="text" readonly placeholder="Choose value" ' +
+					'class="red-ui-input kt-dd-combo">',
+			).insertBefore($select);
+
+			/* popup panel */
+			const $panel = $('<div class="kt-dd-panel kt-dd-hidden"><ul></ul></div>').insertAfter($combo);
+			const $list = $panel.find('ul');
+
+			/* helpers */
+			function buildList() {
+				$list.empty();
+				$select.find('option').each(function () {
+					const $o = $(this);
+					if ($o.is(':disabled') || !$o.val()) return;
+					$('<li>').text($o.text()).attr('data-value', $o.val()).appendTo($list);
+				});
+
+				// add the placeholder once
+				if (!$list.find('.kt-no-results').length) {
+					$('<li class="kt-no-results" style="font-style:italic;color:#888"pointer-events:none;cursor:default;">No results</li>')
+						.appendTo($list)
+						.hide();
+				}
+			}
+
+			function applyFilter(term) {
+				term = term.toLowerCase();
+
+				// hide/show only real options
+				$list
+					.children('li')
+					.not('.kt-no-results')
+					.each(function () {
+						$(this).toggle(term === '' || $(this).text().toLowerCase().includes(term));
+					});
+
+				// show placeholder if nothing else is visible
+				const noneVisible = !$list.children('li').not('.kt-no-results').filter(':visible').length;
+				$list.find('.kt-no-results').toggle(noneVisible);
+			}
+
+			/* open / close */
+			let idx = 0;
+			function openPanel() {
+				buildList();
+				applyFilter($filterBox.val());
+				idx = 0;
+				highlight(idx);
+
+				// where is the combo inside the row?
+				const left = $combo.position().left;
+				const top = $combo.position().top + $combo.outerHeight() + 2; // +2px gap
+
+				$panel
+					.css({
+						width: $combo.outerWidth(),
+						left,
+						top,
+					})
+					.removeClass('kt-dd-hidden')
+					.scrollTop(0);
+			}
+			function closePanel() {
+				$panel.addClass('kt-dd-hidden');
+			}
+
+			/* highlight navigation */
+			function highlight(i) {
+				const $vis = $list.children('li:visible').not('.kt-no-results');
+				if (!$vis.length) return;
+				idx = (i + $vis.length) % $vis.length;
+				$vis.removeClass('kt-active').eq(idx).addClass('kt-active');
+				const $cur = $vis.eq(idx),
+					off = $cur.position().top;
+				if (off < 0) $panel.scrollTop($panel.scrollTop() + off);
+				if (off + $cur.outerHeight() > $panel.height())
+					$panel.scrollTop($panel.scrollTop() + off + $cur.outerHeight() - $panel.height());
+			}
+			function choose($li) {
+				$select.val($li.data('value'));
+				$combo.val($li.text());
+				closePanel();
+			}
+
+			/* filter typing */
+			$filterBox.on('keyup', (e) => {
+				if (e.key === 'Escape') $filterBox.val('');
+				applyFilter($filterBox.val());
+			});
+
+			/* combo click */
+			$combo.on('mousedown', (e) => {
+				e.preventDefault();
+				$panel.hasClass('kt-dd-hidden') ? openPanel() : closePanel();
+			});
+
+			/* click on list item */
+			$list.on('click', 'li:not(.kt-no-results)', function () {
+				choose($(this));
+			});
+
+			/* key nav while open */
+			$(document)
+				.off('keydown.kt-dd')
+				.on('keydown.kt-dd', (e) => {
+					if ($panel.hasClass('kt-dd-hidden')) return;
+					if (e.key === 'ArrowDown') {
+						highlight(idx + 1);
+						e.preventDefault();
+					}
+					if (e.key === 'ArrowUp') {
+						highlight(idx - 1);
+						e.preventDefault();
+					}
+					if (e.key === 'Enter') {
+						choose($list.children('li:visible').not('.kt-no-results').eq(idx));
+					}
+					if (e.key === 'Escape') {
+						closePanel();
 					}
 				});
 
-				ktGenerateFormFields($container, standardFields, defaultValues);
-				ktGenerateCustomFieldsDropdown($container, customFields, defaultValues);
-				$container.show();
-			} else {
-				ktShowError($container, 'No valid items found');
-			}
-		})
-		.fail((jqXHR) => {
-			const errorMessage = ktGetErrorMessage(jqXHR);
-			console.error('Error:', errorMessage);
-			ktShowError($container, `Error: ${errorMessage}`);
+			/* outside click closes */
+			$(document)
+				.off('mousedown.kt-dd')
+				.on('mousedown.kt-dd', (e) => {
+					if ($panel.hasClass('kt-dd-hidden')) return;
+
+					// treat combo + filter + panel as one cluster
+					if (!$(e.target).closest($panel.add($combo).add($filterBox)).length) {
+						closePanel();
+					}
+				});
+
+			/* ── 2  populate hidden <select> options ─────────────────── */
+			const sortedCustom = Object.fromEntries(
+				Object.entries(customFields).sort((a, b) => a[1].localeCompare(b[1])),
+			);
+			ktPopulateDropdownOptions($select, standardFields);
+			ktPopulateDropdownOptions($select, sortedCustom);
+
+			/* ── 3  render built-in rows saved earlier ───────────────── */
+			ktGenerateFormFields($container, standardFields, defaultValues, $select);
+
+			/* ── 4  restore saved custom rows ────────────────────────── */
+			ktRestoreCustomFields($container, $select, customFields, defaultValues);
+
+			/* ── 5  “+” button uses hidden <select> value ───────────── */
+			$addButton.on('click', () => {
+				ktHandleAddCustomField($container, $select); // add & remove option
+
+				/* rebuild the UL and re-apply current filter so the just-added
+     		field disappears immediately without extra clicks */
+				buildList();
+				applyFilter($filterBox.val());
+
+				$select.val('');
+				$combo.val('');
+			});
+
+			$spinner.hide();
 			$container.show();
 		})
-		.always(() => {
+		.fail((jq) => {
+			const msg = ktGetErrorMessage(jq);
+			console.error('Error:', msg);
+			ktShowError($container, `Error: ${msg}`);
 			$spinner.hide();
 			$container.show();
 		});
@@ -239,8 +425,9 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
  * @param {object} $container - The DOM element (jQuery-wrapped) where the contact fields will be rendered.
  * @param {object} fields - An object where keys represent field IDs and values are the field labels.
  * @param {object} [defaultValues={}] - Optional object with default values for the form fields, keyed by field IDs.
+ * @param $dropdown
  */
-function ktGenerateFormFields($container, fields, defaultValues = {}) {
+function ktGenerateFormFields($container, fields, defaultValues = {}, $dropdown) {
 	if (!$container.length) {
 		return;
 	}
@@ -250,62 +437,21 @@ function ktGenerateFormFields($container, fields, defaultValues = {}) {
 	}
 
 	$.each(fields, (key, label) => {
+		// show it only when it existed in the previous config
+		if (!Object.prototype.hasOwnProperty.call(defaultValues, key)) {
+			return; // skip → stays hidden, option remains in the dropdown
+		}
+
 		const iconClass = KLICKTIPP_ICON_MAP[key] || 'fa-question-circle';
 		const defaultValue = defaultValues[key] || '';
 
-		const formRow = `
-      <div class="form-row">
-        <label for="node-input-${key}">
-          <i class="fa ${iconClass}"></i> ${label}
-        </label>
-        <input
-          type="text"
-          id="node-input-${key}"
-          placeholder="Enter ${label.toLowerCase()} (optional)"
-          value="${defaultValue}"
-        >
-      </div>
-    `;
-		$container.append(formRow);
-	});
-}
+		// create a removable row
+		ktGenerateCustomField($container, key, label, defaultValue, $dropdown, iconClass);
 
-/**
- * Generates a dropdown for custom fields, restores previously added custom fields, and adds functionality to add new fields.
- *
- * @param {object} $container - The jQuery-wrapped DOM element where the contact fields will be rendered.
- * @param {object} customFields - An object where keys represent field IDs and values are the field labels.
- * @param {object} defaultValues - An object containing default values for any previously added custom fields, keyed by field ID.
- */
-function ktGenerateCustomFieldsDropdown($container, customFields, defaultValues) {
-	if (!$container.length) {
-		return;
-	}
-
-	if ($.isEmptyObject(customFields)) {
-		return;
-	}
-
-	// Create and append the custom fields dropdown row
-	const $dropdownRow = ktCreateDropdownRow();
-	$container.append($dropdownRow);
-
-	const $dropdown = $container.find('.custom-fields-dropdown');
-	const $addButton = $container.find('.add-custom-field-btn');
-
-	if (!$dropdown.length) {
-		return;
-	}
-
-	// Populate the dropdown with custom field options
-	ktPopulateDropdownOptions($dropdown, customFields);
-
-	// Restore any previously added custom fields
-	ktRestoreCustomFields($container, $dropdown, customFields, defaultValues);
-
-	// Add functionality to the "Add Custom Field" button
-	$addButton.on('click', () => {
-		ktHandleAddCustomField($container, $dropdown);
+		// built-in row is visible now → drop its option so it can return when user clicks “-”
+		if ($dropdown?.length) {
+			$dropdown.find(`option[value="${key}"]`).remove();
+		}
 	});
 }
 
@@ -358,7 +504,8 @@ function ktHandleAddCustomField($container, $dropdown) {
 	}
 
 	// Generate the selected custom field and remove it from the dropdown
-	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel, '', $dropdown);
+	const iconClass = KLICKTIPP_ICON_MAP[selectedFieldKey] || 'fa-question-circle';
+	ktGenerateCustomField($container, selectedFieldKey, selectedFieldLabel, '', $dropdown, iconClass);
 	$dropdown.find(`option[value="${selectedFieldKey}"]`).remove();
 }
 
@@ -370,14 +517,22 @@ function ktHandleAddCustomField($container, $dropdown) {
  * @param {string} fieldLabel - The label to display for the custom field.
  * @param {string} [defaultValue=''] - Optional default value for the custom field input.
  * @param $dropdown
+ * @param {string} iconClass - The icon for field
  */
-function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = '', $dropdown) {
+function ktGenerateCustomField(
+	$container,
+	fieldKey,
+	fieldLabel,
+	defaultValue = '',
+	$dropdown,
+	iconClass,
+) {
 	if (!$container.length) {
 		return;
 	}
 
 	// Create and append the custom field row
-	const $formRow = ktCreateFormRow(fieldKey, fieldLabel, defaultValue);
+	const $formRow = ktCreateFormRow(fieldKey, fieldLabel, defaultValue, iconClass);
 	$container.append($formRow);
 
 	// Add functionality to the remove button
@@ -392,13 +547,14 @@ function ktGenerateCustomField($container, fieldKey, fieldLabel, defaultValue = 
  * @param {string} fieldKey - The unique key/ID for the custom field.
  * @param {string} fieldLabel - The label to display for the custom field.
  * @param {string} defaultValue - The default value for the custom field input.
+ * @param {string} iconClass - Optional, default 'fa-question-circle'.
  * @returns {object} - A jQuery-wrapped form row element.
  */
-function ktCreateFormRow(fieldKey, fieldLabel, defaultValue) {
+function ktCreateFormRow(fieldKey, fieldLabel, defaultValue, iconClass = 'fa-question-circle') {
 	return $(`
 		<div class="form-row d-flex align-items-center" id="form-row-${fieldKey}">
 		  <label for="node-input-${fieldKey}">
-		    <i class="fa fa-question-circle"></i> ${fieldLabel}
+		    <i class="fa ${iconClass}"></i> ${fieldLabel}
 		  </label>
 		  <input
 		    type="text"
@@ -447,7 +603,8 @@ function ktRestoreCustomFields($container, dropdown, customFields, defaultValues
 	$.each(defaultValues, (fieldKey, value) => {
 		if (ktIsCustomField(fieldKey)) {
 			const fieldLabel = customFields[fieldKey] || 'Custom Field';
-			ktGenerateCustomField($container, fieldKey, fieldLabel, value, dropdown);
+			const iconClass = KLICKTIPP_ICON_MAP[fieldKey] || 'fa-question-circle';
+			ktGenerateCustomField($container, fieldKey, fieldLabel, value, dropdown, iconClass);
 			dropdown.find(`option[value="${fieldKey}"]`).remove();
 		}
 	});
@@ -688,7 +845,16 @@ function ktInitializeUserSelectHandler(
  * @param {string} toggleKey - Property name to track whether manual mode is enabled.
  * @param {Function} [castFn] - Optional function to cast the value (e.g., Number, String).
  */
-function ktSaveDualInput(selectEl, manualEl, toggleEl, nodeRef, valueKey, manualKey, toggleKey, castFn = Number) {
+function ktSaveDualInput(
+	selectEl,
+	manualEl,
+	toggleEl,
+	nodeRef,
+	valueKey,
+	manualKey,
+	toggleKey,
+	castFn = Number,
+) {
 	const isManual = toggleEl.is(':checked');
 	nodeRef[toggleKey] = isManual;
 

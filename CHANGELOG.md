@@ -50,3 +50,10 @@
 	- Added ability to update/delete/get contact by email
 - **Improvements**
   - Changed trigger description
+
+## Version 1.0.9 (2025-07-12)
+- **New Features**
+	- Added ability to filter data fields
+- **Improvements**
+	- Made a selective addition of data fields
+  - Changed node names and descriptions
