@@ -51,7 +51,7 @@
 - **Improvements**
   - Changed trigger description
 
-## Version 1.0.9 (2025-07-12)
+## Version 1.0.9 (2025-07-11)
 - **New Features**
 	- Added ability to filter data fields
 - **Improvements**
