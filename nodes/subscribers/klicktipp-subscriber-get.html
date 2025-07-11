@@ -7,10 +7,29 @@
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
-	<div class="form-row">
-	    <label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Contact ID</span></label>
-	    <input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
-	    <input type="hidden" id="node-input-subscriberIdType">
+  <div class="form-row">
+    <label for="node-input-identifierType">
+      <i class="fa fa-question-circle"></i>
+      <span>Identify Contact By</span>
+    </label>
+    <select id="node-input-identifierType">
+      <option value="id">Contact ID</option>
+      <option value="email">Email address</option>
+    </select>
+  </div>
+
+	<!-- ► Contact-ID input (visible when NOT searching by email)  -->
+	<div class="form-row id-row">  
+		<label for="node-input-subscriberId"><i class="fa fa-hashtag"></i> <span>Contact ID</span></label>
+		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
+		<input type="hidden" id="node-input-subscriberIdType">
+	</div>
+
+	<!-- ► email lookup input (visible when searching by email) -->
+	<div class="form-row email-row">
+		<label for="node-input-emailAddress"><i class="fa fa-envelope"></i> <span>Email Address</span></label>
+		<input type="text" id="node-input-emailAddress" placeholder="Enter email address (required)">
+		<input type="hidden" id="node-input-emailAddressType">
 	</div>
 </script>
 
@@ -19,13 +38,23 @@
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	    <dt>msg.payload <span class="property-type">object</span></dt>
-	    <dd>
-	        Expected object with the following properties:
-	        <ul>
-	            <li><code>subscriberId</code> - (Required) the contact's ID</li>
-	        </ul>
-	    </dd>
+    <dt>msg.identifierType <span class="property-type">string</span></dt>
+		<dd>
+			How the contact should be found:
+			<ul>
+				<li><code>"id"</code> - look up by contact ID (default)</li>
+				<li><code>"email"</code> - look up by email address</li>
+			</ul>
+		</dd>
+
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Expected object with the following properties:
+			<ul>
+				<li><code>subscriberId</code> - Contact ID (when identifierType = "id")</li>
+				<li><code>emailAddress</code> - Email address (when identifierType = "email")</li>
+			</ul>
+		</dd>
 	</dl>
 
 	<h3>Outputs</h3>
@@ -60,16 +89,27 @@
 		category: 'KlickTipp',
 		color: '#DAE1FC',
 		defaults: {
+			name: { value: '' },
 			klicktipp: { type: 'klicktipp-config', required: true },
+
+			/* dropdown: id | email */
+			identifierType: { value: 'id' },
+
+			/* ► Contact-ID ----------------------------------------- */
 			subscriberId: {
-				required: true,
 				value: 'payload.subscriberId',
+				required: false,
 				validate: RED.validators.typedInput('subscriberIdType'),
 			},
-			subscriberIdType: {
-				value: 'msg',
+			subscriberIdType: { value: 'msg' },
+
+			/* ► email lookup -------------------------------------- */
+			emailAddress: {
+				value: 'payload.emailAddress',
+				required: false,
+				validate: RED.validators.typedInput('emailAddressType'),
 			},
-			name: { value: '' },
+			emailAddressType: { value: 'msg' },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -82,10 +122,34 @@
 		onadd: function () {
 			ktPopulateConfig(this);
 		},
-		oneditprepare: function () {
-			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
-				'num',
-			]);
-		},
+		oneditprepare() {
+			// reference to the node being edited
+			const node = this;
+
+			//  initialise typed-inputs (unchanged)
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType',
+				'num', ['num', 'msg', 'flow', 'global']);
+			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType',
+				'str', ['str', 'msg', 'flow', 'global']);
+
+			// rows we want to toggle
+			const idRow = $('#node-input-subscriberId').closest('.form-row');
+			const emailRow = $('#node-input-emailAddress').closest('.form-row');
+
+			function toggleRows() {
+				const mode = $('#node-input-identifierType').val();   // "id" | "email"
+				idRow.toggle(mode === 'id');
+				emailRow.toggle(mode === 'email');
+			}
+
+			// set the select to the saved value (or default 'id')
+			$('#node-input-identifierType').val(node.identifierType || 'id');
+
+			// react to user changes
+			$('#node-input-identifierType').on('change', toggleRows);
+
+			// show correct row immediately
+			toggleRows();
+		}
 	});
 </script>

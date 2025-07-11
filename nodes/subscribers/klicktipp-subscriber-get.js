@@ -4,23 +4,14 @@ const handleResponse = require('../utils/handleResponse');
 const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
-const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const resolveSubscriberId = require('../utils/resolveSubscriberId');
 
 module.exports = function (RED) {
-	const coreFunction = async function (msg, config) {
+	async function coreFunction(msg, config) {
 		const node = this;
-		const subscriberId = await evaluatePropertyAsync(
-			RED,
-			config.subscriberId,
-			config.subscriberIdType,
-			node,
-			msg,
-		);
 
-		if (!subscriberId) {
-			handleError(this, msg, 'Contact ID is missing', 'Invalid input');
-			return this.send(msg);
-		}
+		const subscriberId = await resolveSubscriberId(RED, node, config, msg);
+		if (!subscriberId) return node.send(msg);
 
 		try {
 			const response = await makeRequest(
@@ -49,7 +40,7 @@ module.exports = function (RED) {
 				error?.response?.data?.error || error.message,
 			);
 		}
-	};
+	}
 	/**
 	 * KlickTippSubscriberGetNode - A Node-RED node to retrieve information for a specific subscriber.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
@@ -57,8 +48,13 @@ module.exports = function (RED) {
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
 	 * Inputs:
+	 * - `msg.identifierType`: How the contact should be found
+	 *   - `id`: look up by contact ID (default).
+	 *   - `email`: look up by email address
+	 *
 	 * - `msg.payload`: Expected object with the following properties
-	 *   - `subscriberId`: (Required) The ID of the subscriber.
+	 *   - `subscriberId`: (Required) Contact ID (when identifierType = "id").
+	 *   - `emailAddress`: (Required) Email address (when identifierType = "email")
 	 *
 	 * Outputs:
 	 * - `msg.payload`: On success, an object representing the subscriber.
