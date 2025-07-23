@@ -57,3 +57,7 @@
 - **Improvements**
 	- Made a selective addition of data fields
   - Changed node names and descriptions
+
+## Version 1.0.10 (2025-07-23)
+- **Security**
+	- Updated axios to the latest version to address a vulnerability in form-data that used an unsafe random function for boundary generation.
