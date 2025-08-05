@@ -47,17 +47,21 @@
 
 ## Version 1.0.8 (2025-07-11)
 - **New Features**
-	- Added ability to update/delete/get contact by email
+	- Added ability to update/delete/get contact by email.
 - **Improvements**
-  - Changed trigger description
+  - Changed trigger description.
 
 ## Version 1.0.9 (2025-07-11)
 - **New Features**
-	- Added ability to filter data fields
+	- Added ability to filter data fields.
 - **Improvements**
-	- Made a selective addition of data fields
-  - Changed node names and descriptions
+	- Made a selective addition of data fields.
+  - Changed node names and descriptions.
 
 ## Version 1.0.10 (2025-07-23)
 - **Security**
 	- Updated axios to the latest version to address a vulnerability in form-data that used an unsafe random function for boundary generation.
+
+## Version 1.0.11 (2025-08-05)
+- **Improvements**
+	- Made email as a default value for select in update/delete/get contact nodes.
