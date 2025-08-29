@@ -1,4 +1,16 @@
-function adjustErrorMessage(error) {
+function adjustErrorMessage(error, code) {
+	const error10Messages = {
+		4: 'The email address is unsubscribed. You cannot re-subscribe an email address if the contact has unsubscribed.',
+		5: 'Invalid email address.',
+		6: 'There was an error sending the confirmation email.',
+		9: 'The SMS number is already assigned to another contact. If you subscribe an email address and add a phone number, it must be unique.',
+		11: 'Invalid phone number.',
+		12: 'Internal error.',
+		30: 'The email address is blocked and cannot be used for subscription.',
+		31: 'SmartTags are only assigned by the system.',
+		32: 'You must specify either an email address or a SMS number.',
+	};
+
 	switch (error) {
 		case 4:
 			return 'The email address is unsubscribed. You cannot re-subscribe an email address if the contact has unsubscribed.';
@@ -13,7 +25,11 @@ function adjustErrorMessage(error) {
 		case 9:
 			return 'The SMS number is already assigned to another contact. If you subscribe an email address and add a phone number, it must be unique.';
 		case 10:
-			return 'Update of contact failed.';
+			if (code && error10Messages[code]) {
+				return `Update of contact failed: ${error10Messages[code]}`;
+			} else {
+				return 'Update of contact failed.';
+			}
 		case 11:
 			return 'Invalid phone number.';
 		case 12:
