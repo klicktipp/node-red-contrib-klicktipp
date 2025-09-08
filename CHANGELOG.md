@@ -65,3 +65,7 @@
 ## Version 1.0.11 (2025-08-05)
 - **Improvements**
 	- Made email as a default value for select in update/delete/get contact nodes.
+
+## Version 1.0.12 (2025-09-08)
+- **Improvements**
+	- Improved the error handling logic for "Add or Update Contact" node.

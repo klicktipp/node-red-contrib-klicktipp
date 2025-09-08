@@ -6,15 +6,26 @@ const adjustErrorMessage = require('./adjustErrorMessage');
  * @param {object} node - The current Node-RED node instance.
  * @param {object} msg - The message object passed through Node-RED.
  * @param {string} [statusMessage='Error occurred'] - The high-level status message to display in the Node-RED UI.
- * @param {string|null} [errorDetails=null] - Additional error details to append to the status message. If not provided, only the statusMessage is shown.
+ * @param {number|string|object|null} [errorDetails=null] - Error code, message, or object with { error, code }.
  */
 function handleError(node, msg, statusMessage = 'Error occurred', errorDetails = null) {
 	let errorMsg;
-	// Attempt to parse errorDetails as a numeric code.
+
 	if (typeof errorDetails === 'number') {
+		// simple numeric code
 		errorMsg = adjustErrorMessage(errorDetails);
-	} else {
+	} else if (typeof errorDetails === 'object' && errorDetails !== null) {
+		// object with { error, code }
+		const { error, code } = errorDetails;
+		if (typeof error === 'number') {
+			errorMsg = adjustErrorMessage(error, code);
+		} else {
+			errorMsg = errorDetails.error || errorDetails.message || String(errorDetails);
+		}
+	} else if (typeof errorDetails === 'string') {
 		errorMsg = errorDetails;
+	} else {
+		errorMsg = null;
 	}
 
 	const statusText = errorMsg ? `${statusMessage}: ${errorMsg}` : statusMessage;
