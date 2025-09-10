@@ -176,7 +176,7 @@
 			function markDirty() {
 				try {
 					RED.nodes.dirty(true);
-				} catch (e) {}
+				} catch (e) { }
 			}
 
 			/* typed inputs & contact fields */
@@ -202,7 +202,8 @@
 				this.id,
 			);
 
-			this.__cleanupCreateModal = () => {};
+			// always defined so callers can invoke without typeof checks
+			this.__cleanupCreateModal = () => { };
 
 			/* listId dual input */
 			function updateListDisplay() {
@@ -267,15 +268,7 @@
 				markDirty();
 			});
 
-			ktBindDropdownToInput(
-				klicktippInput,
-				tagDropdown,
-				self.tagId,
-				self.klicktipp,
-				`/klicktipp/tags/${self.id}`,
-			);
-
-			// mark dirty when user selects a different tag
+			// mark dirty when user selects a different tag (while NOT in manual mode)
 			tagDropdown.on('change', function () {
 				if (!$('#node-input-toggleTagId').is(':checked')) {
 					const v = $('#node-input-tagId').val();
@@ -316,7 +309,7 @@
 			function writeNameCache(map) {
 				try {
 					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch {}
+				} catch { }
 			}
 			function rememberName(id, name) {
 				const map = readNameCache();
@@ -328,69 +321,25 @@
 				return Object.keys(map).map((id) => ({ id, name: map[id] }));
 			}
 
-			function refreshTagsSorted(selectedId, fallbackOpts) {
-				const want = selectedId ? String(selectedId) : '';
+			// wrapper that uses shared helper to refresh tags <select>
+			function refreshTags(selected) {
 				const cfgId = klicktippInput.val();
-				const url = `/klicktipp/tags/${self.id}?t=${Date.now()}`;
-
-				$.ajax({ url, method: 'GET', headers: { 'config-id': cfgId }, dataType: 'json' })
-					.done((items) => {
-						let list = [];
-						if (typeof ktIsObject === 'function' && ktIsObject(items)) {
-							list = Object.keys(items).map((id) => {
-								const raw = items[id];
-								const label =
-									typeof ktGetOptionLabel === 'function'
-										? ktGetOptionLabel(raw, url)
-										: String(raw ?? id);
-								return { id, label: String(label) };
-							});
-						} else if (Array.isArray(items)) {
-							list = items.map((it) => {
-								const id = String(it?.id ?? it?.value ?? it?.tag_id ?? it?.tid ?? it);
-								const raw = it?.name ?? it?.label ?? it?.text ?? it;
-								const label =
-									typeof ktGetOptionLabel === 'function'
-										? ktGetOptionLabel(raw, url)
-										: String(raw ?? id);
-								return { id, label: String(label) };
-							});
-						}
-						(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
-							const id = String(f.id);
-							const label = String(f.name ?? f.label ?? id);
-							if (id && !list.some((x) => x.id === id)) list.push({ id, label });
-						});
-						list.sort((a, b) => a.label.localeCompare(b.label));
-						tagDropdown.empty().append(new Option('Select an option', '', !want));
-						list.forEach(({ id, label }) => tagDropdown.append(new Option(label, id)));
-						if (want) tagDropdown.val(want).trigger('change');
-					})
-					.fail(() => {
-						const current = [];
-						tagDropdown.find('option').each(function () {
-							const v = this.value,
-								t = $(this).text();
-							if (v !== '') current.push({ id: v, label: t });
-						});
-						(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
-							const id = String(f.id);
-							const label = String(f.name ?? f.label ?? id);
-							if (!current.some((x) => x.id === id)) current.push({ id, label });
-						});
-						current.sort((a, b) => a.label.localeCompare(b.label));
-						tagDropdown.empty().append(new Option('Select an option', '', !selectedId));
-						current.forEach(({ id, label }) => tagDropdown.append(new Option(label, id)));
-						if (selectedId) tagDropdown.val(String(selectedId)).trigger('change');
-					});
+				if (!cfgId) {
+					// No config yet: just show placeholder / keep current options
+					ktPopulateSelect(tagDropdown, ktCurrentOptions(tagDropdown), selected, 'Select an option');
+					return $.Deferred().resolve().promise(); // no-op promise for call sites
+				}
+				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackAllFromCache());
 			}
 
+			// initial refresh on open
 			const openSelected = self.tagId ? String(self.tagId) : '';
-			setTimeout(() => refreshTagsSorted(openSelected, fallbackAllFromCache()), 800);
+			setTimeout(() => refreshTags(openSelected, fallbackAllFromCache()), 800);
 
+			// also refresh whenever config changes
 			klicktippInput.on('change', function () {
 				const want = tagDropdown.val() || self.tagId || '';
-				refreshTagsSorted(want, fallbackAllFromCache());
+				refreshTags(want, fallbackAllFromCache());
 			});
 
 			/* ===== Create Tag Modal (clean, scoped, single instance) ===== */
@@ -401,7 +350,7 @@
 				if ($stale.length) {
 					try {
 						$stale.dialog('destroy');
-					} catch (e) {}
+					} catch (e) { }
 					$stale.remove();
 				}
 			})();
@@ -409,7 +358,6 @@
 			const $createModal = $('#dialog-form')
 				.find(MODAL_SEL)
 				.dialog({
-					// (appendTo left as default 'body' to keep styles clean)
 					autoOpen: false,
 					modal: true,
 					title: 'Create Tag',
@@ -433,27 +381,17 @@
 								return;
 							}
 
-							$.ajax({
-								url: '/klicktipp/createTag?configId=' + encodeURIComponent(configId),
-								method: 'POST',
-								dataType: 'json',
-								data: { name: name, text: text || '' },
-							})
+							// use shared create helper + id extractor
+							ktCreateTag(configId, name, text)
 								.done(function (resp) {
-									let newId = '';
-									if (Array.isArray(resp) && resp.length) newId = String(resp[0]);
-									else if (resp && Array.isArray(resp.data) && resp.data.length)
-										newId = String(resp.data[0]);
-									else if (resp && typeof resp === 'object')
-										newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
-
+									const newId = ktExtractNewTagId(resp);
 									if (!newId) {
 										RED.notify('Tag created, but no ID returned by API', 'warning');
 										$createModal.dialog('close');
 										return;
 									}
 
-									// insert immediately if not present, then select
+									// insert immediately if missing, then select
 									if (!tagDropdown.find('option[value="' + newId + '"]').length) {
 										$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
 									}
@@ -464,19 +402,14 @@
 									// ensure Deploy button lights up
 									markDirty();
 
-									// refresh sorted list to include it properly
-									setTimeout(() => refreshTagsSorted(newId, fallbackAllFromCache()), 800);
+									// refresh sorted list to include it properly (fallback ensures presence)
+									setTimeout(() => refreshTags(newId, fallbackAllFromCache()), 800);
 
 									RED.notify('Tag created', 'success');
 									$createModal.dialog('close');
 								})
 								.fail(function (err) {
-									const msg =
-										(err.responseJSON && err.responseJSON.error) ||
-										err.responseText ||
-										err.statusText ||
-										'Failed to create tag';
-									RED.notify(msg, 'error');
+									RED.notify(ktAjaxErrorMessage(err, 'Failed to create tag'), 'error');
 								});
 						},
 						Cancel: function () {
@@ -504,7 +437,7 @@
 				if ($m.length) {
 					try {
 						$m.dialog('destroy');
-					} catch (e) {}
+					} catch (e) { }
 					$m.remove();
 				}
 			};

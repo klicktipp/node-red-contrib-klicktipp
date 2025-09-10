@@ -201,7 +201,7 @@
 			function writeNameCache(map) {
 				try {
 					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch {}
+				} catch { }
 			}
 			function rememberName(id, name) {
 				const map = readNameCache();
@@ -215,71 +215,15 @@
 
 			/* ---------- Sorted refresh that merges fallback names ---------- */
 			function refreshTagsSorted(ids, fallbackOpts) {
-				const want = (ids || []).map(String);
-				const cfgId = klicktippInput.val();
-				const url = `/klicktipp/tags/${self.id}?t=${Date.now()}`;
-
-				$.ajax({
-					url: url,
-					method: 'GET',
-					headers: { 'config-id': cfgId },
-					dataType: 'json',
-				})
-					.done((items) => {
-						let list = [];
-
-						if (typeof ktIsObject === 'function' && ktIsObject(items)) {
-							list = Object.keys(items).map((id) => {
-								const rawName = items[id];
-								const label =
-									typeof ktGetOptionLabel === 'function'
-										? ktGetOptionLabel(rawName, url)
-										: String(rawName ?? id);
-								return { id, label: String(label) };
-							});
-						} else if (Array.isArray(items)) {
-							list = items.map((it) => {
-								const id = String(it?.id ?? it?.value ?? it?.tag_id ?? it?.tid ?? it);
-								const rawName = it?.name ?? it?.label ?? it?.text ?? it;
-								const label =
-									typeof ktGetOptionLabel === 'function'
-										? ktGetOptionLabel(rawName, url)
-										: String(rawName ?? id);
-								return { id, label: String(label) };
-							});
-						}
-
-						// merge *all* cached fallbacks so previously created tags appear even if server cache is stale
-						(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
-							const id = String(f.id);
-							const label = String(f.name ?? f.label ?? id);
-							if (id && !list.some((x) => x.id === id)) list.push({ id, label });
-						});
-
-						list.sort((a, b) => a.label.localeCompare(b.label));
-						tagDropdown.empty().append(new Option('Select an option', '', !want.length));
-						list.forEach(({ id, label }) => tagDropdown.append(new Option(label, id)));
-						tagDropdown.val(want).trigger('change');
-					})
-					.fail(() => {
-						// fallback: keep current options; ensure fallbacks exist and sort
-						const current = [];
-						tagDropdown.find('option').each(function () {
-							const v = this.value;
-							const t = $(this).text();
-							if (v !== '') current.push({ id: v, label: t });
-						});
-						(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
-							const id = String(f.id);
-							const label = String(f.name ?? f.label ?? id);
-							if (!current.some((x) => x.id === id)) current.push({ id, label });
-						});
-						current.sort((a, b) => a.label.localeCompare(b.label));
-						const wantStr = (ids || []).map(String);
-						tagDropdown.empty().append(new Option('Select an option', '', !wantStr.length));
-						current.forEach(({ id, label }) => tagDropdown.append(new Option(label, id)));
-						tagDropdown.val(wantStr).trigger('change');
-					});
+				const selected = (ids || []).map(String);
+				const cfgId = $('#node-input-klicktipp').val();
+				if (!cfgId) {
+					// No config yet: just keep whatever is in the dropdown
+					ktPopulateSelect(tagDropdown, ktCurrentOptions(tagDropdown), selected, 'Select an option');
+					// return a resolved promise so callers can .done/.fail safely
+					return $.Deferred().resolve().promise();
+				}
+				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackOpts);
 			}
 
 			/* ---------- Always reload on open (and shortly after) ---------- */
@@ -307,6 +251,7 @@
 							RED.notify('Please enter a tag name', 'error');
 							return;
 						}
+
 						const configId = $('#node-input-klicktipp').val();
 						if (!configId) {
 							RED.notify('Missing KlickTipp Config', 'error');
@@ -317,20 +262,9 @@
 							return;
 						}
 
-						$.ajax({
-							url: '/klicktipp/createTag?configId=' + encodeURIComponent(configId),
-							method: 'POST',
-							dataType: 'json',
-							data: { name: name, text: text || '' },
-						})
+						ktCreateTag(configId, name, text)
 							.done(function (resp) {
-								let newId = '';
-								if (Array.isArray(resp) && resp.length) newId = String(resp[0]);
-								else if (resp && Array.isArray(resp.data) && resp.data.length)
-									newId = String(resp.data[0]);
-								else if (resp && typeof resp === 'object')
-									newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
-
+								const newId = ktExtractNewTagId(resp);
 								if (!newId) {
 									RED.notify('Tag created, but no ID returned by API', 'warning');
 									$createModal.dialog('close');
@@ -348,7 +282,7 @@
 								tagDropdown.val(nextVal).trigger('change');
 								self.tagId = nextVal.map((v) => Number(v));
 
-								// remember for future opens (so it won't disappear)
+								// remember for future opens
 								rememberName(newId, name);
 
 								// refresh to include in sorted list
@@ -357,13 +291,8 @@
 								RED.notify('Tag created', 'success');
 								$createModal.dialog('close');
 							})
-							.fail(function (err) {
-								const msg =
-									(err.responseJSON && err.responseJSON.error) ||
-									err.responseText ||
-									err.statusText ||
-									'Failed to create tag';
-								RED.notify(msg, 'error');
+							.fail(function (jq) {
+								RED.notify(ktAjaxErrorMessage(jq, 'Failed to create tag'), 'error');
 							});
 					},
 					Cancel: function () {
