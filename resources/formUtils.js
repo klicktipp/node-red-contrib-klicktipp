@@ -266,7 +266,9 @@ function ktPopulateContactFields($container, defaultValues = {}, configId, actio
 
 				// add the placeholder once
 				if (!$list.find('.kt-no-results').length) {
-					$('<li class="kt-no-results" style="font-style:italic;color:#888"pointer-events:none;cursor:default;">No results</li>')
+					$(
+						'<li class="kt-no-results" style="font-style:italic;color:#888"pointer-events:none;cursor:default;">No results</li>',
+					)
 						.appendTo($list)
 						.hide();
 				}
@@ -867,4 +869,163 @@ function ktSaveDualInput(
 		nodeRef[manualKey] = '';
 		nodeRef[valueKey] = selectVal !== '' ? castFn(selectVal) : '';
 	}
+}
+
+/* ================= AJAX helpers ================= */
+
+/**
+ * GET JSON convenience wrapper around $.ajax.
+ * @param {string} url - Endpoint to request.
+ * @param {Object<string,string>=} headers - Optional headers map.
+ * @returns {JQuery.jqXHR<any>} jqXHR promise resolving to parsed JSON.
+ */
+function ktAjaxGetJSON(url, headers) {
+	return $.ajax({ url, method: 'GET', dataType: 'json', headers: headers || {} });
+}
+
+/**
+ * POST JSON (form-encoded or object) convenience wrapper around $.ajax.
+ * @param {string} url - Endpoint to request.
+ * @param {Object<string,any>=} data - Payload to send (passed to $.ajax `data`).
+ * @param {Object<string,string>=} headers - Optional headers map.
+ * @returns {JQuery.jqXHR<any>} jqXHR promise resolving to parsed JSON.
+ */
+function ktAjaxPostJSON(url, data, headers) {
+	return $.ajax({
+		url,
+		method: 'POST',
+		dataType: 'json',
+		data: data || {},
+		headers: headers || {},
+	});
+}
+
+/**
+ * Extracts a human-readable error message from a jqXHR-like object.
+ * @param {any} jqXHR - jQuery jqXHR or error-like object.
+ * @param {string=} fallback - Message to use if nothing else is available.
+ * @returns {string} Best-effort error message.
+ */
+function ktAjaxErrorMessage(jqXHR, fallback) {
+	return (
+		(jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.error) ||
+		jqXHR?.responseText ||
+		jqXHR?.statusText ||
+		fallback ||
+		'Request failed'
+	);
+}
+
+/* ============= Tag list normalization helpers ============= */
+
+/**
+ * Normalizes various backend tag payload shapes into [{id,label}] list.
+ * Supports object maps and arrays of objects/ids.
+ * @param {Object<string, any>|Array<any>} items - Raw items from backend.
+ * @param {string} url - Source URL (used by ktGetOptionLabel if present).
+ * @returns {Array<{id:string,label:string}>} Normalized list.
+ */
+function ktNormalizeTagItems(items, url) {
+	if (items && typeof items === 'object' && !Array.isArray(items)) {
+		return Object.entries(items).map(([id, raw]) => {
+			const label =
+				typeof ktGetOptionLabel === 'function' ? ktGetOptionLabel(raw, url) : String(raw ?? id);
+			return { id: String(id), label: String(label) };
+		});
+	}
+	return [];
+}
+
+/**
+ * Merges fallback options into a tag list and sorts A→Z by label.
+ * @param {Array<{id:string,label:string}>} list - Primary list.
+ * @param {Array<{id:string,label?:string,name?:string}>=} fallbackOpts - Extra items to ensure presence.
+ * @returns {Array<{id:string,label:string}>} Merged & sorted list.
+ */
+function ktMergeSortTagList(list, fallbackOpts) {
+	const out = list.slice();
+	(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
+		const id = String(f.id);
+		const label = String(f.name ?? f.label ?? id);
+		if (id && !out.some((x) => x.id === id)) out.push({ id, label });
+	});
+	out.sort((a, b) => a.label.localeCompare(b.label));
+	return out;
+}
+
+/**
+ * Populates a <select> with options and selects provided value(s).
+ * @param {JQuery} $select - Target jQuery-wrapped <select>.
+ * @param {Array<{id:string,label:string}>} options - Options to render.
+ * @param {string|string[]=} selected - Current selection (id or ids).
+ * @param {string=} placeholderText - First option text when nothing is selected.
+ * @returns {void}
+ */
+function ktPopulateSelect($select, options, selected, placeholderText) {
+	const want = Array.isArray(selected) ? selected.map(String) : selected ? [String(selected)] : [];
+	$select.empty().append(new Option(placeholderText || 'Select an option', '', want.length === 0));
+	options.forEach(({ id, label }) => $select.append(new Option(label, id)));
+	if (want.length) $select.val(want).trigger('change');
+}
+
+/**
+ * Reads current non-empty options from a <select> into [{id,label}].
+ * @param {JQuery} $select - Source jQuery-wrapped <select>.
+ * @returns {Array<{id:string,label:string}>} Extracted options.
+ */
+function ktCurrentOptions($select) {
+	const cur = [];
+	$select.find('option').each(function () {
+		const v = this.value,
+			t = $(this).text();
+		if (v !== '') cur.push({ id: v, label: t });
+	});
+	return cur;
+}
+
+/**
+ * High-level helper to refresh a tag <select> from backend with graceful fallback.
+ * Fetches, normalizes, merges fallbacks, sorts, and repopulates the select.
+ * @param {JQuery} $dropdown - Target <select>.
+ * @param {string|number} nodeId - Current node id (for cache-busting URL).
+ * @param {string} configId - KlickTipp config node id (sent in headers).
+ * @param {string|string[]=} selected - Id(s) to set as selected.
+ * @param {Array<{id:string,label?:string,name?:string}>=} fallbackOpts - Items to include if server is stale.
+ * @returns {JQuery.jqXHR<any>} jqXHR from the GET call (useful for chaining).
+ */
+function ktRefreshTagsSelect($dropdown, nodeId, configId, selected, fallbackOpts) {
+	const url = `/klicktipp/tags/${nodeId}?t=${Date.now()}`;
+	return ktAjaxGetJSON(url, { 'config-id': configId })
+		.done((items) => {
+			const list = ktMergeSortTagList(ktNormalizeTagItems(items, url), fallbackOpts);
+			ktPopulateSelect($dropdown, list, selected, 'Select an option');
+		})
+		.fail(() => {
+			const merged = ktMergeSortTagList(ktCurrentOptions($dropdown), fallbackOpts);
+			ktPopulateSelect($dropdown, merged, selected, 'Select an option');
+		});
+}
+
+/* ================= Create tag helpers ================= */
+
+/**
+ * Extracts newly created tag id from heterogeneous API responses.
+ * @param {any} resp - API response (array, object with data[], or object with id/tag_id/tid).
+ * @returns {string} The new tag id, or '' if not found.
+ */
+function ktExtractNewTagId(resp) {
+	if (Array.isArray(resp) && resp.length) return String(resp[0]);
+	return '';
+}
+
+/**
+ * Calls backend to create a tag for a given config.
+ * @param {string} configId - KlickTipp config node id.
+ * @param {string} name - Tag name (required).
+ * @param {string=} text - Tag description (optional).
+ * @returns {JQuery.jqXHR<any>} jqXHR promise resolving to create-tag response.
+ */
+function ktCreateTag(configId, name, text) {
+	const url = '/klicktipp/createTag?configId=' + encodeURIComponent(configId);
+	return ktAjaxPostJSON(url, { name: name, text: text || '' });
 }

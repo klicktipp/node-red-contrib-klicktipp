@@ -18,17 +18,51 @@
 		<input type="text" id="node-input-email" placeholder="Enter email address (required)">
 		<input type="hidden" id="node-input-emailType">
 	</div>
+
+	<!-- Tag row with dropdown/manual + Create Tag (+) button -->
 	<div class="form-row" style="display: flex; align-items: center;">
 		<label style="flex: 0 0 auto;" for="node-input-tagId">
 			<i class="fa fa-tag"></i> <span>Tag IDs</span>
 		</label>
-		<div style="flex: 1; display: flex; margin-left: 4px;">
+
+		<!-- NOTE: added align-items:center to prevent stretch -->
+		<div style="flex: 1; display: flex; margin-left: 4px; gap: 10px; align-items: center;">
+			<!-- Dropdown (multi) -->
 			<select id="node-input-tagId" multiple style="height: auto; width: 100%;"></select>
+
+			<!-- Manual entry -->
 			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag IDs (comma separated)">
+
+			<!-- Create Tag button (fixed height, centered icon) -->
+			<button
+				id="btn-create-tag"
+				type="button"
+				title="Create new tag"
+				style="flex: 0 0 auto; height: 28px; min-height: 28px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center;"
+			>
+				<i class="fa fa-plus"></i>
+			</button>
 		</div>
-		<div style="display: flex; flex-direction: row; align-items: center; width: 50px; margin-left: 10px;">
-			<div>Map</div>
-			<input style="margin-top: 0 !important;" type="checkbox" id="node-input-toggleFieldType">
+
+		<div style="display: flex; flex-direction: row; align-items: center; width: 70px; margin-left: 10px;">
+			<div style="margin: 0 6px;">Map</div>
+			<input style="margin-top: 0 !important; width: 20%" type="checkbox" id="node-input-toggleFieldType">
+		</div>
+	</div>
+
+	<!-- Create Tag Modal -->
+	<div id="create-tag-modal" title="Create Tag" style="display: none;">
+		<div class="form-row" style="display:flex; align-items:center; margin-bottom:8px;">
+			<label for="create-tag-name" style="padding-right: 8px; white-space: nowrap;">
+				<i class="fa fa-tag"></i> <span>Name</span>
+			</label>
+			<input type="text" id="create-tag-name" placeholder="Enter name (required)" style="flex:1;">
+		</div>
+		<div class="form-row" style="display:flex; align-items:center;">
+			<label for="create-tag-text" style="padding-right: 8px; white-space: nowrap;">
+				<i class="fa fa-sticky-note"></i> <span>Description</span>
+			</label>
+			<input type="text" id="create-tag-text" placeholder="Enter description" style="flex:1;">
 		</div>
 	</div>
 </script>
@@ -112,63 +146,186 @@
 			const tagDropdown = $('#node-input-tagId');
 			const tagManual = $('#node-input-tagIdManual');
 			const toggle = $('#node-input-toggleFieldType');
+			const btnCreateTag = $('#btn-create-tag');
 
-			// Always bind the dropdown so that its options load regardless of UI state.
-			ktBindDropdownToInput(
-				klicktippInput,
-				tagDropdown,
-				self.tagId,
-				self.klicktipp,
-				`/klicktipp/tags/${self.id}`,
-			);
+			/* ---------- UI helpers ---------- */
+			function setCreateBtnEnabled(enabled) {
+				btnCreateTag
+					.prop('disabled', !enabled)
+					.css('opacity', enabled ? 1 : 0.5)
+					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
+			}
 
-			// Function to update the display state.
 			function updateDisplay() {
 				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
 				toggle.prop('checked', isManual);
-
 				if (isManual) {
 					tagManual.show();
 					tagDropdown.hide();
 					tagManual.val(self.manualTagId);
+					setCreateBtnEnabled(false);
 				} else {
 					tagManual.hide();
 					tagDropdown.show();
+					setCreateBtnEnabled(true);
 				}
 			}
 
-			// Bind the toggle change event and update internal state.
 			toggle.on('change', function () {
 				self.manualFieldEnabled = toggle.prop('checked');
 				updateDisplay();
 			});
 
-			// Bind input and change events on the KlickTipp config field.
-			klicktippInput.on('input change', updateDisplay);
-
-			// Use a MutationObserver to catch any re-rendering in the dialog.
-			const observer = new MutationObserver((mutationsList, observer) => {
-				updateDisplay();
-			});
 			const container = $('#dialog-form')[0];
 			if (container) {
+				const observer = new MutationObserver(() => updateDisplay());
 				observer.observe(container, { childList: true, subtree: true });
 			}
 
-			// Enforce the UI state immediately and after a 200ms delay.
+			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 			updateDisplay();
 			setTimeout(updateDisplay, 200);
 
-			// Initialize the typed input for the email field.
-			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
+			/* ---------- Name cache (per node+config) ---------- */
+			function cacheKey() {
+				const cfg = klicktippInput.val() || 'none';
+				return `kt_tag_names:${self.id}:${cfg}`;
+			}
+			function readNameCache() {
+				try {
+					return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
+				} catch {
+					return {};
+				}
+			}
+			function writeNameCache(map) {
+				try {
+					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
+				} catch {}
+			}
+			function rememberName(id, name) {
+				const map = readNameCache();
+				map[String(id)] = String(name);
+				writeNameCache(map);
+			}
+			function fallbackAllFromCache() {
+				const map = readNameCache();
+				return Object.keys(map).map((id) => ({ id, name: map[id] }));
+			}
+
+			/* ---------- Sorted refresh that merges fallback names ---------- */
+			function refreshTagsSorted(ids, fallbackOpts) {
+				const selected = (ids || []).map(String);
+				const cfgId = $('#node-input-klicktipp').val();
+				if (!cfgId) {
+					// No config yet: just keep whatever is in the dropdown
+					ktPopulateSelect(
+						tagDropdown,
+						ktCurrentOptions(tagDropdown),
+						selected,
+						'Select an option',
+					);
+					// return a resolved promise so callers can .done/.fail safely
+					return $.Deferred().resolve().promise();
+				}
+				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackOpts);
+			}
+
+			/* ---------- Always reload on open (and shortly after) ---------- */
+			const openWant = (self.tagId || []).map(Number);
+			// refresh to beat races/caches
+			setTimeout(() => refreshTagsSorted(openWant, fallbackAllFromCache()), 800);
+
+			/* ---------- Also reload whenever the config changes ---------- */
+			klicktippInput.on('change', function () {
+				const want = tagDropdown.val() || self.tagId || [];
+				refreshTagsSorted(want, fallbackAllFromCache());
+			});
+
+			/* ---------- Create Tag Modal ---------- */
+			const $createModal = $('#create-tag-modal').dialog({
+				autoOpen: false,
+				modal: true,
+				title: 'Create Tag',
+				width: 420,
+				buttons: {
+					Create: function () {
+						const name = $createModal.find('#create-tag-name').val().trim();
+						const text = $createModal.find('#create-tag-text').val().trim();
+						if (!name) {
+							RED.notify('Please enter a tag name', 'error');
+							return;
+						}
+
+						const configId = $('#node-input-klicktipp').val();
+						if (!configId) {
+							RED.notify('Missing KlickTipp Config', 'error');
+							return;
+						}
+						if (toggle.prop('checked')) {
+							RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
+							return;
+						}
+
+						ktCreateTag(configId, name, text)
+							.done(function (resp) {
+								const newId = ktExtractNewTagId(resp);
+								if (!newId) {
+									RED.notify('Tag created, but no ID returned by API', 'warning');
+									$createModal.dialog('close');
+									return;
+								}
+
+								// show immediately
+								if (!tagDropdown.find('option[value="' + newId + '"]').length) {
+									$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
+								}
+
+								// select & persist
+								const current = tagDropdown.val() || [];
+								const nextVal = Array.from(new Set([].concat(current || [], [newId])));
+								tagDropdown.val(nextVal).trigger('change');
+								self.tagId = nextVal.map((v) => Number(v));
+
+								// remember for future opens
+								rememberName(newId, name);
+
+								// refresh to include in sorted list
+								setTimeout(() => refreshTagsSorted(nextVal, fallbackAllFromCache()), 800);
+
+								RED.notify('Tag created', 'success');
+								$createModal.dialog('close');
+							})
+							.fail(function (jq) {
+								RED.notify(ktAjaxErrorMessage(jq, 'Failed to create tag'), 'error');
+							});
+					},
+					Cancel: function () {
+						$createModal.dialog('close');
+					},
+				},
+				open: function () {
+					$createModal.find('#create-tag-name').val('');
+					$createModal.find('#create-tag-text').val('');
+					setTimeout(() => $createModal.find('#create-tag-name').trigger('focus'), 50);
+				},
+			});
+
+			btnCreateTag.on('click', function () {
+				if (toggle.prop('checked')) {
+					RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
+					return;
+				}
+				$createModal.dialog('open');
+			});
 		},
 		oneditsave: function () {
 			const manualEnabled = $('#node-input-toggleFieldType').is(':checked');
 			this.manualFieldEnabled = manualEnabled;
+
 			if (manualEnabled) {
 				const manualVal = $('#node-input-tagIdManual').val();
 				this.manualTagId = manualVal;
-				// Split the input string by comma, trim, convert each to a number, and filter out NaN values.
 				this.tagId = manualVal
 					.split(',')
 					.map((s) => Number(s.trim()))
