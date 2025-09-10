@@ -106,15 +106,15 @@ module.exports = function (RED) {
 			}
 			const configId = req.query.configId;
 			if (!configId) {
-				return res.status(400).json({ error: 'Missing config node id' });
+				return res.status(500).json({ error: 'Missing config node id' });
 			}
 			const configNode = RED.nodes.getNode(configId);
 			if (!configNode) {
-				return res.status(400).json({ error: 'Invalid config node' });
+				return res.status(500).json({ error: 'Invalid config node' });
 			}
 			const { username, password } = configNode.credentials || {};
 			if (!username || !password) {
-				return res.status(400).json({ error: 'Missing username or password in config node' });
+				return res.status(401).json({ error: 'Missing username or password in config node' });
 			}
 
 			let sessionData;
@@ -127,7 +127,7 @@ module.exports = function (RED) {
 						sessionName: loginResponse.data.session_name,
 					};
 				} else {
-					return res.status(400).json({ error: 'Invalid credentials or session ID missing' });
+					return res.status(401).json({ error: 'Invalid credentials or session ID missing' });
 				}
 			} catch (loginError) {
 				return res.status(500).json({ error: 'Login request failed: ' + loginError.message });
