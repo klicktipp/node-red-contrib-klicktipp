@@ -150,7 +150,8 @@
 
 			/* ---------- UI helpers ---------- */
 			function setCreateBtnEnabled(enabled) {
-				btnCreateTag.prop('disabled', !enabled)
+				btnCreateTag
+					.prop('disabled', !enabled)
 					.css('opacity', enabled ? 1 : 0.5)
 					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
 			}
@@ -191,11 +192,16 @@
 				return `kt_tag_names:${self.id}:${cfg}`;
 			}
 			function readNameCache() {
-				try { return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {}; }
-				catch { return {}; }
+				try {
+					return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
+				} catch {
+					return {};
+				}
 			}
 			function writeNameCache(map) {
-				try { localStorage.setItem(cacheKey(), JSON.stringify(map || {})); } catch { }
+				try {
+					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
+				} catch {}
 			}
 			function rememberName(id, name) {
 				const map = readNameCache();
@@ -204,7 +210,7 @@
 			}
 			function fallbackAllFromCache() {
 				const map = readNameCache();
-				return Object.keys(map).map(id => ({ id, name: map[id] }));
+				return Object.keys(map).map((id) => ({ id, name: map[id] }));
 			}
 
 			/* ---------- Sorted refresh that merges fallback names ---------- */
@@ -225,18 +231,20 @@
 						if (typeof ktIsObject === 'function' && ktIsObject(items)) {
 							list = Object.keys(items).map((id) => {
 								const rawName = items[id];
-								const label = (typeof ktGetOptionLabel === 'function')
-									? ktGetOptionLabel(rawName, url)
-									: String(rawName ?? id);
+								const label =
+									typeof ktGetOptionLabel === 'function'
+										? ktGetOptionLabel(rawName, url)
+										: String(rawName ?? id);
 								return { id, label: String(label) };
 							});
 						} else if (Array.isArray(items)) {
 							list = items.map((it) => {
 								const id = String(it?.id ?? it?.value ?? it?.tag_id ?? it?.tid ?? it);
 								const rawName = it?.name ?? it?.label ?? it?.text ?? it;
-								const label = (typeof ktGetOptionLabel === 'function')
-									? ktGetOptionLabel(rawName, url)
-									: String(rawName ?? id);
+								const label =
+									typeof ktGetOptionLabel === 'function'
+										? ktGetOptionLabel(rawName, url)
+										: String(rawName ?? id);
 								return { id, label: String(label) };
 							});
 						}
@@ -295,9 +303,15 @@
 					Create: function () {
 						const name = $createModal.find('#create-tag-name').val().trim();
 						const text = $createModal.find('#create-tag-text').val().trim();
-						if (!name) { RED.notify('Please enter a tag name', 'error'); return; }
+						if (!name) {
+							RED.notify('Please enter a tag name', 'error');
+							return;
+						}
 						const configId = $('#node-input-klicktipp').val();
-						if (!configId) { RED.notify('Missing KlickTipp Config', 'error'); return; }
+						if (!configId) {
+							RED.notify('Missing KlickTipp Config', 'error');
+							return;
+						}
 						if (toggle.prop('checked')) {
 							RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
 							return;
@@ -307,13 +321,15 @@
 							url: '/klicktipp/createTag?configId=' + encodeURIComponent(configId),
 							method: 'POST',
 							dataType: 'json',
-							data: { name: name, text: text || '' }
+							data: { name: name, text: text || '' },
 						})
 							.done(function (resp) {
 								let newId = '';
 								if (Array.isArray(resp) && resp.length) newId = String(resp[0]);
-								else if (resp && Array.isArray(resp.data) && resp.data.length) newId = String(resp.data[0]);
-								else if (resp && typeof resp === 'object') newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
+								else if (resp && Array.isArray(resp.data) && resp.data.length)
+									newId = String(resp.data[0]);
+								else if (resp && typeof resp === 'object')
+									newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
 
 								if (!newId) {
 									RED.notify('Tag created, but no ID returned by API', 'warning');
@@ -342,18 +358,23 @@
 								$createModal.dialog('close');
 							})
 							.fail(function (err) {
-								const msg = (err.responseJSON && err.responseJSON.error) ||
-									err.responseText || err.statusText || 'Failed to create tag';
+								const msg =
+									(err.responseJSON && err.responseJSON.error) ||
+									err.responseText ||
+									err.statusText ||
+									'Failed to create tag';
 								RED.notify(msg, 'error');
 							});
 					},
-					Cancel: function () { $createModal.dialog('close'); },
+					Cancel: function () {
+						$createModal.dialog('close');
+					},
 				},
 				open: function () {
 					$createModal.find('#create-tag-name').val('');
 					$createModal.find('#create-tag-text').val('');
 					setTimeout(() => $createModal.find('#create-tag-name').trigger('focus'), 50);
-				}
+				},
 			});
 
 			btnCreateTag.on('click', function () {

@@ -9,19 +9,19 @@
 		<input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 
-  <div class="form-row">
-    <label for="node-input-identifierType">
-      <i class="fa fa-question-circle"></i>
-      <span>Identify Contact By</span>
-    </label>
-    <select id="node-input-identifierType">
-      <option value="id">Contact ID</option>
-      <option value="email">Email address</option>
-    </select>
-  </div>
+	 <div class="form-row">
+	   <label for="node-input-identifierType">
+	     <i class="fa fa-question-circle"></i>
+	     <span>Identify Contact By</span>
+	   </label>
+	   <select id="node-input-identifierType">
+	     <option value="id">Contact ID</option>
+	     <option value="email">Email address</option>
+	   </select>
+	 </div>
 
 	<!-- ► Contact-ID input (visible when NOT searching by email)  -->
-	<div class="form-row id-row">  
+	<div class="form-row id-row">
 		<label for="node-input-subscriberId"><i class="fa fa-hashtag"></i> <span>Contact ID</span></label>
 		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 		<input type="hidden" id="node-input-subscriberIdType">
@@ -40,7 +40,7 @@
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-    <dt>msg.identifierType <span class="property-type">string</span></dt>
+	   <dt>msg.identifierType <span class="property-type">string</span></dt>
 		<dd>
 			How the contact should be found:
 			<ul>
@@ -119,7 +119,9 @@
 		icon: 'klicktipp.svg',
 		paletteLabel: 'Delete Contact',
 		labelStyle: 'klicktipp_label_style',
-		label() { return this.name || 'Delete Contact'; },
+		label() {
+			return this.name || 'Delete Contact';
+		},
 
 		/* --------------------------------------------------------- */
 		onadd() {
@@ -131,17 +133,25 @@
 			const node = this;
 
 			//  initialise typed-inputs (unchanged)
-			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType',
-				'num', ['num', 'msg', 'flow', 'global']);
-			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType',
-				'str', ['str', 'msg', 'flow', 'global']);
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
+				'num',
+				'msg',
+				'flow',
+				'global',
+			]);
+			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType', 'str', [
+				'str',
+				'msg',
+				'flow',
+				'global',
+			]);
 
 			// rows we want to toggle
 			const idRow = $('#node-input-subscriberId').closest('.form-row');
 			const emailRow = $('#node-input-emailAddress').closest('.form-row');
 
 			function toggleRows() {
-				const mode = $('#node-input-identifierType').val();   // "id" | "email"
+				const mode = $('#node-input-identifierType').val(); // "id" | "email"
 				idRow.toggle(mode === 'id');
 				emailRow.toggle(mode === 'email');
 			}
@@ -154,6 +164,6 @@
 
 			// show correct row immediately
 			toggleRows();
-		}
+		},
 	});
 </script>

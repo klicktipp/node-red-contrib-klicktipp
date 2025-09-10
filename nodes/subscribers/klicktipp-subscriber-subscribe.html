@@ -121,7 +121,10 @@
 			klicktipp: { type: 'klicktipp-config', required: true },
 			email: { value: 'payload.email', validate: RED.validators.typedInput('emailType') },
 			emailType: { value: 'msg' },
-			smsNumber: { value: 'payload.smsNumber', validate: RED.validators.typedInput('smsNumberType') },
+			smsNumber: {
+				value: 'payload.smsNumber',
+				validate: RED.validators.typedInput('smsNumberType'),
+			},
 			smsNumberType: { value: 'msg' },
 			// Opt-in process
 			listId: { value: '', validate: optionalNumberValidator },
@@ -133,7 +136,9 @@
 			manualTagEnabled: { value: false },
 			fields: {
 				value: 'payload.fields',
-				validate: function (v) { return v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v); },
+				validate: function (v) {
+					return v === '' || v === undefined || RED.validators.typedInput('fieldsType')(v);
+				},
 			},
 			fieldsType: { value: 'msg' },
 			fieldsData: { value: {} },
@@ -142,11 +147,15 @@
 		inputs: 1,
 		outputs: 1,
 		icon: 'klicktipp.svg',
-		label: function () { return this.name || 'Add or Update Contact'; },
+		label: function () {
+			return this.name || 'Add or Update Contact';
+		},
 		labelStyle: 'klicktipp_label_style',
 		paletteLabel: 'Add or Update Contact',
 
-		onadd: function () { ktPopulateConfig(this); },
+		onadd: function () {
+			ktPopulateConfig(this);
+		},
 
 		oneditprepare: function () {
 			var self = this;
@@ -164,45 +173,107 @@
 			const tagToggle = $('#node-input-toggleTagId');
 			const btnCreateTag = $('#btn-create-tag-subscribe');
 
-			function markDirty() { try { RED.nodes.dirty(true); } catch (e) { } }
+			function markDirty() {
+				try {
+					RED.nodes.dirty(true);
+				} catch (e) {}
+			}
 
 			/* typed inputs & contact fields */
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
 			ktInitializeTypedInput('#node-input-smsNumber', '#node-input-smsNumberType', 'str', ['str']);
-			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', ['json', KT_CUSTOM_CONTACT_FIELDS_TYPE]);
+			ktInitializeTypedInput('#node-input-fields', '#node-input-fieldsType', 'msg', [
+				'json',
+				KT_CUSTOM_CONTACT_FIELDS_TYPE,
+			]);
 
-			ktInitializeContactFieldsSection(fieldsInput, this.contactFieldsSection, klicktippInput, this.fieldsData, this.id);
-			ktInitializeUserSelectHandler(klicktippInput, '#node-input-fieldsType', this.contactFieldsSection, this.fieldsData, this.id);
+			ktInitializeContactFieldsSection(
+				fieldsInput,
+				this.contactFieldsSection,
+				klicktippInput,
+				this.fieldsData,
+				this.id,
+			);
+			ktInitializeUserSelectHandler(
+				klicktippInput,
+				'#node-input-fieldsType',
+				this.contactFieldsSection,
+				this.fieldsData,
+				this.id,
+			);
 
-			this.__cleanupCreateModal = () => { };
+			this.__cleanupCreateModal = () => {};
 
 			/* listId dual input */
 			function updateListDisplay() {
 				const isManual = self.manualListEnabled === true || self.manualListEnabled === 'true';
 				listToggle.prop('checked', isManual);
-				if (isManual) { listIdManual.show(); listIdDropdown.hide(); listIdManual.val(self.manualListId); }
-				else { listIdManual.hide(); listIdDropdown.show(); }
+				if (isManual) {
+					listIdManual.show();
+					listIdDropdown.hide();
+					listIdManual.val(self.manualListId);
+				} else {
+					listIdManual.hide();
+					listIdDropdown.show();
+				}
 			}
-			listToggle.on('change', function () { self.manualListEnabled = listToggle.prop('checked'); updateListDisplay(); markDirty(); });
-			ktBindDropdownToInput(klicktippInput, listIdDropdown, self.listId, self.klicktipp, `/klicktipp/subscription-processes/${self.id}`);
-			listIdManual.on('input', function () { self.manualListId = $(this).val(); markDirty(); });
-			updateListDisplay(); setTimeout(updateListDisplay, 200);
+			listToggle.on('change', function () {
+				self.manualListEnabled = listToggle.prop('checked');
+				updateListDisplay();
+				markDirty();
+			});
+			ktBindDropdownToInput(
+				klicktippInput,
+				listIdDropdown,
+				self.listId,
+				self.klicktipp,
+				`/klicktipp/subscription-processes/${self.id}`,
+			);
+			listIdManual.on('input', function () {
+				self.manualListId = $(this).val();
+				markDirty();
+			});
+			updateListDisplay();
+			setTimeout(updateListDisplay, 200);
 
 			/* tagId dual input (+button enable/disable) */
 			function setCreateBtnEnabled(enabled) {
-				btnCreateTag.prop('disabled', !enabled).css('opacity', enabled ? 1 : 0.5)
+				btnCreateTag
+					.prop('disabled', !enabled)
+					.css('opacity', enabled ? 1 : 0.5)
 					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
 			}
 			function updateTagDisplay() {
 				const isManual = self.manualTagEnabled === true || self.manualTagEnabled === 'true';
 				tagToggle.prop('checked', isManual);
-				if (isManual) { tagManual.show(); tagDropdown.hide(); tagManual.val(self.manualTagId); setCreateBtnEnabled(false); }
-				else { tagManual.hide(); tagDropdown.show(); setCreateBtnEnabled(true); }
+				if (isManual) {
+					tagManual.show();
+					tagDropdown.hide();
+					tagManual.val(self.manualTagId);
+					setCreateBtnEnabled(false);
+				} else {
+					tagManual.hide();
+					tagDropdown.show();
+					setCreateBtnEnabled(true);
+				}
 			}
-			tagToggle.on('change', function () { self.manualTagEnabled = tagToggle.prop('checked'); updateTagDisplay(); markDirty(); });
-			tagManual.on('input', function () { self.manualTagId = $(this).val(); markDirty(); });
+			tagToggle.on('change', function () {
+				self.manualTagEnabled = tagToggle.prop('checked');
+				updateTagDisplay();
+				markDirty();
+			});
+			tagManual.on('input', function () {
+				self.manualTagId = $(this).val();
+				markDirty();
+			});
 
-			ktBindDropdownToInput(klicktippInput, tagDropdown, self.tagId, self.klicktipp, `/klicktipp/tags/${self.id}`);
+			ktBindDropdownToInput(
+				klicktippInput,
+				tagDropdown,
+				self.tagId,
+				self.klicktipp,
+				`/klicktipp/tags/${self.id}`,
+			);
 
 			// mark dirty when user selects a different tag
 			tagDropdown.on('change', function () {
@@ -213,20 +284,49 @@
 				}
 			});
 
-			updateTagDisplay(); setTimeout(updateTagDisplay, 200);
+			updateTagDisplay();
+			setTimeout(updateTagDisplay, 200);
 
 			/* keep display in sync */
-			function updateDisplay() { updateListDisplay(); updateTagDisplay(); }
+			function updateDisplay() {
+				updateListDisplay();
+				updateTagDisplay();
+			}
 			klicktippInput.on('input change', updateDisplay);
 			const container = $('#dialog-form')[0];
-			if (container) { new MutationObserver(() => updateDisplay()).observe(container, { childList: true, subtree: true }); }
+			if (container) {
+				new MutationObserver(() => updateDisplay()).observe(container, {
+					childList: true,
+					subtree: true,
+				});
+			}
 
 			/* ===== Tag list: name cache + sorted refresh ===== */
-			function cacheKey() { const cfg = klicktippInput.val() || 'none'; return `kt_tag_names:${self.id}:${cfg}`; }
-			function readNameCache() { try { return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {}; } catch { return {}; } }
-			function writeNameCache(map) { try { localStorage.setItem(cacheKey(), JSON.stringify(map || {})); } catch { } }
-			function rememberName(id, name) { const map = readNameCache(); map[String(id)] = String(name); writeNameCache(map); }
-			function fallbackAllFromCache() { const map = readNameCache(); return Object.keys(map).map(id => ({ id, name: map[id] })); }
+			function cacheKey() {
+				const cfg = klicktippInput.val() || 'none';
+				return `kt_tag_names:${self.id}:${cfg}`;
+			}
+			function readNameCache() {
+				try {
+					return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
+				} catch {
+					return {};
+				}
+			}
+			function writeNameCache(map) {
+				try {
+					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
+				} catch {}
+			}
+			function rememberName(id, name) {
+				const map = readNameCache();
+				map[String(id)] = String(name);
+				writeNameCache(map);
+			}
+			function fallbackAllFromCache() {
+				const map = readNameCache();
+				return Object.keys(map).map((id) => ({ id, name: map[id] }));
+			}
 
 			function refreshTagsSorted(selectedId, fallbackOpts) {
 				const want = selectedId ? String(selectedId) : '';
@@ -239,20 +339,27 @@
 						if (typeof ktIsObject === 'function' && ktIsObject(items)) {
 							list = Object.keys(items).map((id) => {
 								const raw = items[id];
-								const label = (typeof ktGetOptionLabel === 'function') ? ktGetOptionLabel(raw, url) : String(raw ?? id);
+								const label =
+									typeof ktGetOptionLabel === 'function'
+										? ktGetOptionLabel(raw, url)
+										: String(raw ?? id);
 								return { id, label: String(label) };
 							});
 						} else if (Array.isArray(items)) {
 							list = items.map((it) => {
 								const id = String(it?.id ?? it?.value ?? it?.tag_id ?? it?.tid ?? it);
 								const raw = it?.name ?? it?.label ?? it?.text ?? it;
-								const label = (typeof ktGetOptionLabel === 'function') ? ktGetOptionLabel(raw, url) : String(raw ?? id);
+								const label =
+									typeof ktGetOptionLabel === 'function'
+										? ktGetOptionLabel(raw, url)
+										: String(raw ?? id);
 								return { id, label: String(label) };
 							});
 						}
 						(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
-							const id = String(f.id); const label = String(f.name ?? f.label ?? id);
-							if (id && !list.some(x => x.id === id)) list.push({ id, label });
+							const id = String(f.id);
+							const label = String(f.name ?? f.label ?? id);
+							if (id && !list.some((x) => x.id === id)) list.push({ id, label });
 						});
 						list.sort((a, b) => a.label.localeCompare(b.label));
 						tagDropdown.empty().append(new Option('Select an option', '', !want));
@@ -261,10 +368,15 @@
 					})
 					.fail(() => {
 						const current = [];
-						tagDropdown.find('option').each(function () { const v = this.value, t = $(this).text(); if (v !== '') current.push({ id: v, label: t }); });
+						tagDropdown.find('option').each(function () {
+							const v = this.value,
+								t = $(this).text();
+							if (v !== '') current.push({ id: v, label: t });
+						});
 						(Array.isArray(fallbackOpts) ? fallbackOpts : []).forEach((f) => {
-							const id = String(f.id); const label = String(f.name ?? f.label ?? id);
-							if (!current.some(x => x.id === id)) current.push({ id, label });
+							const id = String(f.id);
+							const label = String(f.name ?? f.label ?? id);
+							if (!current.some((x) => x.id === id)) current.push({ id, label });
 						});
 						current.sort((a, b) => a.label.localeCompare(b.label));
 						tagDropdown.empty().append(new Option('Select an option', '', !selectedId));
@@ -286,80 +398,97 @@
 			// remove any stale modal left in <body> by a previous open
 			(function cleanupStale() {
 				const $stale = $('body').children(MODAL_SEL + '.ui-dialog-content');
-				if ($stale.length) { try { $stale.dialog('destroy'); } catch (e) { } $stale.remove(); }
+				if ($stale.length) {
+					try {
+						$stale.dialog('destroy');
+					} catch (e) {}
+					$stale.remove();
+				}
 			})();
 
-			const $createModal = $('#dialog-form').find(MODAL_SEL).dialog({
-				// (appendTo left as default 'body' to keep styles clean)
-				autoOpen: false,
-				modal: true,
-				title: 'Create Tag',
-				width: 420,
-				buttons: {
-					Create: function () {
-						const name = $createModal.find('#create-tag-name-subscribe').val().trim();
-						const text = $createModal.find('#create-tag-text-subscribe').val().trim();
-						if (!name) { RED.notify('Please enter a tag name', 'error'); return; }
+			const $createModal = $('#dialog-form')
+				.find(MODAL_SEL)
+				.dialog({
+					// (appendTo left as default 'body' to keep styles clean)
+					autoOpen: false,
+					modal: true,
+					title: 'Create Tag',
+					width: 420,
+					buttons: {
+						Create: function () {
+							const name = $createModal.find('#create-tag-name-subscribe').val().trim();
+							const text = $createModal.find('#create-tag-text-subscribe').val().trim();
+							if (!name) {
+								RED.notify('Please enter a tag name', 'error');
+								return;
+							}
 
-						const configId = $('#node-input-klicktipp').val();
-						if (!configId) { RED.notify('Missing KlickTipp Config', 'error'); return; }
-						if (tagToggle.prop('checked')) {
-							RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-							return;
-						}
+							const configId = $('#node-input-klicktipp').val();
+							if (!configId) {
+								RED.notify('Missing KlickTipp Config', 'error');
+								return;
+							}
+							if (tagToggle.prop('checked')) {
+								RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
+								return;
+							}
 
-						$.ajax({
-							url: '/klicktipp/createTag?configId=' + encodeURIComponent(configId),
-							method: 'POST',
-							dataType: 'json',
-							data: { name: name, text: text || '' }
-						})
-							.done(function (resp) {
-								let newId = '';
-								if (Array.isArray(resp) && resp.length) newId = String(resp[0]);
-								else if (resp && Array.isArray(resp.data) && resp.data.length) newId = String(resp.data[0]);
-								else if (resp && typeof resp === 'object') newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
-
-								if (!newId) {
-									RED.notify('Tag created, but no ID returned by API', 'warning');
-									$createModal.dialog('close');
-									return;
-								}
-
-								// insert immediately if not present, then select
-								if (!tagDropdown.find('option[value="' + newId + '"]').length) {
-									$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
-								}
-								tagDropdown.val(newId).trigger('change');
-								self.tagId = Number(newId);
-								rememberName(newId, name);
-
-								// ensure Deploy button lights up
-								markDirty();
-
-								// refresh sorted list to include it properly
-								setTimeout(() => refreshTagsSorted(newId, fallbackAllFromCache()), 800);
-
-								RED.notify('Tag created', 'success');
-								$createModal.dialog('close');
+							$.ajax({
+								url: '/klicktipp/createTag?configId=' + encodeURIComponent(configId),
+								method: 'POST',
+								dataType: 'json',
+								data: { name: name, text: text || '' },
 							})
-							.fail(function (err) {
-								const msg =
-									(err.responseJSON && err.responseJSON.error) ||
-									err.responseText ||
-									err.statusText ||
-									'Failed to create tag';
-								RED.notify(msg, 'error');
-							});
+								.done(function (resp) {
+									let newId = '';
+									if (Array.isArray(resp) && resp.length) newId = String(resp[0]);
+									else if (resp && Array.isArray(resp.data) && resp.data.length)
+										newId = String(resp.data[0]);
+									else if (resp && typeof resp === 'object')
+										newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
+
+									if (!newId) {
+										RED.notify('Tag created, but no ID returned by API', 'warning');
+										$createModal.dialog('close');
+										return;
+									}
+
+									// insert immediately if not present, then select
+									if (!tagDropdown.find('option[value="' + newId + '"]').length) {
+										$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
+									}
+									tagDropdown.val(newId).trigger('change');
+									self.tagId = Number(newId);
+									rememberName(newId, name);
+
+									// ensure Deploy button lights up
+									markDirty();
+
+									// refresh sorted list to include it properly
+									setTimeout(() => refreshTagsSorted(newId, fallbackAllFromCache()), 800);
+
+									RED.notify('Tag created', 'success');
+									$createModal.dialog('close');
+								})
+								.fail(function (err) {
+									const msg =
+										(err.responseJSON && err.responseJSON.error) ||
+										err.responseText ||
+										err.statusText ||
+										'Failed to create tag';
+									RED.notify(msg, 'error');
+								});
+						},
+						Cancel: function () {
+							$createModal.dialog('close');
+						},
 					},
-					Cancel: function () { $createModal.dialog('close'); },
-				},
-				open: function () {
-					$createModal.find('#create-tag-name-subscribe').val('');
-					$createModal.find('#create-tag-text-subscribe').val('');
-					setTimeout(() => $createModal.find('#create-tag-name-subscribe').trigger('focus'), 50);
-				}
-			});
+					open: function () {
+						$createModal.find('#create-tag-name-subscribe').val('');
+						$createModal.find('#create-tag-text-subscribe').val('');
+						setTimeout(() => $createModal.find('#create-tag-name-subscribe').trigger('focus'), 50);
+					},
+				});
 
 			btnCreateTag.on('click', function () {
 				if (tagToggle.prop('checked')) {
@@ -372,7 +501,12 @@
 			// expose a closer for oneditsave/oneditcancel
 			this.__cleanupCreateModal = function () {
 				const $m = $('body').children(MODAL_SEL + '.ui-dialog-content');
-				if ($m.length) { try { $m.dialog('destroy'); } catch (e) { } $m.remove(); }
+				if ($m.length) {
+					try {
+						$m.dialog('destroy');
+					} catch (e) {}
+					$m.remove();
+				}
 			};
 		},
 
@@ -385,11 +519,25 @@
 			this.__cleanupCreateModal();
 			$(document).off('.kt-dd');
 
-			ktSaveDualInput($('#node-input-listId'), $('#node-input-listIdManual'), $('#node-input-toggleListId'),
-				this, 'listId', 'manualListId', 'manualListEnabled');
+			ktSaveDualInput(
+				$('#node-input-listId'),
+				$('#node-input-listIdManual'),
+				$('#node-input-toggleListId'),
+				this,
+				'listId',
+				'manualListId',
+				'manualListEnabled',
+			);
 
-			ktSaveDualInput($('#node-input-tagId'), $('#node-input-tagIdManual'), $('#node-input-toggleTagId'),
-				this, 'tagId', 'manualTagId', 'manualTagEnabled');
+			ktSaveDualInput(
+				$('#node-input-tagId'),
+				$('#node-input-tagIdManual'),
+				$('#node-input-toggleTagId'),
+				this,
+				'tagId',
+				'manualTagId',
+				'manualTagEnabled',
+			);
 
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},
