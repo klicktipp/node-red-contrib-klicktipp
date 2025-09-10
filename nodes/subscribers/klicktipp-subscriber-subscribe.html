@@ -312,14 +312,19 @@
 							url: '/klicktipp/createTag?configId=' + encodeURIComponent(configId),
 							method: 'POST',
 							dataType: 'json',
-							data: { name: name, text: text || '' },
-							success: function (resp) {
+							data: { name: name, text: text || '' }
+						})
+							.done(function (resp) {
 								let newId = '';
 								if (Array.isArray(resp) && resp.length) newId = String(resp[0]);
 								else if (resp && Array.isArray(resp.data) && resp.data.length) newId = String(resp.data[0]);
 								else if (resp && typeof resp === 'object') newId = String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
 
-								if (!newId) { RED.notify('Tag created, but no ID returned by API', 'warning'); $createModal.dialog('close'); return; }
+								if (!newId) {
+									RED.notify('Tag created, but no ID returned by API', 'warning');
+									$createModal.dialog('close');
+									return;
+								}
 
 								// insert immediately if not present, then select
 								if (!tagDropdown.find('option[value="' + newId + '"]').length) {
@@ -337,12 +342,15 @@
 
 								RED.notify('Tag created', 'success');
 								$createModal.dialog('close');
-							},
-							error: function (err) {
-								const msg = (err.responseJSON && err.responseJSON.error) || err.responseText || err.statusText || 'Failed to create tag';
+							})
+							.fail(function (err) {
+								const msg =
+									(err.responseJSON && err.responseJSON.error) ||
+									err.responseText ||
+									err.statusText ||
+									'Failed to create tag';
 								RED.notify(msg, 'error');
-							},
-						});
+							});
 					},
 					Cancel: function () { $createModal.dialog('close'); },
 				},
