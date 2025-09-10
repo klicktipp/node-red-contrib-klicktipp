@@ -201,7 +201,7 @@
 			function writeNameCache(map) {
 				try {
 					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch { }
+				} catch {}
 			}
 			function rememberName(id, name) {
 				const map = readNameCache();
@@ -219,7 +219,12 @@
 				const cfgId = $('#node-input-klicktipp').val();
 				if (!cfgId) {
 					// No config yet: just keep whatever is in the dropdown
-					ktPopulateSelect(tagDropdown, ktCurrentOptions(tagDropdown), selected, 'Select an option');
+					ktPopulateSelect(
+						tagDropdown,
+						ktCurrentOptions(tagDropdown),
+						selected,
+						'Select an option',
+					);
 					// return a resolved promise so callers can .done/.fail safely
 					return $.Deferred().resolve().promise();
 				}

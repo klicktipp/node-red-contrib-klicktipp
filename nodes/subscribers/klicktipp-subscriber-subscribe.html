@@ -176,7 +176,7 @@
 			function markDirty() {
 				try {
 					RED.nodes.dirty(true);
-				} catch (e) { }
+				} catch (e) {}
 			}
 
 			/* typed inputs & contact fields */
@@ -203,7 +203,7 @@
 			);
 
 			// always defined so callers can invoke without typeof checks
-			this.__cleanupCreateModal = () => { };
+			this.__cleanupCreateModal = () => {};
 
 			/* listId dual input */
 			function updateListDisplay() {
@@ -309,7 +309,7 @@
 			function writeNameCache(map) {
 				try {
 					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch { }
+				} catch {}
 			}
 			function rememberName(id, name) {
 				const map = readNameCache();
@@ -326,7 +326,12 @@
 				const cfgId = klicktippInput.val();
 				if (!cfgId) {
 					// No config yet: just show placeholder / keep current options
-					ktPopulateSelect(tagDropdown, ktCurrentOptions(tagDropdown), selected, 'Select an option');
+					ktPopulateSelect(
+						tagDropdown,
+						ktCurrentOptions(tagDropdown),
+						selected,
+						'Select an option',
+					);
 					return $.Deferred().resolve().promise(); // no-op promise for call sites
 				}
 				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackAllFromCache());
@@ -350,7 +355,7 @@
 				if ($stale.length) {
 					try {
 						$stale.dialog('destroy');
-					} catch (e) { }
+					} catch (e) {}
 					$stale.remove();
 				}
 			})();
@@ -437,7 +442,7 @@
 				if ($m.length) {
 					try {
 						$m.dialog('destroy');
-					} catch (e) { }
+					} catch (e) {}
 					$m.remove();
 				}
 			};
