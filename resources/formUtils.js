@@ -926,24 +926,14 @@ function ktAjaxErrorMessage(jqXHR, fallback) {
  * @returns {Array<{id:string,label:string}>} Normalized list.
  */
 function ktNormalizeTagItems(items, url) {
-	let list = [];
-	if (typeof ktIsObject === 'function' && ktIsObject(items)) {
-		list = Object.keys(items).map((id) => {
-			const raw = items[id];
+	if (items && typeof items === 'object' && !Array.isArray(items)) {
+		return Object.entries(items).map(([id, raw]) => {
 			const label =
 				typeof ktGetOptionLabel === 'function' ? ktGetOptionLabel(raw, url) : String(raw ?? id);
 			return { id: String(id), label: String(label) };
 		});
-	} else if (Array.isArray(items)) {
-		list = items.map((it) => {
-			const id = String(it?.id ?? it?.value ?? it?.tag_id ?? it?.tid ?? it);
-			const raw = it?.name ?? it?.label ?? it?.text ?? it;
-			const label =
-				typeof ktGetOptionLabel === 'function' ? ktGetOptionLabel(raw, url) : String(raw ?? id);
-			return { id, label: String(label) };
-		});
 	}
-	return list;
+	return [];
 }
 
 /**
@@ -1025,8 +1015,6 @@ function ktRefreshTagsSelect($dropdown, nodeId, configId, selected, fallbackOpts
  */
 function ktExtractNewTagId(resp) {
 	if (Array.isArray(resp) && resp.length) return String(resp[0]);
-	if (resp && Array.isArray(resp.data) && resp.data.length) return String(resp.data[0]);
-	if (resp && typeof resp === 'object') return String(resp.id ?? resp.tag_id ?? resp.tid ?? '');
 	return '';
 }
 
