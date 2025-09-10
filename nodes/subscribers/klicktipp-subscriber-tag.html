@@ -276,9 +276,7 @@
 
 			/* ---------- Always reload on open (and shortly after) ---------- */
 			const openWant = (self.tagId || []).map(Number);
-			// first refresh (immediate list)
-			setTimeout(() => refreshTagsSorted(openWant, fallbackAllFromCache()), 100);
-			// second refresh to beat races/caches
+			// refresh to beat races/caches
 			setTimeout(() => refreshTagsSorted(openWant, fallbackAllFromCache()), 800);
 
 			/* ---------- Also reload whenever the config changes ---------- */
@@ -333,8 +331,7 @@
 								rememberName(newId, name);
 
 								// refresh now (twice) to include it in sorted server list
-								setTimeout(() => refreshTagsSorted(nextVal, fallbackAllFromCache()), 200);
-								setTimeout(() => refreshTagsSorted(nextVal, fallbackAllFromCache()), 900);
+								setTimeout(() => refreshTagsSorted(nextVal, fallbackAllFromCache()), 800);
 
 								RED.notify('Tag created', 'success');
 								$createModal.dialog('close');

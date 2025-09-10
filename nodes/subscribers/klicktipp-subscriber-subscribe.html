@@ -272,7 +272,6 @@
 			}
 
 			const openSelected = self.tagId ? String(self.tagId) : '';
-			setTimeout(() => refreshTagsSorted(openSelected, fallbackAllFromCache()), 100);
 			setTimeout(() => refreshTagsSorted(openSelected, fallbackAllFromCache()), 800);
 
 			klicktippInput.on('change', function () {
@@ -332,8 +331,7 @@
 								markDirty();
 
 								// refresh sorted list to include it properly
-								setTimeout(() => refreshTagsSorted(newId, fallbackAllFromCache()), 200);
-								setTimeout(() => refreshTagsSorted(newId, fallbackAllFromCache()), 900);
+								setTimeout(() => refreshTagsSorted(newId, fallbackAllFromCache()), 800);
 
 								RED.notify('Tag created', 'success');
 								$createModal.dialog('close');
