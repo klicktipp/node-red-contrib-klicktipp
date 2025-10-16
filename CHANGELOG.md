@@ -73,3 +73,7 @@
 ## Version 1.0.13 (2025-09-10)
 - **New Features**
 	- Added the ability to create tags in the "Add or Update Contact" and "Tag contact" nodes.
+
+## Version 1.0.14 (2025-10-16)
+- **Bugfix**
+	- Improved the error handling logic.
