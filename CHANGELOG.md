@@ -77,3 +77,7 @@
 ## Version 1.0.14 (2025-10-16)
 - **Bugfix**
 	- Improved the error handling logic.
+
+## Version 1.0.15 (2025-11-07)
+- **Improvements**
+	- Enrichment of requests.
