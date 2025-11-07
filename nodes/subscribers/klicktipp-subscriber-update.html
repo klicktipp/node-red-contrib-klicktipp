@@ -22,7 +22,7 @@
 		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
 		<input type="hidden" id="node-input-subscriberIdType">
 	</div>
-	<div class="form-row email-row"> 
+	<div class="form-row email-row">
 		<label for="node-input-emailAddress"><i class="fa fa-search"></i> <span>Email Address</span></label>
 		<input type="text" id="node-input-emailAddress" placeholder="Enter email address (required)">
 		<input type="hidden" id="node-input-emailAddressType">
@@ -50,7 +50,7 @@
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-    	<dt>msg.identifierType <span class="property-type">string</span></dt>
+	   	<dt>msg.identifierType <span class="property-type">string</span></dt>
 			<dd>
 				How the contact should be found:
 				<ul>
@@ -106,7 +106,7 @@
 		color: '#DAE1FC',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
-			identifierType: { value: 'id' },
+			identifierType: { value: 'email' },
 			subscriberId: {
 				required: false,
 				value: 'payload.subscriberId',
@@ -116,8 +116,9 @@
 				value: 'msg',
 			},
 			emailAddress: {
-				value: 'payload.emailAddress', required: false,
-				validate: RED.validators.typedInput('emailAddressType')
+				value: 'payload.emailAddress',
+				required: false,
+				validate: RED.validators.typedInput('emailAddressType'),
 			},
 			emailAddressType: { value: 'msg' },
 			newEmailAddress: {
@@ -164,11 +165,24 @@
 		},
 		oneditprepare: function () {
 			const node = this;
-			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType',
-				'num', ['num', 'msg', 'flow', 'global']);
-			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType',
-				'str', ['str', 'msg', 'flow', 'global']);
-			ktInitializeTypedInput('#node-input-newEmailAddress', '#node-input-newEmailAddressType', 'str', ['str']);
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
+				'num',
+				'msg',
+				'flow',
+				'global',
+			]);
+			ktInitializeTypedInput('#node-input-emailAddress', '#node-input-emailAddressType', 'str', [
+				'str',
+				'msg',
+				'flow',
+				'global',
+			]);
+			ktInitializeTypedInput(
+				'#node-input-newEmailAddress',
+				'#node-input-newEmailAddressType',
+				'str',
+				['str'],
+			);
 			ktInitializeTypedInput('#node-input-newSmsNumber', '#node-input-newSmsNumberType', 'str', [
 				'str',
 			]);
@@ -214,7 +228,7 @@
 			);
 		},
 		oneditcancel: function () {
-			$(document).off('.kt-dd');      // removes keydown.kt-dd and mousedown.kt-dd
+			$(document).off('.kt-dd'); // removes keydown.kt-dd and mousedown.kt-dd
 		},
 		oneditsave: function () {
 			$(document).off('.kt-dd');

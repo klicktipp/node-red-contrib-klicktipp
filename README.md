@@ -94,7 +94,7 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 ### Triggers
 
 - **Node Name:**: `Watch new events`
-- **Description**: Triggers on a new event.
+- **Description**: Triggers when a webhook event occurs in KlickTipp, such as a tag being added, an email being opened or sent, a link clicked, an SMS sent, and more.
 
 ---
 
