@@ -31,4 +31,4 @@ jobs:
         run: npm ci
 
       - name: Publish to npm (Trusted Publishing via OIDC)
-        run: npm publish
+        run: npm publish --access public
