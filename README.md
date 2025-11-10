@@ -76,9 +76,9 @@ This package includes various nodes to interact with the KlickTipp API. Below is
 ### Opt-in Process
 
 - **Node Names:**:
-  - `Get opt-in process`
-  - `Search redirect url`
-  - `list opt in process`
+  - `Get Opt-in process`
+  - `Search redirect URL`
+  - `List Opt-in processes`
 - **Description**: Manages opt-in processes, including listing all processes, retrieving details of a specific process, and obtaining redirect URLs.
 
 ### Tag

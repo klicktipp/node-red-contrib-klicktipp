@@ -81,3 +81,7 @@
 ## Version 1.0.15 (2025-11-07)
 - **Improvements**
 	- Enrichment of requests.
+
+## Version 1.0.16 (2025-11-10)
+- **Documentation**
+    - Fix README typos and formatting.
