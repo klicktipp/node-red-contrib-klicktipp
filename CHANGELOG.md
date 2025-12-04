@@ -84,4 +84,8 @@
 
 ## Version 1.0.16 (2025-11-10)
 - **Documentation**
-    - Fix README typos and formatting.
+  - Fix README typos and formatting.
+
+## Version 1.0.17 (2025-12-04)
+- **Improvements**
+  - Updated description for "Delete tag" node.
