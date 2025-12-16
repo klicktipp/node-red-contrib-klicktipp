@@ -24,6 +24,27 @@
 			<input style="margin-top: 0 !important;" type="checkbox" id="node-input-toggleFieldType">
 		</div>
 	</div>
+	<div class="form-row">
+    <label for="node-input-subscriptionStatus">
+      <i class="fa fa-filter"></i> <span>Subscription Status</span>
+    </label>
+    <select id="node-input-subscriptionStatus" multiple style="width: 70%;">
+      <option value="pending">Pending</option>
+      <option value="subscribed">Subscribed</option>
+      <option value="unsubscribed">Unsubscribed</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-bounceStatus">
+      <i class="fa fa-filter"></i> <span>Bounce Status</span>
+    </label>
+    <select id="node-input-bounceStatus" multiple style="width: 70%;">
+      <option value="hardbounce">Hard bounce</option>
+      <option value="softbounce">Soft bounce</option>
+      <option value="spambounce">Spam bounce</option>
+      <option value="nobounce">No bounce</option>
+    </select>
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tagged">
@@ -31,13 +52,38 @@
 
 	<h3>Inputs</h3>
 	<dl class="message-properties">
-	    <dt>msg.payload <span class="property-type">object</span></dt>
-	    <dd>
-	        Expected object with the following properties:
-	        <ul>
-	            <li><code>tagId</code> - (Required) the ID of a manual tag or SmartLink</li>
-	        </ul>
-	    </dd>
+		<dt>Node Configuration <span class="property-type">object</span></dt>
+		<dd>
+			The node must be configured with the following settings:
+			<ul>
+				<li>
+					<strong>Tag</strong> - (Required) The tag used to filter contacts.
+					When the <em>Map</em> option is disabled, the tag is selected from the dropdown
+					in the node configuration.
+				</li>
+				<li>
+					<strong>Subscription Status</strong> - (Optional) One or more subscription
+					statuses selected in the node settings. Multiple values are combined using a comma
+					(e.g. <code>unsubscribed,pending</code>).
+				</li>
+				<li>
+					<strong>Bounce Status</strong> - (Optional) One or more bounce statuses
+					selected in the node settings. Multiple values are combined using a comma
+					(e.g. <code>hardbounce,nobounce</code>).
+				</li>
+			</ul>
+		</dd>
+
+		<dt>msg.payload <span class="property-type">object</span></dt>
+		<dd>
+			Expected only when the <em>Map</em> option is enabled:
+			<ul>
+				<li>
+					<code>tagId</code> - (Required) The ID of a manual tag or SmartLink,
+					provided at runtime.
+				</li>
+			</ul>
+		</dd>
 	</dl>
 
 	<h3>Outputs</h3>
@@ -80,6 +126,8 @@
 			manualTagId: { value: '' },
 			manualFieldEnabled: { value: false },
 			name: { value: '' },
+			subscriptionStatus: { value: [] },
+			bounceStatus: { value: [] },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -98,6 +146,9 @@
 			const tagDropdown = $('#node-input-tagId');
 			const tagManual = $('#node-input-tagIdManual');
 			const toggle = $('#node-input-toggleFieldType');
+
+			$('#node-input-subscriptionStatus').val(self.subscriptionStatus || []);
+			$('#node-input-bounceStatus').val(self.bounceStatus || []);
 
 			// Always bind the dropdown so that its options load regardless of UI state.
 			ktBindDropdownToInput(

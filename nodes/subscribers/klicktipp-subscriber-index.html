@@ -7,10 +7,49 @@
 	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
+	<div class="form-row">
+    <label for="node-input-subscriptionStatus">
+      <i class="fa fa-filter"></i> <span>Subscription Status</span>
+    </label>
+    <select id="node-input-subscriptionStatus" multiple style="width: 70%;">
+      <option value="pending">Pending</option>
+      <option value="subscribed">Subscribed</option>
+      <option value="unsubscribed">Unsubscribed</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-bounceStatus">
+      <i class="fa fa-filter"></i> <span>Bounce Status</span>
+    </label>
+    <select id="node-input-bounceStatus" multiple style="width: 70%;">
+      <option value="hardbounce">Hard bounce</option>
+      <option value="softbounce">Soft bounce</option>
+      <option value="spambounce">Spam bounce</option>
+      <option value="nobounce">No bounce</option>
+    </select>
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-index">
 	<p>Lists the IDs of all active contacts</p>
+
+	<h3>Inputs</h3>
+	<dl class="message-properties">
+		<dt>Node Configuration <span class="property-type">object</span></dt>
+		<dd>
+			Optional filters configured in the node:
+			<ul>
+				<li>
+					<strong>Subscription Status</strong> - (Optional) One or more values selected in the node settings.
+					Multiple values are combined using a comma (e.g. <code>unsubscribed,pending</code>).
+				</li>
+				<li>
+					<strong>Bounce Status</strong> - (Optional) One or more values selected in the node settings.
+					Multiple values are combined using a comma (e.g. <code>hardbounce,nobounce</code>).
+				</li>
+			</ul>
+		</dd>
+	</dl>
 
 	<h3>Outputs</h3>
 	<dl class="message-properties">
@@ -46,6 +85,8 @@
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
 			name: { value: '' },
+			subscriptionStatus: { value: [] },
+			bounceStatus: { value: [] },
 		},
 		inputs: 1,
 		outputs: 1,
@@ -57,6 +98,12 @@
 		paletteLabel: 'List Contacts',
 		onadd: function () {
 			ktPopulateConfig(this);
+		},
+		oneditprepare: function () {
+			const node = this;
+
+			$('#node-input-subscriptionStatus').val(node.subscriptionStatus || []);
+			$('#node-input-bounceStatus').val(node.bounceStatus || []);
 		},
 	});
 </script>
