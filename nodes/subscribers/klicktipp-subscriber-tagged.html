@@ -25,26 +25,38 @@
 		</div>
 	</div>
 	<div class="form-row">
-    <label for="node-input-subscriptionStatus">
-      <i class="fa fa-filter"></i> <span>Subscription Status</span>
-    </label>
-    <select id="node-input-subscriptionStatus" multiple style="width: 70%;">
-      <option value="pending">Pending</option>
-      <option value="subscribed">Subscribed</option>
-      <option value="unsubscribed">Unsubscribed</option>
-    </select>
-  </div>
-  <div class="form-row">
-    <label for="node-input-bounceStatus">
-      <i class="fa fa-filter"></i> <span>Bounce Status</span>
-    </label>
-    <select id="node-input-bounceStatus" multiple style="width: 70%;">
-      <option value="hardbounce">Hard bounce</option>
-      <option value="softbounce">Soft bounce</option>
-      <option value="spambounce">Spam bounce</option>
-      <option value="nobounce">No bounce</option>
-    </select>
-  </div>
+		<label for="node-input-subscriptionStatus">
+			<i class="fa fa-filter"></i>
+			<span>Subscription Status</span>
+			<i
+				class="fa fa-info-circle"
+				style="margin-left:4px; color:#888; cursor: help;"
+				title="Filter contacts by their subscription status. You can select one or multiple values to narrow down the results. If no value is selected, the filter defaults to Subscribed, meaning only contacts with an active subscription are included."
+			></i>
+		</label>
+		<select id="node-input-subscriptionStatus" multiple style="width: 70%;">
+			<option value="pending">Pending</option>
+			<option value="subscribed">Subscribed</option>
+			<option value="unsubscribed">Unsubscribed</option>
+		</select>
+	</div>
+	<div class="form-row">
+		<label for="node-input-bounceStatus">
+			<i class="fa fa-filter"></i>
+			<span>Bounce Status</span>
+			<i
+				class="fa fa-info-circle"
+				style="margin-left:4px; color:#888; cursor: help;"
+				title="Filter contacts by their bounce status. You can select one or multiple values. If no value is selected, the filter defaults to Soft Bounce, Spam Bounce, and No Bounce."
+			></i>
+		</label>
+		<select id="node-input-bounceStatus" multiple style="width: 70%;">
+			<option value="hardbounce">Hard bounce</option>
+			<option value="softbounce">Soft bounce</option>
+			<option value="spambounce">Spam bounce</option>
+			<option value="nobounce">No bounce</option>
+		</select>
+	</div>
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-tagged">
