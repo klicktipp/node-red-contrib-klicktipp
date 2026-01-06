@@ -71,12 +71,12 @@ module.exports = async function resolveSubscriberId(RED, node, config, msg) {
 			'Request failed with status code 404',
 		);
 		return null;
-	} catch (err) {
+	} catch (error) {
 		handleError(
 			node,
 			msg,
 			'Contact ID could not be retrieved',
-			err?.response?.data?.error || err.message,
+			error?.response?.data || error?.message,
 		);
 		return null;
 	}

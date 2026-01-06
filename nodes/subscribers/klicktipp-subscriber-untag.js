@@ -49,7 +49,8 @@ module.exports = function (RED) {
 				node,
 				msg,
 				'Tag could not be removed from contact',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
+				tagId,
 			);
 		}
 	};

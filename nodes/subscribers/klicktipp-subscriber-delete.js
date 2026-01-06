@@ -24,14 +24,14 @@ module.exports = function (RED) {
 			handleResponse(node, msg, response, 'Contact deleted', 'Contact could not be deleted', () => {
 				msg.payload = { success: true };
 			});
-		} catch (err) {
+		} catch (error) {
 			handleError(
 				node,
 				msg,
 				'Contact could not be deleted',
-				err?.response?.data?.error || err.message,
+				error?.response?.data || error?.message,
 			);
-			msg.rawError = err;
+			msg.rawError = error;
 			node.send(msg);
 		}
 	}

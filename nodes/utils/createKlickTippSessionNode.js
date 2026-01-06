@@ -48,7 +48,7 @@ function createKlickTippSessionNode(RED, node, coreFunction) {
 				// Execute core functionality
 				await coreFunction.call(node, msg, config);
 			} catch (error) {
-				handleError(node, msg, 'Request failed', error?.response?.data?.error || error.message);
+				handleError(node, msg, 'Request failed', error?.response?.data || error?.message);
 			} finally {
 				//Logout
 				if (sessionData) {

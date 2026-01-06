@@ -63,7 +63,7 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, undefined, error?.response?.data);
+			handleError(node, msg, undefined, error?.response?.data || error?.message);
 		}
 	};
 

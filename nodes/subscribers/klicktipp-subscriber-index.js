@@ -40,7 +40,7 @@ module.exports = function (RED) {
 				this,
 				msg,
 				'Contacts could not be retrieved',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
 			);
 		}
 	};

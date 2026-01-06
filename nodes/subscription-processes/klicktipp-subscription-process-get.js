@@ -39,7 +39,7 @@ module.exports = function (RED) {
 				this,
 				msg,
 				'Opt-in process could not be retrieved',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
 			);
 		}
 	};

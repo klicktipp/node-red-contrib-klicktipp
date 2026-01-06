@@ -1,4 +1,15 @@
-function adjustErrorMessage(error, code) {
+function adjustErrorMessage(error, code, tagHint) {
+	// special-case: error 7 depends on node
+	if (error === 7) {
+		// Tag/Untag contact nodes
+		if (tagHint) {
+			return 'Email address not found.';
+		}
+
+		// Default for a "Update contact" node
+		return 'Invalid value in custom field. The provided value is not valid for the field type.';
+	}
+
 	const error10Messages = {
 		4: 'The email address is unsubscribed. You cannot re-subscribe an email address if the contact has unsubscribed.',
 		5: 'Invalid email address.',
@@ -18,8 +29,6 @@ function adjustErrorMessage(error, code) {
 			return 'Invalid email address.';
 		case 6:
 			return 'There was an error sending the confirmation email.';
-		case 7:
-			return 'Invalid value in custom field. The provided value is not valid for the field type.';
 		case 8:
 			return 'Invalid value in custom field. The provided value is not valid for the field type.';
 		case 9:

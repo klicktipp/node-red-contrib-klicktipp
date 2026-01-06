@@ -60,7 +60,8 @@ module.exports = function (RED) {
 				node,
 				msg,
 				'Contact could not be tagged',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
+				tagIds,
 			);
 		}
 	};
