@@ -9,19 +9,31 @@ const qs = require('qs');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
-		const node = this;
-		const tagId = config.manualFieldEnabled
-			? config.manualTagId || msg?.payload?.manualTagId
-			: config.tagId || msg?.payload?.tagId;
-
-		if (!tagId) {
-			handleError(this, msg, 'Tag ID is missing');
-			return this.send(msg);
-		}
-
 		try {
+			const tagId = config.manualFieldEnabled
+				? config.manualTagId || msg?.payload?.manualTagId
+				: config.tagId || msg?.payload?.tagId;
+
+			if (!tagId) {
+				handleError(this, msg, 'Tag ID is missing');
+				return this.send(msg);
+			}
+
+			const subscriptionStatus = [...new Set(config.subscriptionStatus)];
+			const bounceStatus = [...new Set(config.bounceStatus)];
+
+			const queryParts = [];
+			if (subscriptionStatus.length) {
+				queryParts.push(`status=${encodeURIComponent(subscriptionStatus.join(','))}`);
+			}
+			if (bounceStatus.length) {
+				queryParts.push(`bounceStatus=${encodeURIComponent(bounceStatus.join(','))}`);
+			}
+
+			const url = `/subscriber/tagged${queryParts.length ? `?${queryParts.join('&')}` : ''}`;
+
 			const response = await makeRequest(
-				'/subscriber/tagged',
+				url,
 				'POST',
 				qs.stringify({ tagid: tagId }),
 				msg.sessionData,
@@ -46,7 +58,7 @@ module.exports = function (RED) {
 			);
 		} catch (error) {
 			handleError(
-				node,
+				this,
 				msg,
 				'Contacts could not be retrieved',
 				error?.response?.data?.error || error.message,
