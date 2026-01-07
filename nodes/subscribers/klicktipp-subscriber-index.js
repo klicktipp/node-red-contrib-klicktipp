@@ -9,7 +9,20 @@ const objectToIdValueArray = require('../utils/objectToIdValueArray');
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		try {
-			const response = await makeRequest('/subscriber', 'GET', {}, msg.sessionData);
+			const subscriptionStatus = [...new Set(config.subscriptionStatus)];
+			const bounceStatus = [...new Set(config.bounceStatus)];
+
+			const queryParts = [];
+			if (subscriptionStatus.length) {
+				queryParts.push(`status=${encodeURIComponent(subscriptionStatus.join(','))}`);
+			}
+			if (bounceStatus.length) {
+				queryParts.push(`bounceStatus=${encodeURIComponent(bounceStatus.join(','))}`);
+			}
+
+			const url = `/subscriber${queryParts.length ? `?${queryParts.join('&')}` : ''}`;
+
+			const response = await makeRequest(url, 'GET', {}, msg.sessionData);
 
 			handleResponse(
 				this,
