@@ -27,7 +27,14 @@ module.exports = function (RED) {
 		RED.auth.needsPermission('klicktipp-config.write'),
 		async (req, res) => {
 			try {
-				const { username, password } = req.body || {};
+				let { id, username, password } = req.body || {};
+
+				// If testing an existing config node, use stored credentials
+				if (id) {
+					const creds = RED.nodes.getCredentials(id);
+					if (creds?.username) username = creds.username;
+					if (creds?.password) password = creds.password;
+				}
 
 				if (!username || !password) {
 					return res

@@ -39,6 +39,7 @@
 			return this.name || 'KlickTipp Config';
 		},
 		oneditprepare: function () {
+			const configId = this.id;
 			const $btn = $("#klicktipp-test-connection");
 			const $result = $("#klicktipp-test-result");
 
@@ -64,7 +65,7 @@
 					url: "klicktipp/test-connection",
 					type: "POST",
 					contentType: "application/json",
-					data: JSON.stringify({ username, password }),
+					data: JSON.stringify({ id: configId, username, password }),
 				})
 					.done((data) => {
 						if (data && data.ok) {
