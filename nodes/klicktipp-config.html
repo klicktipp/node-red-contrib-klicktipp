@@ -40,49 +40,54 @@
 		},
 		oneditprepare: function () {
 			const configId = this.id;
-			const $btn = $("#klicktipp-test-connection");
-			const $result = $("#klicktipp-test-result");
+			const $btn = $('#klicktipp-test-connection');
+			const $result = $('#klicktipp-test-result');
 
 			const setResult = (ok, text) => {
 				$result
 					.text(text)
-					.css("color", ok ? "var(--red-ui-success-text-color, #28a745)" : "var(--red-ui-error-text-color, #d9534f)");
+					.css(
+						'color',
+						ok
+							? 'var(--red-ui-success-text-color, #28a745)'
+							: 'var(--red-ui-error-text-color, #d9534f)',
+					);
 			};
 
-			$btn.on("click", () => {
-				const username = $("#node-config-input-username").val();
-				const password = $("#node-config-input-password").val();
+			$btn.on('click', () => {
+				const username = $('#node-config-input-username').val();
+				const password = $('#node-config-input-password').val();
 
 				if (!username || !password) {
-					setResult(false, "Please enter username and password.");
+					setResult(false, 'Please enter username and password.');
 					return;
 				}
 
-				$btn.prop("disabled", true);
-				setResult(true, "Testing...");
+				$btn.prop('disabled', true);
+				setResult(true, 'Testing...');
 
 				$.ajax({
-					url: "klicktipp/test-connection",
-					type: "POST",
-					contentType: "application/json",
+					url: 'klicktipp/test-connection',
+					type: 'POST',
+					contentType: 'application/json',
 					data: JSON.stringify({ id: configId, username, password }),
 				})
 					.done((data) => {
 						if (data && data.ok) {
-							setResult(true, data.message || "Connection successful.");
+							setResult(true, data.message || 'Connection successful.');
 						} else {
-							setResult(false, (data && data.message) || "Connection failed.");
+							setResult(false, (data && data.message) || 'Connection failed.');
 						}
 					})
 					.fail((xhr) => {
 						const msg =
 							(xhr.responseJSON && xhr.responseJSON.message) ||
 							xhr.statusText ||
-							"Connection test failed.";
+							'Connection test failed.';
 						setResult(false, msg);
 					})
 					.always(() => {
-						$btn.prop("disabled", false);
+						$btn.prop('disabled', false);
 					});
 			});
 		},
