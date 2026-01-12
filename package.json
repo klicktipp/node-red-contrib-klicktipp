@@ -1,6 +1,6 @@
 {
   "name": "@klicktipp/node-red-contrib-klicktipp",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "KlickTipp API integration node for Node-RED",
   "keywords": [
     "node-red",
