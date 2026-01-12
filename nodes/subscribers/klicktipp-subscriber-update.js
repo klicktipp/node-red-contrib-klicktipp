@@ -48,12 +48,12 @@ module.exports = function (RED) {
 			handleResponse(node, msg, resp, 'Contact updated', 'Contact could not be updated', () => {
 				msg.payload = { success: true };
 			});
-		} catch (err) {
+		} catch (error) {
 			handleError(
 				node,
 				msg,
 				'Contact could not be updated',
-				err?.response?.data?.error || err.message,
+				error?.response?.data || error?.message,
 			);
 		}
 	};

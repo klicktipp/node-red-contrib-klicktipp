@@ -1,41 +1,58 @@
 const adjustErrorMessage = require('./adjustErrorMessage');
+const buildValidationMessage = require('./buildValidationMessage');
 
 /**
  * Handles errors by setting the Node-RED node's status and sending an error message.
  *
  * @param {object} node - The current Node-RED node instance.
  * @param {object} msg - The message object passed through Node-RED.
- * @param {string} [statusMessage='Error occurred'] - The high-level status message to display in the Node-RED UI.
- * @param {number|string|object|null} [errorDetails=null] - Error code, message, or object with { error, code }.
+ * @param {string} [statusMessage='Error occurred'] - High-level status message to display in the UI.
+ * @param {number|string|object|null} [errorDetails=null] - Error code, message, or object with:
+ * @param {any} [tagHint=null] - Optional “tag operation hint”. Pass tagId (number) or tagIds (array) from Tag/Untag nodes so error=7 can be disambiguated.
+ *   - legacy: { error, code }
+ *   - new: { field, name, reason, error?, code? }
  */
-function handleError(node, msg, statusMessage = 'Error occurred', errorDetails = null) {
-	let errorMsg;
+function handleError(
+	node,
+	msg,
+	statusMessage = 'Error occurred',
+	errorDetails = null,
+	tagHint = null,
+) {
+	let errorMsg = null;
 
-	if (typeof errorDetails === 'number') {
-		// simple numeric code
-		errorMsg = adjustErrorMessage(errorDetails);
-	} else if (typeof errorDetails === 'object' && errorDetails !== null) {
-		// object with { error, code }
-		const { error, code } = errorDetails;
-		if (typeof error === 'number') {
-			errorMsg = adjustErrorMessage(error, code);
+	// 1) If object: prefer field/name/reason validation message
+	if (errorDetails && typeof errorDetails === 'object') {
+		const validationMsg = buildValidationMessage(errorDetails);
+		if (validationMsg) {
+			errorMsg = validationMsg;
 		} else {
-			errorMsg = errorDetails.error || errorDetails.message || String(errorDetails);
+			// 2) Legacy fallback: { error, code }
+			const error = errorDetails.error;
+			const code = errorDetails.code;
+
+			if (typeof error === 'number') {
+				errorMsg = adjustErrorMessage(error, code, tagHint);
+			} else if (typeof error === 'string' && error.trim() !== '') {
+				errorMsg = error;
+			} else if (typeof errorDetails.message === 'string' && errorDetails.message.trim() !== '') {
+				errorMsg = errorDetails.message;
+			} else {
+				errorMsg = String(errorDetails);
+			}
 		}
+	} else if (typeof errorDetails === 'number') {
+		// numeric code only
+		errorMsg = adjustErrorMessage(errorDetails);
 	} else if (typeof errorDetails === 'string') {
 		errorMsg = errorDetails;
-	} else {
-		errorMsg = null;
 	}
 
 	const statusText = errorMsg ? `${statusMessage}: ${errorMsg}` : statusMessage;
 
-	// Update the node status with the appropriate text
 	node.status({ fill: 'red', shape: 'ring', text: statusText });
 
-	// Set error details in the message; if no errorDetails, just set statusMessage as the error
 	msg.error = errorMsg || statusMessage;
-
 	msg.payload = { success: false };
 }
 

@@ -1,6 +1,16 @@
 <script src="resources/@klicktipp/node-red-contrib-klicktipp/formUtils.js"></script>
 
 <script type="text/x-red" data-template-name="klicktipp-config">
+	<div class="form-row" style="display:flex; align-items:center; justify-content:flex-end; margin-right: 35px;">
+		<span
+			id="klicktipp-test-result"
+			style="flex:1; text-align:right; margin-right:10px; font-weight:500;">
+		</span>
+
+		<button type="button" class="red-ui-button" id="klicktipp-test-connection" style="white-space:nowrap; border-radius: 4px;">
+			<i class="fa fa-plug"></i> Test connection
+		</button>
+	</div>
 	<div class="form-row">
 	    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 	    <input type="text" id="node-config-input-name" placeholder="Enter a name for this config">
@@ -27,6 +37,59 @@
 		},
 		label: function () {
 			return this.name || 'KlickTipp Config';
+		},
+		oneditprepare: function () {
+			const configId = this.id;
+			const $btn = $('#klicktipp-test-connection');
+			const $result = $('#klicktipp-test-result');
+
+			const setResult = (ok, text) => {
+				$result
+					.text(text)
+					.css(
+						'color',
+						ok
+							? 'var(--red-ui-success-text-color, #28a745)'
+							: 'var(--red-ui-error-text-color, #d9534f)',
+					);
+			};
+
+			$btn.on('click', () => {
+				const username = $('#node-config-input-username').val();
+				const password = $('#node-config-input-password').val();
+
+				if (!username || !password) {
+					setResult(false, 'Please enter username and password.');
+					return;
+				}
+
+				$btn.prop('disabled', true);
+				setResult(true, 'Testing...');
+
+				$.ajax({
+					url: 'klicktipp/test-connection',
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ id: configId, username, password }),
+				})
+					.done((data) => {
+						if (data && data.ok) {
+							setResult(true, data.message || 'Connection successful.');
+						} else {
+							setResult(false, (data && data.message) || 'Connection failed.');
+						}
+					})
+					.fail((xhr) => {
+						const msg =
+							(xhr.responseJSON && xhr.responseJSON.message) ||
+							xhr.statusText ||
+							'Connection test failed.';
+						setResult(false, msg);
+					})
+					.always(() => {
+						$btn.prop('disabled', false);
+					});
+			});
 		},
 	});
 </script>

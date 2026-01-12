@@ -37,7 +37,7 @@ module.exports = function (RED) {
 				node,
 				msg,
 				'Contact information could not be retrieved',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
 			);
 		}
 	}

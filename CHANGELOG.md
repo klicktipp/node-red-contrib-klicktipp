@@ -93,3 +93,9 @@
 ## Version 1.0.18 (2026-01-05)
 - **New Features**
   - Added filtering options for "List Contacts" and "Search Tagged Contacts" nodes.
+
+## Version 1.0.19 (2026-01-12)
+- **Improvements**
+	- Improved the error handling logic.
+- **New Features**
+	- Added connection test.

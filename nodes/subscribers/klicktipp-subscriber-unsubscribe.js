@@ -42,7 +42,7 @@ module.exports = function (RED) {
 				node,
 				msg,
 				'Contact could not be unsubscribed',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
 			);
 		}
 	};

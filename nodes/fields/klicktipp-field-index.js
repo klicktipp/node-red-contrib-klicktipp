@@ -27,7 +27,7 @@ module.exports = function (RED) {
 				this,
 				msg,
 				'Data fields could not be retrieved',
-				error?.response?.data?.error || error.message,
+				error?.response?.data || error?.message,
 			);
 		}
 	};
