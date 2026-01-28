@@ -3,60 +3,81 @@ function adjustErrorMessage(error, code, tagHint) {
 	if (error === 7) {
 		// Tag/Untag contact nodes
 		if (tagHint) {
-			return 'Email address not found.';
+			return 'Subscriber email not found.';
 		}
 
 		// Default for a "Update contact" node
-		return 'Invalid value in custom field. The provided value is not valid for the field type.';
+		return 'Field validation failed.';
 	}
 
 	const error10Messages = {
-		4: 'The email address is unsubscribed. You cannot re-subscribe an email address if the contact has unsubscribed.',
 		5: 'Invalid email address.',
 		6: 'There was an error sending the confirmation email.',
 		9: 'The SMS number is already assigned to another contact. If you subscribe an email address and add a phone number, it must be unique.',
+		10: 'The SMS number is unsubscribed. You cannot re-subscribe an SMS number if the contact has unsubscribed.',
 		11: 'Invalid phone number.',
-		12: 'Internal error.',
 		30: 'The email address is blocked and cannot be used for subscription.',
-		31: 'SmartTags are only assigned by the system.',
-		32: 'You must specify either an email address or a SMS number.',
 	};
 
 	switch (error) {
 		case 4:
-			return 'The email address is unsubscribed. You cannot re-subscribe an email address if the contact has unsubscribed.';
+			return 'Subscription not found.';
 		case 5:
-			return 'Invalid email address.';
+			return 'Email address validation failed';
+		// error 6 not present in last instractions
 		case 6:
 			return 'There was an error sending the confirmation email.';
 		case 8:
-			return 'Invalid value in custom field. The provided value is not valid for the field type.';
+			return 'Field validation failed.';
 		case 9:
-			return 'The SMS number is already assigned to another contact. If you subscribe an email address and add a phone number, it must be unique.';
+			return 'Subscriber not subscribed.';
 		case 10:
 			if (code && error10Messages[code]) {
 				return `Update of contact failed: ${error10Messages[code]}`;
 			} else {
 				return 'Update of contact failed.';
 			}
+		// error 11 and 12 not present in last instractions
 		case 11:
 			return 'Invalid phone number.';
 		case 12:
 			return 'Internal error.';
 		case 30:
-			return 'The email address is blocked and cannot be used for subscription.';
+			return 'Email address change not allowed.';
 		case 31:
-			return 'SmartTags are only assigned by the system.';
+			return 'Untag smarttag not allowed.';
 		case 32:
-			return 'You must specify either an email address or a SMS number.';
+			return 'Email address SMS number required.';
+		case 100:
+			return 'Invalid API key.';
 		case 401:
-			return 'Contact not found.';
+			return 'User not found.';
 		case 402:
-			return 'Opt-in process not found.';
+			return 'List not found.';
 		case 403:
 			return 'Tag not found.';
+		case 404:
+			return 'User group not found.';
+		case 405:
+			return 'Campaign not found.';
+		case 406:
+			return 'Tier not found.';
+		case 501:
+			return 'Email address required.';
+		case 502:
+			return 'Username required.';
+		case 503:
+			return 'Password required.';
+		case 504:
+			return 'First name required.';
+		case 505:
+			return 'Last name required.';
+		case 506:
+			return 'Username exists.';
 		case 507:
-			return 'You tried to add an email address to a contact that is already assigned to another contact.';
+			return 'Email address exists.';
+		case 508:
+			return 'User update failed.';
 		default:
 			return `Something went wrong. Please try again later. Error: ${error}`;
 	}
