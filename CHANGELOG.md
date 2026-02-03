@@ -99,3 +99,7 @@
 	- Improved the error handling logic.
 - **New Features**
 	- Added connection test.
+
+## Version 1.0.20 (2026-02-03)
+- **Improvements**
+	- Updated error messages.
