@@ -24,7 +24,7 @@ function adjustErrorMessage(error, code, tagHint) {
 			return 'Subscription not found.';
 		case 5:
 			return 'Email address validation failed';
-		// error 6 not present in last instractions
+		// error 6 was not present in last instractions
 		case 6:
 			return 'There was an error sending the confirmation email.';
 		case 8:
