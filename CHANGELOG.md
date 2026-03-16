@@ -103,3 +103,7 @@
 ## Version 1.0.20 (2026-02-03)
 - **Improvements**
 	- Updated error messages.
+
+## Version 1.0.21 (2026-03-16)
+- **Improvements**
+	- Updated error messages: added field value.
