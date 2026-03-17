@@ -13,17 +13,31 @@
 			<span>Identify Contact By</span>
 		</label>
 		<select id="node-input-identifierType" class="input-typed-select">
-			<option value="id">Contact ID</option>
+			<option value="id">Contact Identifier (ID or Key)</option>
 			<option value="email">Email Address</option>
 		</select>
 	</div>
 	<div class="form-row">
-		<label for="node-input-subscriberId"><i class="fa fa-tags""></i> <span>Contact ID</span></label>
-		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID (required)">
+		<label for="node-input-subscriberId">
+			<i class="fa fa-tags"></i> <span>Contact Identifier (ID or Key)</span>
+			<i
+				class="fa fa-info-circle"
+				style="margin-left:4px; color:#888; cursor: help;"
+				title="Enter the Contact ID or Contact Key. The Contact Key may appear as a URL parameter in redirect links generated using the email editor placeholder, or custom confirmation/thank-you pages."
+			></i>
+		</label>
+		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID or Key (required)">
 		<input type="hidden" id="node-input-subscriberIdType">
 	</div>
 	<div class="form-row email-row">
-		<label for="node-input-emailAddress"><i class="fa fa-search"></i> <span>Email Address</span></label>
+		<label for="node-input-emailAddress">
+			<i class="fa fa-search"></i> <span>Email Address</span>
+			<i
+				class="fa fa-info-circle"
+				style="margin-left:4px; color:#888; cursor: help;"
+				title="Enter the Email address. This is used to look up the Contact ID automatically."
+			></i>
+		</label>
 		<input type="text" id="node-input-emailAddress" placeholder="Enter email address (required)">
 		<input type="hidden" id="node-input-emailAddressType">
 	</div>
@@ -54,7 +68,7 @@
 			<dd>
 				How the contact should be found:
 				<ul>
-					<li><code>"id"</code> - look up by contact ID (default)</li>
+					<li><code>"id"</code> - look up by contact identifier (ID or Key)</li>
 					<li><code>"email"</code> - look up by email address</li>
 				</ul>
 			</dd>
@@ -63,7 +77,7 @@
 	    <dd>
 	        Expected object with the following properties:
 	        <ul>
-							<li><code>subscriberId</code> - required when <code>identifierType="id"</code></li>
+							<li><code>subscriberId</code> - Contact Identifier (ID or Key), required when <code>identifierType="id"</code></li>
 							<li><code>emailAddress</code> - required when <code>identifierType="email"</code></li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.),
 	            structured as returned by the <code>Field index</code> node</li>
@@ -96,7 +110,7 @@
 	<h3>Node Status</h3>
 	<ul>
 	    <li><strong>Green (dot)</strong> - Contact was updated successfully.</li>
-	    <li><strong>Red (ring)</strong> - Failed to update contact (e.g., missing contact ID, invalid data, or API error).</li>
+	    <li><strong>Red (ring)</strong> - Failed to update contact (e.g., missing contact identifier, invalid data, or API error).</li>
 	</ul>
 </script>
 
@@ -165,7 +179,8 @@
 		},
 		oneditprepare: function () {
 			const node = this;
-			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'num', [
+			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'str', [
+				'str',
 				'num',
 				'msg',
 				'flow',
@@ -194,14 +209,13 @@
 			// rows to toggle
 			const idRow = $('#node-input-subscriberId').closest('.form-row');
 			const emailRow = $('#node-input-emailAddress').closest('.form-row');
-
 			function toggleRows() {
-				const mode = $('#node-input-identifierType').val() || 'id';
+				const mode = $('#node-input-identifierType').val() || 'email';
 				idRow.toggle(mode === 'id');
 				emailRow.toggle(mode === 'email');
 			}
 
-			$('#node-input-identifierType').val(node.identifierType || 'id');
+			$('#node-input-identifierType').val(node.identifierType || 'email');
 			$('#node-input-identifierType').on('change', toggleRows);
 			toggleRows();
 

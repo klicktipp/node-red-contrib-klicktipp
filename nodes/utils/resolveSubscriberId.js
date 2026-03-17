@@ -3,6 +3,46 @@
 const evaluatePropertyAsync = require('./evaluatePropertyAsync');
 const makeRequest = require('./makeRequest');
 const handleError = require('./handleError');
+const VALID_EMAIL_MESSAGE = 'Valid email address required. Example: jsmith@example.com';
+const CONTACT_IDENTIFIER_MESSAGE = 'Contact ID or Key is required and cannot contain whitespace.';
+
+function containsTemplateVariable(value) {
+	return /\{\{[^}]+\}\}|\$\{[^}]+\}/.test(String(value || ''));
+}
+
+function usesVariableSource(type) {
+	return !!type && !['str', 'num'].includes(type);
+}
+
+function validateSubscriberEmail(value, type) {
+	const normalizedValue = String(value || '').trim();
+
+	if (!normalizedValue) {
+		return VALID_EMAIL_MESSAGE;
+	}
+
+	if (usesVariableSource(type) || containsTemplateVariable(normalizedValue)) {
+		return null;
+	}
+
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedValue) ? null : VALID_EMAIL_MESSAGE;
+}
+
+function validateSubscriberIdentifier(value, type) {
+	const normalizedValue = String(value || '');
+
+	if (!normalizedValue.trim()) {
+		return CONTACT_IDENTIFIER_MESSAGE;
+	}
+
+	if (usesVariableSource(type) || containsTemplateVariable(normalizedValue)) {
+		return null;
+	}
+
+	return normalizedValue.length >= 1 && !/\s/.test(normalizedValue)
+		? null
+		: CONTACT_IDENTIFIER_MESSAGE;
+}
 
 /**
  * Resolve the klick-tipp subscriber ID the same way across all nodes.
@@ -19,7 +59,7 @@ module.exports = async function resolveSubscriberId(RED, node, config, msg) {
 	const identifierType =
 		typeof msg.identifierType === 'string' ? msg.identifierType : config.identifierType || 'id';
 
-	/* ──────── Match by ID (fast path) ───────────────────────── */
+	/* ──────── Match by contact identifier (fast path) ───────── */
 	if (identifierType === 'id') {
 		const subscriberId = await evaluatePropertyAsync(
 			RED,
@@ -29,8 +69,12 @@ module.exports = async function resolveSubscriberId(RED, node, config, msg) {
 			msg,
 		);
 
-		if (!subscriberId) {
-			handleError(node, msg, 'Contact ID is missing', 'Invalid input');
+		const identifierValidationError = validateSubscriberIdentifier(
+			subscriberId,
+			config.subscriberIdType,
+		);
+		if (identifierValidationError) {
+			handleError(node, msg, identifierValidationError);
 			return null;
 		}
 		return subscriberId;
@@ -45,8 +89,9 @@ module.exports = async function resolveSubscriberId(RED, node, config, msg) {
 		msg,
 	);
 
-	if (!emailAddress) {
-		handleError(node, msg, 'Email address is missing', 'Invalid input');
+	const emailValidationError = validateSubscriberEmail(emailAddress, config.emailAddressType);
+	if (emailValidationError) {
+		handleError(node, msg, emailValidationError);
 		return null;
 	}
 

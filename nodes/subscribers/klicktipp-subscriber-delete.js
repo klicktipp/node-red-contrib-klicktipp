@@ -44,11 +44,11 @@ module.exports = function (RED) {
 	 *
 	 * Inputs:
 	 * - `msg.identifierType`: How the contact should be found
-	 *   - `id`: look up by contact ID (default).
+	 *   - `id`: look up by contact identifier (ID or Key).
 	 *   - `email`: look up by email address
 	 *
 	 * - `msg.payload`: Expected object with the following properties
-	 *   - `subscriberId`: (Required) Contact ID (when identifierType = "id").
+	 *   - `subscriberId`: (Required) Contact Identifier (ID or Key) (when identifierType = "id").
 	 *   - `emailAddress`: (Required) Email address (when identifierType = "email")
 	 *
 	 * Outputs:

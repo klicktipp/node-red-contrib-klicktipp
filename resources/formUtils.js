@@ -30,7 +30,6 @@ const KT_CUSTOM_CONTACT_FIELDS_TYPE = {
 const PREDEFINED_OPT_IN_PROCESS_NAME = 'Predefined double opt-in process';
 
 const SUBSCRIPTION_PROCESS = 'subscription-process';
-
 /**
  * Creates a spinner element using jQuery.
  *
