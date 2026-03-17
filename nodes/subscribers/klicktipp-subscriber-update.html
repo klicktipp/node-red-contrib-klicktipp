@@ -1,5 +1,5 @@
 <script type="text/x-red" data-template-name="klicktipp-subscriber-update">
-	<div class="form-row">
+	<div class="form-row kt-align-row">
 			<label for="node-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
 			<input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
@@ -29,7 +29,7 @@
 		<input type="text" id="node-input-subscriberId" placeholder="Enter contact ID or Key (required)">
 		<input type="hidden" id="node-input-subscriberIdType">
 	</div>
-	<div class="form-row email-row">
+	<div class="form-row email-row kt-align-row">
 		<label for="node-input-emailAddress">
 			<i class="fa fa-search"></i> <span>Email Address</span>
 			<i
@@ -179,6 +179,7 @@
 		},
 		oneditprepare: function () {
 			const node = this;
+
 			ktInitializeTypedInput('#node-input-subscriberId', '#node-input-subscriberIdType', 'str', [
 				'str',
 				'num',
@@ -192,6 +193,7 @@
 				'flow',
 				'global',
 			]);
+			ktAlignSimpleFormRows();
 			ktInitializeTypedInput(
 				'#node-input-newEmailAddress',
 				'#node-input-newEmailAddressType',
@@ -211,8 +213,8 @@
 			const emailRow = $('#node-input-emailAddress').closest('.form-row');
 			function toggleRows() {
 				const mode = $('#node-input-identifierType').val() || 'email';
-				idRow.toggle(mode === 'id');
-				emailRow.toggle(mode === 'email');
+				idRow.css('display', mode === 'id' ? 'flex' : 'none');
+				emailRow.css('display', mode === 'email' ? 'flex' : 'none');
 			}
 
 			$('#node-input-identifierType').val(node.identifierType || 'email');

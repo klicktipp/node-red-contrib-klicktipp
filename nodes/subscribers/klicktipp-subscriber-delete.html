@@ -21,7 +21,7 @@
 	 </div>
 
 	<!-- ► Contact-ID input (visible when NOT searching by email)  -->
-	<div class="form-row id-row">
+	<div class="form-row id-row kt-align-row">
 		<label for="node-input-subscriberId">
 			<i class="fa fa-hashtag"></i> <span>Contact Identifier (ID or Key)</span>
 			<i
@@ -35,7 +35,7 @@
 	</div>
 
 	<!-- ► email lookup input (visible when searching by email) -->
-	<div class="form-row email-row">
+	<div class="form-row email-row kt-align-row">
 		<label for="node-input-emailAddress">
 			<i class="fa fa-envelope"></i> <span>Email Address</span>
 			<i
@@ -161,13 +161,15 @@
 				'global',
 			]);
 
+			ktAlignSimpleFormRows();
+
 			// rows we want to toggle
 			const idRow = $('#node-input-subscriberId').closest('.form-row');
 			const emailRow = $('#node-input-emailAddress').closest('.form-row');
 			function toggleRows() {
 				const mode = $('#node-input-identifierType').val(); // "id" | "email"
-				idRow.toggle(mode === 'id');
-				emailRow.toggle(mode === 'email');
+				idRow.css('display', mode === 'id' ? 'flex' : 'none');
+				emailRow.css('display', mode === 'email' ? 'flex' : 'none');
 			}
 
 			// set the select to the saved value (or default 'email')

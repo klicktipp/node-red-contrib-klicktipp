@@ -94,6 +94,68 @@ function ktShowError($element, message) {
 	$element.before(`<span class="kt-error-message">${message}</span>`);
 }
 
+function ktEnsureAlignedFormRowStyles() {
+	if ($('#kt-align-row-style').length) {
+		return;
+	}
+
+	$('<style id="kt-align-row-style">')
+		.text(
+			`
+				.kt-align-row {
+					display: flex;
+					align-items: center;
+				}
+
+				.kt-align-row > label {
+					margin-bottom: 0;
+				}
+
+				.kt-align-row > input[type='text'],
+				.kt-align-row > input[type='password'],
+				.kt-align-row > select,
+				.kt-align-row > textarea,
+				.kt-align-row > .red-ui-typedInput-container {
+					flex-grow: 1;
+					width: auto !important;
+				}
+			`,
+		)
+		.appendTo('head');
+}
+
+function ktAlignSimpleFormRows(scope = '#dialog-form') {
+	ktEnsureAlignedFormRowStyles();
+
+	$(scope)
+		.find('.form-row')
+		.each(function () {
+			const $row = $(this);
+			const $label = $row.children('label');
+			const $field = $row.children(
+				'.red-ui-typedInput-container, input[type="text"], input[type="password"], select, textarea',
+			);
+			const $extras = $row
+				.children()
+				.not(
+					'label, input[type="hidden"], .red-ui-typedInput-container, input[type="text"], input[type="password"], select, textarea',
+				)
+				.filter(function () {
+					return $(this).css('display') !== 'none';
+				});
+
+			if ($label.length === 1 && $field.length === 1 && $extras.length === 0) {
+				$row.addClass('kt-align-row');
+
+				if ($field.hasClass('red-ui-typedInput-container')) {
+					$field[0].style.setProperty('margin-left', '4px', 'important');
+				} else {
+					$field.css('margin-left', '4px');
+				}
+			}
+		});
+}
+
 /**
  * Extracts the error message from the failed AJAX request.
  *
