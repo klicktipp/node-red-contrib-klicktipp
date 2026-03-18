@@ -66,11 +66,11 @@ module.exports = function (RED) {
 	 *
 	 * Inputs:
 	 * - `msg.identifierType`: How the contact should be found
-	 *   - `id`: look up by contact ID (default).
+	 *   - `id`: look up by contact identifier (ID or Key).
 	 *   - `email`: look up by email address
 	 *
 	 * - `msg.payload`: Expected object with the following properties
-	 *   - `subscriberId`: (Required) The ID of the subscriber to update.
+	 *   - `subscriberId`: (Required) The Contact Identifier (ID or Key) of the subscriber to update.
 	 *   - `fields` (Optional): Fields of the subscriber to update.
 	 *   - `newEmailAddress` (Optional): The new email address of the subscriber.
 	 *   - `newSmsNumber` (Optional): The new SMS number of the subscriber.

@@ -107,3 +107,8 @@
 ## Version 1.0.21 (2026-03-16)
 - **Improvements**
 	- Updated error messages: added field value.
+
+## Version 1.0.22 (2026-03-18)
+- **Improvements**
+	- Updated option name in select "Contact ID" -> "Contact Identifier (ID or Key)" in update/delete/get contact nodes.
+	- Added hints for select options in update/delete/get contact nodes.
