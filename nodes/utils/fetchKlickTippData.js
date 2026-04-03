@@ -1,8 +1,9 @@
 const makeRequest = require('./makeRequest');
+const { runWithSession } = require('./klickTippSessionManager');
 
 /**
  * Fetches data from the KlickTipp API for a specific endpoint.
- * This function handles the session login, fetching the data, and session logout process.
+ * This function reuses a stored session cookie and refreshes it once if it expires.
  *
  * @async
  * @function fetchKlickTippData
@@ -12,33 +13,16 @@ const makeRequest = require('./makeRequest');
  * @returns {Promise<object>} - Returns a Promise that resolves to the fetched data or throws an error.
  *
  * @throws {Error} If the KlickTipp credentials are missing or invalid.
- * @throws {Error} If the API request fails at any point (login, fetching data, logout).
+ * @param {object} [sessionOwner] - Mutable owner object used to cache the session between calls.
+ * @throws {Error} If the API request fails at any point (login or fetching data).
  *
  */
-async function fetchKlickTippData(username, password, endpoint) {
-	// Login to KlickTipp API
-	const loginResponse = await makeRequest('/account/login', 'POST', {
-		username,
-		password,
+async function fetchKlickTippData(username, password, endpoint, sessionOwner) {
+	const response = await runWithSession(sessionOwner, username, password, async (sessionData) => {
+		return await makeRequest(endpoint, 'GET', {}, sessionData);
 	});
 
-	if (!loginResponse.data?.sessid || !loginResponse.data?.session_name) {
-		console.log('Login failed');
-		return;
-	}
-
-	const sessionData = {
-		sessionId: loginResponse.data.sessid,
-		sessionName: loginResponse.data.session_name,
-	};
-
-	// Fetch data from the specified endpoint
-	const response = await makeRequest(endpoint, 'GET', {}, sessionData);
-
-	// Logout from KlickTipp API
-	await makeRequest('/account/logout', 'POST', {}, sessionData);
-
-	return response.data; // Return the fetched data
+	return response.data;
 }
 
 module.exports = fetchKlickTippData;
