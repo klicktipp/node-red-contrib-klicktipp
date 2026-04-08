@@ -131,22 +131,36 @@ async function runWithSession(owner, username, password, requestFn) {
 	let sessionData = await getSession(owner, username, password);
 
 	try {
+		// Developer note: uncomment this block to test the 403 case and verify re-auth logs.
+		// if (owner && !owner._klickTippForced403Tested) {
+		// 	owner._klickTippForced403Tested = true;
+		//
+		// 	authLog('Forced 403 for reauth test', {
+		// 		owner: getOwnerLabel(owner),
+		// 		session: formatSession(sessionData),
+		// 	});
+		//
+		// 	const forcedError = new Error('Forced 403 for reauth test');
+		// 	forcedError.response = { status: 403, data: 'Forced 403 for reauth test' };
+		// 	throw forcedError;
+		// }
+
 		return await requestFn(sessionData);
 	} catch (error) {
 		if (!isAuthError(error)) {
 			throw error;
 		}
 
-			authLog('Received auth error, retrying with fresh session', {
-				owner: getOwnerLabel(owner),
-				session: formatSession(sessionData),
-				status: error?.response?.status ?? error?.statusCode,
-			});
-			invalidateSession(owner, sessionData);
-			sessionData = await getSession(owner, username, password, {
-				forceRefresh: true,
-				reason: 'reauth',
-			});
+		authLog('Received auth error, retrying with fresh session', {
+			owner: getOwnerLabel(owner),
+			session: formatSession(sessionData),
+			status: error?.response?.status ?? error?.statusCode,
+		});
+		invalidateSession(owner, sessionData);
+		sessionData = await getSession(owner, username, password, {
+			forceRefresh: true,
+			reason: 'reauth',
+		});
 
 		return await requestFn(sessionData);
 	}
