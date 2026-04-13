@@ -1,7 +1,6 @@
 'use strict';
 
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const CACHE_KEYS = require('./utils/cache/cacheKeys');
 const makeRequest = require('./utils/makeRequest');
 const getErrorMessage = require('./utils/getErrorMessage');
@@ -47,8 +46,8 @@ module.exports = function (RED) {
 				}
 
 				const sessionOwner = id ? RED.nodes.getNode(id) : null;
-				await runWithSession(sessionOwner, username, password, async (sessionData) => {
-					await makeRequest('/list', 'GET', {}, sessionData);
+				await runWithSession(sessionOwner, username, password, (sessionData) => {
+					return makeRequest('/list', 'GET', {}, sessionData);
 				});
 
 				return res.json({ ok: true, message: 'Connection successful.' });
@@ -68,7 +67,11 @@ module.exports = function (RED) {
 			endpoint: endpointPath,
 			cacheKey: cacheKey,
 			fetchFunction: async (username, password, configNode) => {
-				return await fetchKlickTippData(username, password, apiPath, configNode);
+				const response = await runWithSession(configNode, username, password, (sessionData) => {
+					return makeRequest(apiPath, 'GET', {}, sessionData);
+				});
+
+				return response.data;
 			},
 		});
 	};
