@@ -107,7 +107,7 @@ module.exports = function (RED) {
 					username,
 					password,
 					async (sessionData) => {
-						return await makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
+						return makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
 					},
 				);
 				// Pass through API payload
