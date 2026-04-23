@@ -4,8 +4,8 @@
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-klicktipp"><i class="fa fa-cog"></i> <span>KlickTipp Config</span></label>
-	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
+	    <label for="node-input-webhookAuth"><i class="fa fa-lock"></i> <span>Webhook Auth</span></label>
+	    <input type="text" id="node-input-webhookAuth">
 	</div>
 	<div class="form-row">
 	    <label for="node-input-webhookUrl">Webhook URL</label>
@@ -27,6 +27,11 @@
 	<p>
 		Triggers when a webhook event occurs in KlickTipp, such as a tag being added, an email being opened or sent, a link clicked, an SMS sent, and more.
 	</p>
+	<p>
+		Incoming requests must include the configured secret in the configured request body field. If
+		the field is missing or the secret is wrong, the node returns <code>401 Unauthorized</code>
+		and does not emit a message.
+	</p>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
@@ -41,7 +46,7 @@
 		category: 'KlickTipp',
 		color: '#DAE1FC',
 		defaults: {
-			klicktipp: { type: 'klicktipp-config', required: true },
+			webhookAuth: { type: 'klicktipp-webhook-auth', required: true },
 			name: { value: '' },
 			token: { value: '' }, // token will be saved here
 		},
@@ -52,9 +57,6 @@
 			return this.name || 'Watch New Events';
 		},
 		paletteLabel: 'Watch New Events',
-		onadd: function () {
-			ktPopulateConfig(this);
-		},
 		oneditprepare: function () {
 			var baseUrl = window.location.origin;
 			// Retrieve the token from the hidden field
