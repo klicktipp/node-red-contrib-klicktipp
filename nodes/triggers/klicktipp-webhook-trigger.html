@@ -4,7 +4,7 @@
 	    <input type="text" id="node-input-name" placeholder="Enter node name">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-webhookAuth"><i class="fa fa-lock"></i> <span>Webhook Auth</span></label>
+	    <label for="node-input-webhookAuth"><i class="fa fa-lock"></i> <span>Authentication Via Body</span></label>
 	    <input type="text" id="node-input-webhookAuth">
 	</div>
 	<div class="form-row">
@@ -58,6 +58,15 @@
 		},
 		paletteLabel: 'Watch New Events',
 		oneditprepare: function () {
+			function renameAddWebhookAuthOption() {
+				$('#node-input-webhookAuth')
+					.find('option')
+					.filter(function () {
+						return $(this).text().trim() === 'Add new klicktipp-webhook-auth...';
+					})
+					.text('None');
+			}
+
 			var baseUrl = window.location.origin;
 			// Retrieve the token from the hidden field
 			var token = $('#node-input-token').val();
@@ -75,6 +84,9 @@
 				copyText.select();
 				document.execCommand('copy');
 			});
+			renameAddWebhookAuthOption();
+			setTimeout(renameAddWebhookAuthOption, 0);
+			$('#node-input-webhookAuth').on('focus mousedown click change', renameAddWebhookAuthOption);
 			ktAlignSimpleFormRows();
 		},
 	});

@@ -1,10 +1,10 @@
 <script type="text/x-red" data-template-name="klicktipp-webhook-auth">
 	<div class="form-row">
-		<label for="node-config-input-name"><i class="fa fa-tag"></i> <span>Name</span></label>
-		<input type="text" id="node-config-input-name" placeholder="Webhook auth">
+		<label for="node-config-input-name"><i class="fa fa-tag"></i> <span>Credential Name</span></label>
+		<input type="text" id="node-config-input-name" placeholder="Enter the credential name">
 	</div>
 	<div class="form-row">
-		<label for="node-config-input-bodyFieldName"><i class="fa fa-key"></i> <span>Body Field</span></label>
+		<label for="node-config-input-bodyFieldName"><i class="fa fa-key"></i> <span>Name</span></label>
 		<input
 			type="text"
 			id="node-config-input-bodyFieldName"
@@ -12,12 +12,17 @@
 		>
 	</div>
 	<div class="form-row">
-		<label for="node-config-input-secret"><i class="fa fa-lock"></i> <span>Secret</span></label>
+		<label for="node-config-input-secret"><i class="fa fa-lock"></i> <span>Value</span></label>
 		<input
 			type="password"
 			id="node-config-input-secret"
-			placeholder="Enter the webhook secret"
+			placeholder="Enter the secret value"
 		>
+	</div>
+	<div class="form-row" style="margin: 12px 0;">
+		<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">
+			Please add that as a parameter in the KlickTipp webhook.
+		</p>
 	</div>
 </script>
 
@@ -39,7 +44,42 @@
 			secret: { type: 'password', required: true },
 		},
 		label: function () {
-			return this.name || `Webhook Auth (${this.bodyFieldName || 'Authorization'})`;
+			return this.name || 'Authentication Via Body';
+		},
+		oneditsave: function () {
+			var nameField = $('#node-config-input-name');
+			var currentName = (nameField.val() || '').trim();
+
+			if (currentName) {
+				nameField.val(currentName);
+				return;
+			}
+
+			var baseName = 'Authentication Via Body';
+			var usedNames = {};
+
+			RED.nodes.eachConfig(function (config) {
+				if (config.type !== 'klicktipp-webhook-auth' || config.id === this.id) {
+					return;
+				}
+
+				var existingName = (config.name || '').trim();
+				if (existingName) {
+					usedNames[existingName] = true;
+				}
+			}.bind(this));
+
+			if (!usedNames[baseName]) {
+				nameField.val(baseName);
+				return;
+			}
+
+			var suffix = 2;
+			while (usedNames[baseName + ' ' + suffix]) {
+				suffix += 1;
+			}
+
+			nameField.val(baseName + ' ' + suffix);
 		},
 	});
 </script>
