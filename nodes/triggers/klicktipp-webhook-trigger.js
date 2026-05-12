@@ -50,9 +50,12 @@ module.exports = function (RED) {
 
 		node.bodyFieldName = webhookAuth?.bodyFieldName || 'Authorization';
 		node.webhookSecret = webhookAuth?.secret || '';
+		node.hasBodyAuth = Boolean(config.webhookAuth && node.webhookSecret);
 
-		if (!node.webhookSecret) {
-			node.status({ fill: 'red', shape: 'ring', text: 'missing webhook auth secret' });
+		if (!config.webhookAuth) {
+			node.status({ fill: 'green', shape: 'dot', text: 'listening' });
+		} else if (!node.webhookSecret) {
+			node.status({ fill: 'red', shape: 'ring', text: 'missing auth value' });
 		} else {
 			node.status({ fill: 'green', shape: 'dot', text: `listening on ${node.bodyFieldName}` });
 		}
@@ -67,7 +70,7 @@ module.exports = function (RED) {
 			const payload = req.body || {};
 			const providedSecret = payload[node.bodyFieldName];
 
-			if (!node.webhookSecret || !safeCompare(providedSecret, node.webhookSecret)) {
+			if (node.hasBodyAuth && !safeCompare(providedSecret, node.webhookSecret)) {
 				node.warn(`Rejected unauthorized webhook request for ${endpoint}`);
 				res.sendStatus(401);
 				return;
