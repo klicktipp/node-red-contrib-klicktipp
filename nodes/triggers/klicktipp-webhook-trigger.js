@@ -52,14 +52,6 @@ module.exports = function (RED) {
 		node.webhookSecret = webhookAuth?.secret || '';
 		node.hasBodyAuth = Boolean(config.webhookAuth && node.webhookSecret);
 
-		if (!config.webhookAuth) {
-			node.status({ fill: 'green', shape: 'dot', text: 'listening' });
-		} else if (!node.webhookSecret) {
-			node.status({ fill: 'red', shape: 'ring', text: 'missing auth value' });
-		} else {
-			node.status({ fill: 'green', shape: 'dot', text: `listening on ${node.bodyFieldName}` });
-		}
-
 		// Build the full webhook URL.
 		node.webhookUrl = (RED.settings.httpNodeRoot || '') + '/klicktipp-webhook/' + node.token;
 		node.log('Webhook URL set to: ' + node.webhookUrl);
