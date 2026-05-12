@@ -29,9 +29,17 @@ module.exports = function (RED) {
 				return true;
 			}
 
-			const routeHandler = layer.route.stack.some(
-				(routeLayer) => routeLayer.method === method && routeLayer.handle === handler,
-			);
+			const routeHandler = layer.route.stack.some((routeLayer) => {
+				if (routeLayer.method !== method) {
+					return false;
+				}
+
+				if (!handler) {
+					return true;
+				}
+
+				return routeLayer.handle === handler;
+			});
 
 			return !routeHandler;
 		});
@@ -72,6 +80,8 @@ module.exports = function (RED) {
 			res.sendStatus(200);
 		};
 
+		// Remove any stale handlers left behind for the same token before registering the new one.
+		removeHttpRoute('post', endpoint);
 		RED.httpNode.post(endpoint, handleWebhook);
 
 		node.on('close', function () {
