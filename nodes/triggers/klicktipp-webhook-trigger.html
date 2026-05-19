@@ -8,23 +8,10 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-webhookAuth">
-	    	<i class="fa fa-lock"></i> <span>Authentication</span>
-	    	<i
-	    		class="fa fa-info-circle"
-	    		style="margin-left:4px; color:#888; cursor: help;"
-	    		title="Choose &quot;Yes&quot; only if your KlickTipp webhook sends auth in the POST body as a static parameter. Choose &quot;No&quot; if no auth is required."
-	    	></i>
-	    </label>
-	    <input type="text" id="node-input-webhookAuth">
-	</div>
-	<div class="form-row">
 	    <label for="node-input-webhookUrl">Webhook URL</label>
 	    <input type="text" id="node-input-webhookUrl" readonly>
 	    <button type="button" id="copy-webhook-btn">Copy</button>
 	</div>
-	<!-- Hidden field to store the token -->
-	<input type="hidden" id="node-input-token">
 	<div class="form-row">
 	    <p class="help">
 	      The webhook URL needs to be set up in KlickTipp.
@@ -32,6 +19,57 @@
 	      <a href="https://www.klicktipp.com/de/support/wissensdatenbank/outbound-erstellen-und-nutzen/" target="_blank" style="color: red;"">Help</a>.
 	    </p>
 	</div>
+	<div class="form-row">
+	    <label for="node-input-authentication">
+	    	<i class="fa fa-lock"></i> <span>Authentication</span>
+	    	<i
+	    		class="fa fa-info-circle"
+	    		style="margin-left:4px; color:#888; cursor: help;"
+	    		title="Choose &quot;Yes&quot; only if your KlickTipp webhook sends auth in the POST body as a static parameter. Choose &quot;No&quot; if no auth is required."
+	    	></i>
+	    </label>
+	    <select id="node-input-authentication">
+	    	<option value="yes">Yes</option>
+	    	<option value="no">No</option>
+	    </select>
+	</div>
+	<div class="form-row auth-settings-row">
+		<label for="node-input-authParameterKey">
+			<i class="fa fa-key"></i> <span>Parameter Key</span>
+			<i
+				class="fa fa-info-circle"
+				style="margin-left:4px; color:#888; cursor: help;"
+				title="Enter the exact body parameter key configured in KlickTipp. Usually: Authorization."
+			></i>
+		</label>
+		<input
+			type="text"
+			id="node-input-authParameterKey"
+			placeholder="Authorization"
+		>
+	</div>
+	<div class="form-row auth-settings-row">
+		<label for="node-input-authParameterValue">
+			<i class="fa fa-lock"></i> <span>Parameter Value</span>
+			<i
+				class="fa fa-info-circle"
+				style="margin-left:4px; color:#888; cursor: help;"
+				title="Paste the webhook token exactly as stored in KlickTipp. Do not add &quot;Bearer&quot;, quotes, or extra spaces."
+			></i>
+		</label>
+		<input
+			type="password"
+			id="node-input-authParameterValue"
+			placeholder="Empty"
+		>
+	</div>
+	<div class="form-row auth-settings-row" style="margin: 12px 0;">
+		<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">
+			In KlickTipp, create or edit your webhook, set the HTTP method to POST, enable Add static value, and add the same key-value pair as a static POST body parameter. If this is missing, body authentication will fail.
+		</p>
+	</div>
+	<!-- Hidden field to store the token -->
+	<input type="hidden" id="node-input-token">
 </script>
 
 <script type="text/x-red" data-help-name="klicktipp-webhook-trigger">
@@ -39,7 +77,7 @@
 		Triggers when a webhook event occurs in KlickTipp, such as a tag being added, an email being opened or sent, a link clicked, an SMS sent, and more.
 	</p>
 	<p>
-		If <code>Authentication</code> is selected, incoming requests must include the
+		If <code>Authentication</code> is set to <code>Yes</code>, incoming requests must include the
 		configured value in the configured request body field. If the field is missing or the value is
 		wrong, the node returns <code>401 Unauthorized</code> and does not emit a message.
 	</p>
@@ -58,9 +96,13 @@
 		color: '#DAE1FC',
 		defaults: {
 			klicktipp: { type: 'klicktipp-config', required: true },
-			webhookAuth: { type: 'klicktipp-webhook-auth', required: false },
+			authentication: { value: 'no' },
+			authParameterKey: { value: 'Authorization' },
 			name: { value: '' },
 			token: { value: '' }, // token will be saved here
+		},
+		credentials: {
+			authParameterValue: { type: 'password' },
 		},
 		inputs: 0,
 		outputs: 1,
@@ -71,14 +113,9 @@
 		paletteLabel: 'Watch New Events',
 		oneditprepare: function () {
 			ktPopulateConfig(this);
-
-			function renameAddWebhookAuthOption() {
-				$('#node-input-webhookAuth')
-					.find('option')
-					.filter(function () {
-						return $(this).text().trim() === 'Add new klicktipp-webhook-auth...';
-					})
-					.text('No');
+			function toggleAuthenticationFields() {
+				var showAuthFields = $('#node-input-authentication').val() === 'yes';
+				$('.auth-settings-row').toggle(showAuthFields);
 			}
 
 			var baseUrl = window.location.origin;
@@ -98,9 +135,11 @@
 				copyText.select();
 				document.execCommand('copy');
 			});
-			renameAddWebhookAuthOption();
-			setTimeout(renameAddWebhookAuthOption, 0);
-			$('#node-input-webhookAuth').on('focus mousedown click change', renameAddWebhookAuthOption);
+			if (!$('#node-input-authParameterKey').val()) {
+				$('#node-input-authParameterKey').val('Authorization');
+			}
+			$('#node-input-authentication').on('change', toggleAuthenticationFields);
+			toggleAuthenticationFields();
 			ktAlignSimpleFormRows();
 		},
 	});

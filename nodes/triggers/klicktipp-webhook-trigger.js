@@ -48,7 +48,6 @@ module.exports = function (RED) {
 	function KlickTippWebhookTriggerNode(config) {
 		RED.nodes.createNode(this, config);
 		const node = this;
-		const webhookAuth = RED.nodes.getNode(config.webhookAuth);
 
 		// Generate a secure token if not provided in the configuration.
 		if (!config.token) {
@@ -56,12 +55,13 @@ module.exports = function (RED) {
 		}
 		node.token = config.token;
 
-		node.authParameterKey = webhookAuth?.authParameterKey || 'Authorization';
+		node.authentication = config.authentication;
+		node.authParameterKey = (config.authParameterKey || 'Authorization').trim() || 'Authorization';
 		node.authParameterValue =
-			typeof webhookAuth?.authParameterValue === 'string'
-				? webhookAuth.authParameterValue.trim()
+			typeof node.credentials?.authParameterValue === 'string'
+				? node.credentials.authParameterValue.trim()
 				: '';
-		node.hasAuthentication = Boolean(config.webhookAuth);
+		node.hasAuthentication = node.authentication === 'yes';
 
 		// Build the full webhook URL.
 		node.webhookUrl = (RED.settings.httpNodeRoot || '') + '/klicktipp-webhook/' + node.token;
@@ -99,5 +99,9 @@ module.exports = function (RED) {
 		});
 	}
 
-	RED.nodes.registerType('klicktipp-webhook-trigger', KlickTippWebhookTriggerNode);
+	RED.nodes.registerType('klicktipp-webhook-trigger', KlickTippWebhookTriggerNode, {
+		credentials: {
+			authParameterValue: { type: 'password' },
+		},
+	});
 };
