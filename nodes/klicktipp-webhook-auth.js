@@ -4,13 +4,13 @@ module.exports = function (RED) {
 	function KlickTippWebhookAuthNode(config) {
 		RED.nodes.createNode(this, config);
 		this.name = config.name;
-		this.bodyFieldName = (config.bodyFieldName || 'Authorization').trim() || 'Authorization';
-		this.secret = this.credentials.secret;
+		this.authParameterKey = (config.authParameterKey || 'Authorization').trim() || 'Authorization';
+		this.authParameterValue = this.credentials.authParameterValue || '';
 	}
 
 	RED.nodes.registerType('klicktipp-webhook-auth', KlickTippWebhookAuthNode, {
 		credentials: {
-			secret: { type: 'password' },
+			authParameterValue: { type: 'password' },
 		},
 	});
 };

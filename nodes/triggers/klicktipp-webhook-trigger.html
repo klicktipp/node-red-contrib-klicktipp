@@ -8,7 +8,14 @@
 	    <input type="text" id="node-input-klicktipp" data-i18n="config node">
 	</div>
 	<div class="form-row">
-	    <label for="node-input-webhookAuth"><i class="fa fa-lock"></i> <span>Authentication Via Body</span></label>
+	    <label for="node-input-webhookAuth">
+	    	<i class="fa fa-lock"></i> <span>Authentication</span>
+	    	<i
+	    		class="fa fa-info-circle"
+	    		style="margin-left:4px; color:#888; cursor: help;"
+	    		title="Choose &quot;Yes&quot; only if your KlickTipp webhook sends auth in the POST body as a static parameter. Choose &quot;No&quot; if no auth is required."
+	    	></i>
+	    </label>
 	    <input type="text" id="node-input-webhookAuth">
 	</div>
 	<div class="form-row">
@@ -32,7 +39,7 @@
 		Triggers when a webhook event occurs in KlickTipp, such as a tag being added, an email being opened or sent, a link clicked, an SMS sent, and more.
 	</p>
 	<p>
-		If <code>Authentication Via Body</code> is selected, incoming requests must include the
+		If <code>Authentication</code> is selected, incoming requests must include the
 		configured value in the configured request body field. If the field is missing or the value is
 		wrong, the node returns <code>401 Unauthorized</code> and does not emit a message.
 	</p>
@@ -71,7 +78,7 @@
 					.filter(function () {
 						return $(this).text().trim() === 'Add new klicktipp-webhook-auth...';
 					})
-					.text('none');
+					.text('No');
 			}
 
 			var baseUrl = window.location.origin;

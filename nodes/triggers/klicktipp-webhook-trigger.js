@@ -56,9 +56,12 @@ module.exports = function (RED) {
 		}
 		node.token = config.token;
 
-		node.bodyFieldName = webhookAuth?.bodyFieldName || 'Authorization';
-		node.webhookSecret = webhookAuth?.secret || '';
-		node.hasBodyAuth = Boolean(config.webhookAuth && node.webhookSecret);
+		node.authParameterKey = webhookAuth?.authParameterKey || 'Authorization';
+		node.authParameterValue =
+			typeof webhookAuth?.authParameterValue === 'string'
+				? webhookAuth.authParameterValue.trim()
+				: '';
+		node.hasAuthentication = Boolean(config.webhookAuth);
 
 		// Build the full webhook URL.
 		node.webhookUrl = (RED.settings.httpNodeRoot || '') + '/klicktipp-webhook/' + node.token;
@@ -68,9 +71,15 @@ module.exports = function (RED) {
 		const endpoint = '/klicktipp-webhook/' + node.token;
 		const handleWebhook = function (req, res) {
 			const payload = req.body || {};
-			const providedSecret = payload[node.bodyFieldName];
+			const providedAuthParameterValue = payload[node.authParameterKey];
 
-			if (node.hasBodyAuth && !safeCompare(providedSecret, node.webhookSecret)) {
+			if (node.hasAuthentication && !node.authParameterValue) {
+				node.warn(`Rejected webhook request for ${endpoint}: empty authentication value`);
+				res.sendStatus(401);
+				return;
+			}
+
+			if (node.hasAuthentication && !safeCompare(providedAuthParameterValue, node.authParameterValue)) {
 				node.warn(`Rejected unauthorized webhook request for ${endpoint}`);
 				res.sendStatus(401);
 				return;
