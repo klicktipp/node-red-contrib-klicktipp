@@ -114,5 +114,5 @@
 	- Added hints for select options in update/delete/get contact nodes.
 
 ## Version 1.0.23 (2026-05-20)
-- **Improvements**
+- **New Features**
 	- Added simple auth for trigger.
