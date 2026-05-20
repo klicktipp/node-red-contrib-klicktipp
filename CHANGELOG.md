@@ -112,3 +112,7 @@
 - **Improvements**
 	- Updated option name in select "Contact ID" -> "Contact Identifier (ID or Key)" in update/delete/get contact nodes.
 	- Added hints for select options in update/delete/get contact nodes.
+
+## Version 1.0.23 (2026-05-20)
+- **Improvements**
+	- Added simple auth for trigger.
