@@ -116,3 +116,7 @@
 ## Version 1.0.23 (2026-05-20)
 - **New Features**
 	- Added simple auth for trigger.
+
+## Version 1.0.24 (2026-05-26)
+- **Changes**
+	- Improved KlickTipp authentication by reusing active sessions, automatically re-authenticating once on 401/403, and avoiding per-request login/logout.
