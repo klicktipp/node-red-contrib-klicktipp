@@ -1,10 +1,10 @@
 'use strict';
 
 const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const CACHE_KEYS = require('./utils/cache/cacheKeys');
 const makeRequest = require('./utils/makeRequest');
 const getErrorMessage = require('./utils/getErrorMessage');
+const { runWithSession } = require('./utils/klickTippSessionManager');
 
 module.exports = function (RED) {
 	// Configuration node for storing API credentials
@@ -12,6 +12,9 @@ module.exports = function (RED) {
 		RED.nodes.createNode(this, n);
 		this.username = this.credentials.username;
 		this.password = this.credentials.password;
+		this._klickTippSessionData = null;
+		this._klickTippSessionPromise = null;
+		this._klickTippSessionAuthKey = null;
 	}
 
 	// Register the config node for KlickTipp credentials
@@ -42,37 +45,10 @@ module.exports = function (RED) {
 						.json({ ok: false, message: 'Username and password are required.' });
 				}
 
-				// 1) login
-				const loginResponse = await makeRequest('/account/login', 'POST', { username, password });
-
-				const sessid = loginResponse?.data?.sessid;
-				const sessionName = loginResponse?.data?.session_name;
-
-				if (!sessid || !sessionName) {
-					return res.status(401).json({
-						ok: false,
-						message: 'Login failed: missing sessid/session_name in response.',
-					});
-				}
-
-				const sessionData = { sessionId: sessid, sessionName };
-
-				// 2) verify session by calling an authenticated endpoint /list as "subscription-processes"
-				try {
-					await makeRequest('/list', 'GET', {}, sessionData);
-				} catch (verifyErr) {
-					// logout, then report verify failure
-					try {
-						await makeRequest('/account/logout', 'POST', {}, sessionData);
-					} catch (_) {}
-
-					return res.status(401).json({ ok: false, message: getErrorMessage(verifyErr) });
-				}
-
-				// 3) logout
-				try {
-					await makeRequest('/account/logout', 'POST', {}, sessionData);
-				} catch (_) {}
+				const sessionOwner = id ? RED.nodes.getNode(id) : null;
+				await runWithSession(sessionOwner, username, password, (sessionData) => {
+					return makeRequest('/list', 'GET', {}, sessionData);
+				});
 
 				return res.json({ ok: true, message: 'Connection successful.' });
 			} catch (err) {
@@ -90,8 +66,12 @@ module.exports = function (RED) {
 		createCachedApiEndpoint(RED, {
 			endpoint: endpointPath,
 			cacheKey: cacheKey,
-			fetchFunction: async (username, password) => {
-				return await fetchKlickTippData(username, password, apiPath);
+			fetchFunction: async (username, password, configNode) => {
+				const response = await runWithSession(configNode, username, password, (sessionData) => {
+					return makeRequest(apiPath, 'GET', {}, sessionData);
+				});
+
+				return response.data;
 			},
 		});
 	};

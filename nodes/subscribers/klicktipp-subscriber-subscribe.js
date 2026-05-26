@@ -7,6 +7,7 @@ const prepareSubscriptionData = require('../utils/transformers/prepareCreateSubs
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
+const { runWithSession } = require('../utils/klickTippSessionManager');
 
 const qs = require('qs');
 
@@ -96,29 +97,19 @@ module.exports = function (RED) {
 				return res.status(401).json({ error: 'Missing username or password in config node' });
 			}
 
-			let sessionData;
 			try {
-				// Login
-				const loginResponse = await makeRequest('/account/login', 'POST', { username, password });
-				if (loginResponse && loginResponse.data && loginResponse.data.sessid) {
-					sessionData = {
-						sessionId: loginResponse.data.sessid,
-						sessionName: loginResponse.data.session_name,
-					};
-				} else {
-					return res.status(401).json({ error: 'Invalid credentials or session ID missing' });
-				}
-			} catch (loginError) {
-				return res.status(500).json({ error: 'Login request failed: ' + loginError.message });
-			}
-
-			try {
-				// Create tag
 				const payload = { name: name };
 				if (text && String(text).trim() !== '') {
 					payload.text = text;
 				}
-				const response = await makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
+				const response = await runWithSession(
+					configNode,
+					username,
+					password,
+					async (sessionData) => {
+						return makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
+					},
+				);
 				// Pass through API payload
 				return res.json(response.data);
 			} catch (err) {
@@ -127,13 +118,6 @@ module.exports = function (RED) {
 					err.message ||
 					'Create tag failed';
 				return res.status(err.response?.status || 500).json({ error: msg });
-			} finally {
-				// Logout best-effort
-				try {
-					await makeRequest('/account/logout', 'POST', {}, sessionData);
-				} catch (logoutError) {
-					console.error('Logout failed:', logoutError.message);
-				}
 			}
 		},
 	);
