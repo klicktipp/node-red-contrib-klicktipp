@@ -1,7 +1,6 @@
 'use strict';
 
-const createCachedApiEndpoint = require('./utils/cache/createCachedApiEndpoint');
-const CACHE_KEYS = require('./utils/cache/cacheKeys');
+const createApiEndpoint = require('./utils/createApiEndpoint');
 const makeRequest = require('./utils/makeRequest');
 const getErrorMessage = require('./utils/getErrorMessage');
 const { runWithSession } = require('./utils/klickTippSessionManager');
@@ -61,11 +60,10 @@ module.exports = function (RED) {
 		},
 	);
 
-	// Helper function to register endpoints with caching
-	const registerKlickTippEndpoint = (endpointPath, apiPath, cacheKey) => {
-		createCachedApiEndpoint(RED, {
+	// Register admin endpoints that always return fresh data for editor dropdowns.
+	const registerKlickTippEndpoint = (endpointPath, apiPath) => {
+		createApiEndpoint(RED, {
 			endpoint: endpointPath,
-			cacheKey: cacheKey,
 			fetchFunction: async (username, password, configNode) => {
 				const response = await runWithSession(configNode, username, password, (sessionData) => {
 					return makeRequest(apiPath, 'GET', {}, sessionData);
@@ -76,12 +74,7 @@ module.exports = function (RED) {
 		});
 	};
 
-	// Register each endpoint with caching, using centralized cache keys
-	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag', CACHE_KEYS.TAGS);
-	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field', CACHE_KEYS.FIELDS);
-	registerKlickTippEndpoint(
-		'/klicktipp/subscription-processes/:nodeId',
-		'/list',
-		CACHE_KEYS.OPT_IN_PROCESSES,
-	);
+	registerKlickTippEndpoint('/klicktipp/tags/:nodeId', '/tag');
+	registerKlickTippEndpoint('/klicktipp/contact-fields/:nodeId', '/field');
+	registerKlickTippEndpoint('/klicktipp/subscription-processes/:nodeId', '/list');
 };

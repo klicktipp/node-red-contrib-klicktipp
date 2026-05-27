@@ -120,3 +120,7 @@
 ## Version 1.0.24 (2026-05-26)
 - **Changes**
 	- Improved KlickTipp authentication by reusing active sessions, automatically re-authenticating once on 401/403, and avoiding per-request login/logout.
+
+## Version 1.0.25 (2026-05-27)
+- **Improvements**
+	- Disabled dropdown data caching for tags, contact fields, and opt-in processes so newly created items appear immediately.

@@ -3,9 +3,7 @@
 const handleResponse = require('../utils/handleResponse');
 const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
-const clearCache = require('../utils/cache/clearCache');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
-const CACHE_KEYS = require('../utils/cache/cacheKeys');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -28,9 +26,6 @@ module.exports = function (RED) {
 
 			handleResponse(this, msg, response, 'Tag deleted', 'Tag could not be deleted', () => {
 				msg.payload = { success: true };
-
-				// Clear the cache after a successful delete
-				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
 			handleError(this, msg, 'Tag could not be deleted', error?.response?.data || error?.message);
@@ -40,7 +35,6 @@ module.exports = function (RED) {
 	/**
 	 * KlickTippTagDeleteNode - A Node-RED node to delete a manual tag.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
-	 * It will also clear the cached tag data after a successful deletion.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
