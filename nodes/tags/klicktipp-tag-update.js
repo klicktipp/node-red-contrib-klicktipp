@@ -3,10 +3,8 @@
 const handleResponse = require('../utils/handleResponse');
 const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
-const clearCache = require('../utils/cache/clearCache');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const CACHE_KEYS = require('../utils/cache/cacheKeys');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -50,9 +48,6 @@ module.exports = function (RED) {
 
 			handleResponse(node, msg, response, 'Tag updated', 'Tag could not be updated', () => {
 				msg.payload = { success: true };
-
-				// Clear the cache after a successful update
-				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
 			handleError(node, msg, 'Tag could not be updated', error?.response?.data || error?.message);

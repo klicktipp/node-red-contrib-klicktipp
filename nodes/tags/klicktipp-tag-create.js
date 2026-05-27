@@ -3,10 +3,8 @@
 const handleResponse = require('../utils/handleResponse');
 const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
-const clearCache = require('../utils/cache/clearCache');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const CACHE_KEYS = require('../utils/cache/cacheKeys');
 const qs = require('qs');
 
 module.exports = function (RED) {
@@ -44,9 +42,6 @@ module.exports = function (RED) {
 				};
 
 				msg.payload = enhancedData;
-
-				// Clear the cache after a successful delete
-				clearCache(CACHE_KEYS.TAGS);
 			});
 		} catch (error) {
 			handleError(node, msg, 'Tag could not be created', error?.response?.data || error?.message);
@@ -56,7 +51,6 @@ module.exports = function (RED) {
 	/**
 	 * KlickTippTagCreateNode - A Node-RED node to create a new manual tag.
 	 * It requires a valid session ID and session name (obtained during login) to perform the request.
-	 * It will also clear the cached tag data after a successful deletion.
 	 *
 	 * @param {object} config - The configuration object passed from Node-RED.
 	 *
