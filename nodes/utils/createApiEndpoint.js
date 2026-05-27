@@ -4,7 +4,7 @@
  * @param {object} RED - The Node-RED runtime object used to register HTTP routes and manage credentials.
  * @param {object} options - Endpoint configuration.
  * @param {string} options.endpoint - The HTTP admin route to register.
- * @param {function} options.fetchFunction - Async function that fetches data using stored credentials.
+ * @param {function} options.fetchFunction - Async function that fetches data using stored credentials and config node.
  * @returns {void}
  */
 function createApiEndpoint(RED, options) {
@@ -21,8 +21,9 @@ function createApiEndpoint(RED, options) {
 				return res.status(400).json({ error: 'Credentials are missing' });
 			}
 
+			const configNode = RED.nodes.getNode(configId);
 			const { username, password } = credentials;
-			const data = await options.fetchFunction(username, password);
+			const data = await options.fetchFunction(username, password, configNode);
 
 			return res.json(data);
 		} catch (error) {

@@ -1,7 +1,6 @@
 'use strict';
 
 const createApiEndpoint = require('./utils/createApiEndpoint');
-const fetchKlickTippData = require('./utils/fetchKlickTippData');
 const makeRequest = require('./utils/makeRequest');
 const getErrorMessage = require('./utils/getErrorMessage');
 const { runWithSession } = require('./utils/klickTippSessionManager');
@@ -65,8 +64,12 @@ module.exports = function (RED) {
 	const registerKlickTippEndpoint = (endpointPath, apiPath) => {
 		createApiEndpoint(RED, {
 			endpoint: endpointPath,
-			fetchFunction: async (username, password) => {
-				return await fetchKlickTippData(username, password, apiPath);
+			fetchFunction: async (username, password, configNode) => {
+				const response = await runWithSession(configNode, username, password, (sessionData) => {
+					return makeRequest(apiPath, 'GET', {}, sessionData);
+				});
+
+				return response.data;
 			},
 		});
 	};
