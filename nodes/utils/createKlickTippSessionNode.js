@@ -1,11 +1,11 @@
-const makeRequest = require('./makeRequest');
 const handleError = require('./handleError');
+const { runWithSession } = require('./klickTippSessionManager');
 
 /**
- * createKlickTippSessionNode - A higher-order function to create a Node-RED node with KlickTipp login and logout functionality.
+ * createKlickTippSessionNode - A higher-order function to create a Node-RED node with KlickTipp session handling.
  *
- * This function handles the login process, executes the core functionality, and performs the logout process automatically.
- * It also manages session handling and ensures that if login fails, the error is properly propagated.
+ * This function reuses a stored session cookie, performs a login only when needed,
+ * and retries the request once after a 401/403 by refreshing the session.
  *
  * @param {object} RED - The Node-RED runtime object. This provides access to Node-RED's API.
  * @param node
@@ -24,40 +24,15 @@ function createKlickTippSessionNode(RED, node, coreFunction) {
 				return node.send(msg);
 			}
 
-			let sessionData;
-
 			try {
-				// Login wrapped in try/catch for specific error handling
-				try {
-					const loginResponse = await makeRequest('/account/login', 'POST', { username, password });
-					if (loginResponse?.data?.sessid) {
-						sessionData = {
-							sessionId: loginResponse.data.sessid,
-							sessionName: loginResponse.data.session_name,
-						};
-						msg.sessionData = sessionData;
-					} else {
-						handleError(node, msg, 'Invalid credentials or session ID missing');
-						return node.send(msg);
-					}
-				} catch (loginError) {
-					handleError(node, msg, 'Login request failed', loginError.message);
-					return node.send(msg);
-				}
-
-				// Execute core functionality
-				await coreFunction.call(node, msg, config);
+				await runWithSession(klicktippConfig, username, password, async (sessionData) => {
+					msg.sessionData = sessionData;
+					await coreFunction.call(node, msg, config);
+				});
 			} catch (error) {
 				handleError(node, msg, 'Request failed', error?.response?.data || error?.message);
 			} finally {
-				//Logout
-				if (sessionData) {
-					try {
-						await makeRequest('/account/logout', 'POST', {}, sessionData);
-					} catch (logoutError) {
-						node.error('Logout failed: ' + logoutError.message, msg);
-					}
-				}
+				delete msg.sessionData;
 				node.send(msg);
 			}
 		});
