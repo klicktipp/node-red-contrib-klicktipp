@@ -8,7 +8,7 @@ function encode(value) {
 	return encodeURIComponent(String(value));
 }
 
-function appendPair(pairs, key, value) {
+function appendPair(pairs, key, value, seen) {
 	if (value === undefined) {
 		return;
 	}
@@ -19,16 +19,28 @@ function appendPair(pairs, key, value) {
 	}
 
 	if (Array.isArray(value)) {
+		if (seen.has(value)) {
+			throw new TypeError(`Cyclic value detected at key "${key}"`);
+		}
+
+		seen.add(value);
 		value.forEach((item, index) => {
-			appendPair(pairs, `${key}[${index}]`, item);
+			appendPair(pairs, `${key}[${index}]`, item, seen);
 		});
+		seen.delete(value);
 		return;
 	}
 
 	if (isPlainObject(value)) {
+		if (seen.has(value)) {
+			throw new TypeError(`Cyclic value detected at key "${key}"`);
+		}
+
+		seen.add(value);
 		Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-			appendPair(pairs, `${key}[${nestedKey}]`, nestedValue);
+			appendPair(pairs, `${key}[${nestedKey}]`, nestedValue, seen);
 		});
+		seen.delete(value);
 		return;
 	}
 
@@ -37,9 +49,10 @@ function appendPair(pairs, key, value) {
 
 function stringifyFormData(data = {}) {
 	const pairs = [];
+	const seen = new WeakSet();
 
 	Object.entries(data).forEach(([key, value]) => {
-		appendPair(pairs, key, value);
+		appendPair(pairs, key, value, seen);
 	});
 
 	return pairs.join('&');
