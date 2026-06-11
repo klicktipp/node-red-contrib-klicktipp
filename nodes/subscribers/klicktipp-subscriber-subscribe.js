@@ -9,7 +9,7 @@ const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
 const { runWithSession } = require('../utils/klickTippSessionManager');
 
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -49,7 +49,7 @@ module.exports = function (RED) {
 			const response = await makeRequest(
 				'/subscriber',
 				'POST',
-				qs.stringify(data),
+				stringifyFormData(data),
 				msg.sessionData,
 			);
 
@@ -107,7 +107,7 @@ module.exports = function (RED) {
 					username,
 					password,
 					async (sessionData) => {
-						return makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
+						return makeRequest('/tag', 'POST', stringifyFormData(payload), sessionData);
 					},
 				);
 				// Pass through API payload

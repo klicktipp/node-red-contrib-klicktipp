@@ -5,7 +5,7 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -34,7 +34,7 @@ module.exports = function (RED) {
 				data.text = text;
 			}
 
-			const response = await makeRequest('/tag', 'POST', qs.stringify(data), msg.sessionData);
+			const response = await makeRequest('/tag', 'POST', stringifyFormData(data), msg.sessionData);
 
 			handleResponse(node, msg, response, 'Tag created', 'Tag could not be created', (response) => {
 				const enhancedData = {
