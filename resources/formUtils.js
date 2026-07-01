@@ -932,6 +932,73 @@ function ktSaveDualInput(
 	}
 }
 
+/**
+ * Keeps a dual input editor's in-progress select/manual values mirrored in the node draft state.
+ *
+ * This is useful for editors that re-render while open (for example when typedInput changes type),
+ * so UI refresh logic can restore the current draft value instead of the last saved value.
+ *
+ * @param {Object} options - Configuration object.
+ * @param {JQuery} options.selectEl - jQuery object for the select input.
+ * @param {JQuery} options.manualEl - jQuery object for the manual text input.
+ * @param {Object} options.nodeRef - The node draft object (`this` inside oneditprepare).
+ * @param {string} options.valueKey - Property name storing the select-backed value.
+ * @param {string} options.manualKey - Property name storing the manual input value.
+ * @param {Function=} options.readSelectValue - Optional custom reader for select draft value.
+ * @param {Function=} options.writeSelectValue - Optional custom writer for select draft value.
+ * @returns {{syncDraftState: Function}} Helper methods for the editor.
+ */
+function ktBindDualInputDraftState({
+	selectEl,
+	manualEl,
+	nodeRef,
+	valueKey,
+	manualKey,
+	readSelectValue,
+	writeSelectValue,
+}) {
+	const readSelectDraft =
+		typeof readSelectValue === 'function'
+			? readSelectValue
+			: () => {
+					const value = selectEl.val();
+					return value !== undefined && value !== null && value !== '' ? value : undefined;
+				};
+
+	const writeSelectDraft =
+		typeof writeSelectValue === 'function'
+			? writeSelectValue
+			: (value) => {
+					selectEl.val(value || '');
+				};
+
+	function syncDraftState() {
+		const currentSelectValue = readSelectDraft();
+		if (currentSelectValue !== undefined) {
+			nodeRef[valueKey] = currentSelectValue;
+		}
+
+		const currentManualValue = manualEl.val();
+		if (currentManualValue !== undefined) {
+			nodeRef[manualKey] = currentManualValue;
+		}
+	}
+
+	selectEl.on('change', function () {
+		const currentSelectValue = readSelectDraft();
+		nodeRef[valueKey] = currentSelectValue !== undefined ? currentSelectValue : '';
+	});
+
+	manualEl.on('input change', function () {
+		nodeRef[manualKey] = manualEl.val();
+	});
+
+	return {
+		syncDraftState,
+		writeSelectDraft,
+	};
+}
+
 /* ================= AJAX helpers ================= */
 
 /**
