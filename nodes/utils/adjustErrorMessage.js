@@ -1,13 +1,13 @@
-function adjustErrorMessage(error, code, tagHint) {
+function adjustErrorMessage(error, code, subscriberIdHint) {
 	// special-case: error 7 depends on node
 	if (error === 7) {
-		// Tag/Untag contact nodes
-		if (tagHint) {
-			return 'Subscriber email not found.';
+		// Check if it's "Update contact" module
+		if (subscriberIdHint) {
+			return 'Field validation failed.';
 		}
 
-		// Default for a "Update contact" node
-		return 'Field validation failed.';
+		// Default for tag/untag/unsubscribe modules
+		return 'Subscriber email not found.';
 	}
 
 	const error10Messages = {

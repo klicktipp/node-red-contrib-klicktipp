@@ -54,6 +54,7 @@ module.exports = function (RED) {
 				msg,
 				'Contact could not be updated',
 				error?.response?.data || error?.message,
+				subscriberId
 			);
 		}
 	};

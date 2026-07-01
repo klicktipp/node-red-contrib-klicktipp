@@ -62,7 +62,6 @@ module.exports = function (RED) {
 				msg,
 				'Contact could not be tagged',
 				error?.response?.data || error?.message,
-				tagIds,
 			);
 		}
 	};
