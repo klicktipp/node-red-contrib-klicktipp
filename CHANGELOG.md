@@ -124,3 +124,8 @@
 ## Version 1.0.25 (2026-05-27)
 - **Improvements**
 	- Disabled dropdown data caching for tags, contact fields, and opt-in processes so newly created items appear immediately.
+
+## Version 1.0.26 (2025-07-07)
+- **Bugfix**
+	- Improved the error handling logic for error 7.
+	- Fixed a Node-RED editor UI issue where mapped values in Update Tag, Tag Contact, Untag Contact, and Search Redirect URL could be reset when changing other input types in the node configuration.
