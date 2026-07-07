@@ -112,6 +112,13 @@
 			const tagDropdown = $('#node-input-tagId');
 			const tagManual = $('#node-input-tagIdManual');
 			const toggle = $('#node-input-toggleFieldType');
+			const { syncDraftState, writeSelectDraft } = ktBindDualInputDraftState({
+				selectEl: tagDropdown,
+				manualEl: tagManual,
+				nodeRef: self,
+				valueKey: 'tagId',
+				manualKey: 'manualTagId',
+			});
 
 			// Always bind the dropdown so that its options load regardless of UI state.
 			ktBindDropdownToInput(
@@ -124,22 +131,27 @@
 
 			// Function to update the display state.
 			function updateDisplay() {
+				syncDraftState();
 				// Determine manual mode solely from the internal flag.
 				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
 				toggle.prop('checked', isManual);
 
 				if (isManual) {
+					const nextManualValue = tagManual.is(':visible') ? tagManual.val() : self.manualTagId;
 					tagManual.show();
 					tagDropdown.hide();
-					tagManual.val(self.manualTagId);
+					tagManual.val(nextManualValue || '');
 				} else {
+					const nextSelectedValue = tagDropdown.val() || self.tagId || '';
 					tagManual.hide();
 					tagDropdown.show();
+					writeSelectDraft(nextSelectedValue);
 				}
 			}
 
 			// Bind the toggle change event and update internal state.
 			toggle.on('change', function () {
+				syncDraftState();
 				self.manualFieldEnabled = toggle.prop('checked');
 				updateDisplay();
 			});

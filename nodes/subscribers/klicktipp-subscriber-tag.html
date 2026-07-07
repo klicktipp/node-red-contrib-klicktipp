@@ -155,23 +155,55 @@
 					.css('opacity', enabled ? 1 : 0.5)
 					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
 			}
+			const { syncDraftState, writeSelectDraft } = ktBindDualInputDraftState({
+				selectEl: tagDropdown,
+				manualEl: tagManual,
+				nodeRef: self,
+				valueKey: 'tagId',
+				manualKey: 'manualTagId',
+				readSelectValue: () => {
+					const currentValue = tagDropdown.val();
+					return Array.isArray(currentValue)
+						? currentValue
+						: currentValue
+							? [currentValue]
+							: undefined;
+				},
+				writeSelectValue: (value) => {
+					const nextValue = Array.isArray(value)
+						? value
+						: value === undefined || value === null || value === ''
+							? []
+							: [String(value)];
+					tagDropdown.val(nextValue);
+				},
+			});
 
 			function updateDisplay() {
+				syncDraftState();
 				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
 				toggle.prop('checked', isManual);
 				if (isManual) {
+					const nextManualValue = tagManual.is(':visible') ? tagManual.val() : self.manualTagId;
 					tagManual.show();
 					tagDropdown.hide();
-					tagManual.val(self.manualTagId);
+					tagManual.val(nextManualValue || '');
 					setCreateBtnEnabled(false);
 				} else {
+					const nextSelectedValue = Array.isArray(tagDropdown.val())
+						? tagDropdown.val()
+						: Array.isArray(self.tagId)
+							? self.tagId.map(String)
+							: [];
 					tagManual.hide();
 					tagDropdown.show();
+					writeSelectDraft(nextSelectedValue);
 					setCreateBtnEnabled(true);
 				}
 			}
 
 			toggle.on('change', function () {
+				syncDraftState();
 				self.manualFieldEnabled = toggle.prop('checked');
 				updateDisplay();
 			});
