@@ -974,7 +974,14 @@ function ktBindDualInputDraftState({
 
 	function syncDraftState() {
 		const currentSelectValue = readSelectDraft();
-		if (currentSelectValue !== undefined) {
+		const shouldPreserveExistingArrayDraft =
+			Array.isArray(nodeRef[valueKey]) &&
+			nodeRef[valueKey].length > 0 &&
+			Array.isArray(currentSelectValue) &&
+			currentSelectValue.length === 0 &&
+			selectEl.find('option').length === 0;
+
+		if (currentSelectValue !== undefined && !shouldPreserveExistingArrayDraft) {
 			nodeRef[valueKey] = currentSelectValue;
 		}
 
