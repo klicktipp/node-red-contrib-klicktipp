@@ -38,14 +38,14 @@
 		</div>
 	</div>
 
-	<!-- Tag (single select) + Create Tag (+) -->
+	<!-- Tag (multi select) + Create Tag (+) -->
 	<div class="form-row" style="display: flex; align-items: center;">
 		<label style="flex: 0 0 auto;" for="node-input-tagId">
-			<i class="fa fa-tag"></i> <span>Tag</span>
+			<i class="fa fa-tag"></i> <span>Tag IDs</span>
 		</label>
 		<div style="flex: 1; display: flex; margin-left: 4px; gap: 10px; align-items: center;">
-			<select id="node-input-tagId" style="flex: 1;"></select>
-			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag ID">
+			<select id="node-input-tagId" multiple style="flex: 1; height: auto; width: 100%;"></select>
+			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag IDs (comma separated)">
 			<button id="btn-create-tag-subscribe" type="button" title="Create new tag" style="flex: 0 0 auto; height: 28px; min-height: 28px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center;">
 				<i class="fa fa-plus"></i>
 			</button>
@@ -91,7 +91,8 @@
 	            <li><code>email</code> - (Optional) the contact's email address</li>
 	            <li><code>smsNumber</code> - (Optional) the contact's mobile number</li>
 	            <li><code>listId</code> - (Optional) the ID of a opt-in process</li>
-	            <li><code>tagId</code> - (Optional) the ID of a manual tag or SmartLink</li>
+	            <li><code>tagId</code> - (Optional) a single tag ID for backward compatibility</li>
+	            <li><code>tagIds</code> - (Optional) one or more tag IDs. You can pass an array for multiple tags.</li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.), structured as returned by the <code>Field index</code> node</li>
 	        </ul>
 	    </dd>
@@ -130,9 +131,9 @@
 			listId: { value: '', validate: optionalNumberValidator },
 			manualListId: { value: '', validate: optionalNumberValidator },
 			manualListEnabled: { value: false },
-			// Tag (single)
-			tagId: { value: '', validate: optionalNumberValidator },
-			manualTagId: { value: '', validate: optionalNumberValidator },
+			// Tag (single or multiple)
+			tagId: { value: [] },
+			manualTagId: { value: '' },
 			manualTagEnabled: { value: false },
 			fields: {
 				value: 'payload.fields',
@@ -172,6 +173,31 @@
 			const tagManual = $('#node-input-tagIdManual');
 			const tagToggle = $('#node-input-toggleTagId');
 			const btnCreateTag = $('#btn-create-tag-subscribe');
+
+			const { syncDraftState: syncTagDraftState, writeSelectDraft: writeTagDraft } =
+				ktBindDualInputDraftState({
+					selectEl: tagDropdown,
+					manualEl: tagManual,
+					nodeRef: self,
+					valueKey: 'tagId',
+					manualKey: 'manualTagId',
+					readSelectValue: () => {
+						const currentValue = tagDropdown.val();
+						return Array.isArray(currentValue)
+							? currentValue
+							: currentValue
+								? [currentValue]
+								: undefined;
+					},
+					writeSelectValue: (value) => {
+						const nextValue = Array.isArray(value)
+							? value.map(String)
+							: value === undefined || value === null || value === ''
+								? []
+								: [String(value)];
+						tagDropdown.val(nextValue);
+					},
+				});
 
 			function markDirty() {
 				try {
@@ -246,20 +272,31 @@
 					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
 			}
 			function updateTagDisplay() {
+				syncTagDraftState();
 				const isManual = self.manualTagEnabled === true || self.manualTagEnabled === 'true';
 				tagToggle.prop('checked', isManual);
 				if (isManual) {
+					const nextManualValue = tagManual.is(':visible') ? tagManual.val() : self.manualTagId;
 					tagManual.show();
 					tagDropdown.hide();
-					tagManual.val(self.manualTagId);
+					tagManual.val(nextManualValue || '');
 					setCreateBtnEnabled(false);
 				} else {
 					tagManual.hide();
 					tagDropdown.show();
+					const nextSelectedValue = Array.isArray(tagDropdown.val())
+						? tagDropdown.val()
+						: Array.isArray(self.tagId)
+							? self.tagId.map(String)
+							: self.tagId
+								? [String(self.tagId)]
+								: [];
+					writeTagDraft(nextSelectedValue);
 					setCreateBtnEnabled(true);
 				}
 			}
 			tagToggle.on('change', function () {
+				syncTagDraftState();
 				self.manualTagEnabled = tagToggle.prop('checked');
 				updateTagDisplay();
 				markDirty();
@@ -273,7 +310,7 @@
 			tagDropdown.on('change', function () {
 				if (!$('#node-input-toggleTagId').is(':checked')) {
 					const v = $('#node-input-tagId').val();
-					self.tagId = v ? Number(v) : '';
+					self.tagId = Array.isArray(v) ? v.map(Number).filter((id) => !Number.isNaN(id)) : [];
 					markDirty();
 				}
 			});
@@ -339,12 +376,16 @@
 			}
 
 			// initial refresh on open
-			const openSelected = self.tagId ? String(self.tagId) : '';
+			const openSelected = Array.isArray(self.tagId)
+				? self.tagId.map(String)
+				: self.tagId
+					? [String(self.tagId)]
+					: [];
 			setTimeout(() => refreshTags(openSelected, fallbackAllFromCache()), 800);
 
 			// also refresh whenever config changes
 			klicktippInput.on('change', function () {
-				const want = tagDropdown.val() || self.tagId || '';
+				const want = tagDropdown.val() || self.tagId || [];
 				refreshTags(want, fallbackAllFromCache());
 			});
 
@@ -401,15 +442,19 @@
 									if (!tagDropdown.find('option[value="' + newId + '"]').length) {
 										$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
 									}
-									tagDropdown.val(newId).trigger('change');
-									self.tagId = Number(newId);
+									const currentValue = tagDropdown.val();
+									const nextValue = Array.isArray(currentValue)
+										? [...new Set([...currentValue, String(newId)])]
+										: [String(newId)];
+									tagDropdown.val(nextValue).trigger('change');
+									self.tagId = nextValue.map(Number);
 									rememberName(newId, name);
 
 									// ensure Deploy button lights up
 									markDirty();
 
 									// refresh sorted list to include it properly (fallback ensures presence)
-									setTimeout(() => refreshTags(newId, fallbackAllFromCache()), 800);
+									setTimeout(() => refreshTags(nextValue, fallbackAllFromCache()), 800);
 
 									RED.notify('Tag created', 'success');
 									$createModal.dialog('close');
@@ -468,15 +513,18 @@
 				'manualListEnabled',
 			);
 
-			ktSaveDualInput(
-				$('#node-input-tagId'),
-				$('#node-input-tagIdManual'),
-				$('#node-input-toggleTagId'),
-				this,
-				'tagId',
-				'manualTagId',
-				'manualTagEnabled',
-			);
+			const isManualTag = $('#node-input-toggleTagId').is(':checked');
+			this.manualTagEnabled = isManualTag;
+			if (isManualTag) {
+				this.manualTagId = $('#node-input-tagIdManual').val();
+				this.tagId = this.manualTagId;
+			} else {
+				const selectedTags = $('#node-input-tagId').val();
+				this.manualTagId = '';
+				this.tagId = Array.isArray(selectedTags)
+					? selectedTags.map(Number).filter((id) => !Number.isNaN(id))
+					: [];
+			}
 
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},

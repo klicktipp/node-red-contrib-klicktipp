@@ -5,6 +5,7 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const normalizeTagIds = require('../utils/normalizeTagIds');
 const { runWithSession } = require('../utils/klickTippSessionManager');
 const qs = require('qs');
 
@@ -17,24 +18,12 @@ module.exports = function (RED) {
 		let tagIds = config.manualFieldEnabled
 			? config.manualTagId || msg?.payload?.manualTagId
 			: config.tagId || msg?.payload?.tagId;
-
-		// If tagIds is a string (as an extra precaution), split it.
-		if (typeof tagIds === 'string') {
-			tagIds = tagIds.split(',').map((s) => Number(s.trim()));
-		} else if (!Array.isArray(tagIds)) {
-			tagIds = [tagIds];
-		}
+		tagIds = normalizeTagIds(tagIds);
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
-
-		// Filter out any NaN entries
-		tagIds = tagIds
-			.filter((v) => v !== '')
-			.map((v) => Number(v))
-			.filter((tagId) => !isNaN(tagId));
 
 		if (tagIds.length === 0) {
 			handleError(node, msg, 'Tag ID is missing', 'Invalid input');

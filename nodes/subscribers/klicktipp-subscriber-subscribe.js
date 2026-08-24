@@ -7,6 +7,7 @@ const prepareSubscriptionData = require('../utils/transformers/prepareCreateSubs
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
+const normalizeTagIds = require('../utils/normalizeTagIds');
 const { runWithSession } = require('../utils/klickTippSessionManager');
 
 const qs = require('qs');
@@ -23,9 +24,10 @@ module.exports = function (RED) {
 
 		let tagId = config.manualTagEnabled
 			? config.manualTagId || msg?.payload?.manualTagId
-			: config.tagId || msg?.payload?.tagId;
+			: (config.tagId ?? msg?.payload?.tagIds ?? msg?.payload?.tagId);
 
-		tagId = tagId !== undefined ? Number(tagId) : undefined;
+		const tagIds = normalizeTagIds(tagId);
+		const primaryTagId = tagIds[0];
 
 		const fields = await getContactFields(RED, config, node, msg);
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
@@ -43,15 +45,71 @@ module.exports = function (RED) {
 		}
 
 		// Prepare data object and filter fields
-		const data = prepareSubscriptionData(email, smsNumber, listId, tagId, fields);
+		const data = prepareSubscriptionData(email, smsNumber, listId, primaryTagId, fields);
 
-		try {
-			const response = await makeRequest(
-				'/subscriber',
+		const createOrUpdateContact = async (payload) =>
+			makeRequest('/subscriber', 'POST', qs.stringify(payload), msg.sessionData);
+
+		const tagContact = async (emailAddress, remainingTagIds) =>
+			makeRequest(
+				'/subscriber/tag',
 				'POST',
-				qs.stringify(data),
+				qs.stringify({
+					email: emailAddress,
+					tagids: remainingTagIds,
+				}),
 				msg.sessionData,
 			);
+
+		const getContact = async (emailAddress) => {
+			const searchResponse = await makeRequest(
+				'/subscriber/search',
+				'POST',
+				{ email: emailAddress },
+				msg.sessionData,
+			);
+			const searchBody = searchResponse?.data ?? searchResponse;
+			const subscriberId = Array.isArray(searchBody) && searchBody.length ? searchBody[0] : null;
+
+			if (!subscriberId) {
+				throw new Error('Contact ID could not be retrieved after tagging');
+			}
+
+			return makeRequest(
+				`/subscriber/${encodeURIComponent(subscriberId)}`,
+				'GET',
+				{},
+				msg.sessionData,
+			);
+		};
+
+		try {
+			let response = await createOrUpdateContact(data);
+
+			if (tagIds.length > 1) {
+				const remainingTagIds = tagIds.slice(1);
+				const resolvedEmail = String(email || '').trim();
+
+				if (resolvedEmail) {
+					await tagContact(resolvedEmail, remainingTagIds);
+					const refreshedContact = await getContact(resolvedEmail);
+					return handleResponse(
+						node,
+						msg,
+						refreshedContact,
+						'Contact created',
+						'Contact could not be created',
+						(refreshedResponse) => {
+							msg.payload = refreshedResponse.data;
+						},
+					);
+				}
+
+				for (const extraTagId of remainingTagIds) {
+					const fallbackData = prepareSubscriptionData('', smsNumber, undefined, extraTagId, {});
+					response = await createOrUpdateContact(fallbackData);
+				}
+			}
 
 			handleResponse(
 				node,
