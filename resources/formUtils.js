@@ -986,7 +986,13 @@ function ktBindDualInputDraftState({
 		}
 
 		const currentManualValue = manualEl.val();
-		if (currentManualValue !== undefined) {
+		const shouldPreserveExistingManualDraft =
+			typeof nodeRef[manualKey] === 'string' &&
+			nodeRef[manualKey] !== '' &&
+			currentManualValue === '' &&
+			!manualEl.is(':visible');
+
+		if (currentManualValue !== undefined && !shouldPreserveExistingManualDraft) {
 			nodeRef[manualKey] = currentManualValue;
 		}
 	}
