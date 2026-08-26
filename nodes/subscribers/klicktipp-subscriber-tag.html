@@ -179,6 +179,14 @@
 				},
 			});
 
+			function getCurrentTagIdsFromSelect() {
+				return ktNormalizeTagIds(tagDropdown.val());
+			}
+
+			function getCurrentTagIdsFromManual() {
+				return ktNormalizeTagIds(tagManual.val());
+			}
+
 			function updateDisplay() {
 				syncDraftState();
 				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
@@ -205,7 +213,24 @@
 			toggle.on('change', function () {
 				syncDraftState();
 				self.manualFieldEnabled = toggle.prop('checked');
+				if (self.manualFieldEnabled) {
+					self.manualTagId = ktTagIdsToManualString(self.tagId);
+				} else {
+					self.tagId = getCurrentTagIdsFromManual();
+				}
 				updateDisplay();
+			});
+
+			tagDropdown.on('change', function () {
+				if (!$('#node-input-toggleFieldType').is(':checked')) {
+					self.tagId = getCurrentTagIdsFromSelect();
+					self.manualTagId = ktTagIdsToManualString(self.tagId);
+				}
+			});
+
+			tagManual.on('input change', function () {
+				self.manualTagId = tagManual.val();
+				self.tagId = getCurrentTagIdsFromManual();
 			});
 
 			const container = $('#dialog-form')[0];
@@ -359,21 +384,10 @@
 			if (manualEnabled) {
 				const manualVal = $('#node-input-tagIdManual').val();
 				this.manualTagId = manualVal;
-				this.tagId = manualVal
-					.split(',')
-					.map((s) => Number(s.trim()))
-					.filter((n) => !isNaN(n));
+				this.tagId = ktNormalizeTagIds(manualVal);
 			} else {
-				const selectVal = $('#node-input-tagId').val();
-				if (!selectVal) {
-					this.tagId = [];
-				} else {
-					this.tagId = (Array.isArray(selectVal) ? selectVal : [selectVal])
-						.filter((v) => v !== '')
-						.map((v) => Number(v))
-						.filter((n) => !isNaN(n));
-				}
-				this.manualTagId = '';
+				this.tagId = ktNormalizeTagIds($('#node-input-tagId').val());
+				this.manualTagId = ktTagIdsToManualString(this.tagId);
 			}
 		},
 	});

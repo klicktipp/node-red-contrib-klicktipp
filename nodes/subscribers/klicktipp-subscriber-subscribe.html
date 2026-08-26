@@ -199,6 +199,14 @@
 					},
 				});
 
+			function getCurrentTagIdsFromSelect() {
+				return ktNormalizeTagIds(tagDropdown.val());
+			}
+
+			function getCurrentTagIdsFromManual() {
+				return ktNormalizeTagIds(tagManual.val());
+			}
+
 			function markDirty() {
 				try {
 					RED.nodes.dirty(true);
@@ -298,19 +306,25 @@
 			tagToggle.on('change', function () {
 				syncTagDraftState();
 				self.manualTagEnabled = tagToggle.prop('checked');
+				if (self.manualTagEnabled) {
+					self.manualTagId = ktTagIdsToManualString(self.tagId);
+				} else {
+					self.tagId = getCurrentTagIdsFromManual();
+				}
 				updateTagDisplay();
 				markDirty();
 			});
 			tagManual.on('input', function () {
 				self.manualTagId = $(this).val();
+				self.tagId = getCurrentTagIdsFromManual();
 				markDirty();
 			});
 
 			// mark dirty when user selects a different tag (while NOT in manual mode)
 			tagDropdown.on('change', function () {
 				if (!$('#node-input-toggleTagId').is(':checked')) {
-					const v = $('#node-input-tagId').val();
-					self.tagId = Array.isArray(v) ? v.map(Number).filter((id) => !Number.isNaN(id)) : [];
+					self.tagId = getCurrentTagIdsFromSelect();
+					self.manualTagId = ktTagIdsToManualString(self.tagId);
 					markDirty();
 				}
 			});
@@ -517,13 +531,10 @@
 			this.manualTagEnabled = isManualTag;
 			if (isManualTag) {
 				this.manualTagId = $('#node-input-tagIdManual').val();
-				this.tagId = this.manualTagId;
+				this.tagId = ktNormalizeTagIds(this.manualTagId);
 			} else {
-				const selectedTags = $('#node-input-tagId').val();
-				this.manualTagId = '';
-				this.tagId = Array.isArray(selectedTags)
-					? selectedTags.map(Number).filter((id) => !Number.isNaN(id))
-					: [];
+				this.tagId = ktNormalizeTagIds($('#node-input-tagId').val());
+				this.manualTagId = ktTagIdsToManualString(this.tagId);
 			}
 
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
