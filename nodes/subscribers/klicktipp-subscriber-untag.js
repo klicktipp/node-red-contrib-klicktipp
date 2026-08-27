@@ -5,7 +5,7 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const normalizeTagIds = require('../utils/normalizeTagIds');
+const resolveTagIdsInput = require('../utils/resolveTagIdsInput');
 const getErrorMessage = require('../utils/getErrorMessage');
 const adjustErrorMessage = require('../utils/adjustErrorMessage');
 const qs = require('qs');
@@ -33,10 +33,7 @@ module.exports = function (RED) {
 		const node = this;
 
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		let tagIds = config.manualFieldEnabled
-			? config.manualTagId || msg?.payload?.manualTagId
-			: config.tagId || msg?.payload?.tagIds || msg?.payload?.tagId;
-		tagIds = normalizeTagIds(tagIds);
+		const tagIds = resolveTagIdsInput(config, msg);
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');

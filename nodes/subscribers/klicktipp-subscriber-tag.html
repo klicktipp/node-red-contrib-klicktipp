@@ -141,254 +141,27 @@
 			ktPopulateConfig(this);
 		},
 		oneditprepare: function () {
-			var self = this;
-			const klicktippInput = $('#node-input-klicktipp');
-			const tagDropdown = $('#node-input-tagId');
-			const tagManual = $('#node-input-tagIdManual');
-			const toggle = $('#node-input-toggleFieldType');
-			const btnCreateTag = $('#btn-create-tag');
-
-			/* ---------- UI helpers ---------- */
-			function setCreateBtnEnabled(enabled) {
-				btnCreateTag
-					.prop('disabled', !enabled)
-					.css('opacity', enabled ? 1 : 0.5)
-					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
-			}
-			const { syncDraftState, writeSelectDraft } = ktBindDualInputDraftState({
-				selectEl: tagDropdown,
-				manualEl: tagManual,
-				nodeRef: self,
-				valueKey: 'tagId',
-				manualKey: 'manualTagId',
-				readSelectValue: () => {
-					const currentValue = tagDropdown.val();
-					return Array.isArray(currentValue)
-						? currentValue
-						: currentValue
-							? [currentValue]
-							: undefined;
-				},
-				writeSelectValue: (value) => {
-					const nextValue = Array.isArray(value)
-						? value
-						: value === undefined || value === null || value === ''
-							? []
-							: [String(value)];
-					tagDropdown.val(nextValue);
-				},
+			const tagEditor = ktInitializeTagSelectorEditor({
+				nodeRef: this,
+				klicktippInput: $('#node-input-klicktipp'),
+				tagDropdown: $('#node-input-tagId'),
+				tagManual: $('#node-input-tagIdManual'),
+				toggleEl: $('#node-input-toggleFieldType'),
+				createTagButton: $('#btn-create-tag'),
+				createTagModalSelector: '#create-tag-modal',
+				createTagNameSelector: '#create-tag-name',
+				createTagTextSelector: '#create-tag-text',
 			});
-
-			function getCurrentTagIdsFromSelect() {
-				return ktNormalizeTagIds(tagDropdown.val());
-			}
-
-			function getCurrentTagIdsFromManual() {
-				return ktNormalizeTagIds(tagManual.val());
-			}
-
-			function updateDisplay() {
-				syncDraftState();
-				const isManual = self.manualFieldEnabled === true || self.manualFieldEnabled === 'true';
-				toggle.prop('checked', isManual);
-				if (isManual) {
-					const nextManualValue = tagManual.is(':visible') ? tagManual.val() : self.manualTagId;
-					tagManual.show();
-					tagDropdown.hide();
-					tagManual.val(nextManualValue || '');
-					setCreateBtnEnabled(false);
-				} else {
-					const nextSelectedValue = Array.isArray(tagDropdown.val())
-						? tagDropdown.val()
-						: Array.isArray(self.tagId)
-							? self.tagId.map(String)
-							: [];
-					tagManual.hide();
-					tagDropdown.show();
-					writeSelectDraft(nextSelectedValue);
-					setCreateBtnEnabled(true);
-				}
-			}
-
-			toggle.on('change', function () {
-				syncDraftState();
-				self.manualFieldEnabled = toggle.prop('checked');
-				if (self.manualFieldEnabled) {
-					self.manualTagId = ktTagIdsToManualString(self.tagId);
-				} else {
-					self.tagId = getCurrentTagIdsFromManual();
-				}
-				updateDisplay();
-			});
-
-			tagDropdown.on('change', function () {
-				if (!$('#node-input-toggleFieldType').is(':checked')) {
-					self.tagId = getCurrentTagIdsFromSelect();
-					self.manualTagId = ktTagIdsToManualString(self.tagId);
-				}
-			});
-
-			tagManual.on('input change', function () {
-				self.manualTagId = tagManual.val();
-				self.tagId = getCurrentTagIdsFromManual();
-			});
-
-			const container = $('#dialog-form')[0];
-			if (container) {
-				const observer = new MutationObserver(() => updateDisplay());
-				observer.observe(container, { childList: true, subtree: true });
-			}
-
 			ktInitializeTypedInput('#node-input-email', '#node-input-emailType', 'str', ['str']);
-			updateDisplay();
-			setTimeout(updateDisplay, 200);
 			ktAlignSimpleFormRows();
-
-			/* ---------- Name cache (per node+config) ---------- */
-			function cacheKey() {
-				const cfg = klicktippInput.val() || 'none';
-				return `kt_tag_names:${self.id}:${cfg}`;
-			}
-			function readNameCache() {
-				try {
-					return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
-				} catch {
-					return {};
-				}
-			}
-			function writeNameCache(map) {
-				try {
-					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch {}
-			}
-			function rememberName(id, name) {
-				const map = readNameCache();
-				map[String(id)] = String(name);
-				writeNameCache(map);
-			}
-			function fallbackAllFromCache() {
-				const map = readNameCache();
-				return Object.keys(map).map((id) => ({ id, name: map[id] }));
-			}
-
-			/* ---------- Sorted refresh that merges fallback names ---------- */
-			function refreshTagsSorted(ids, fallbackOpts) {
-				const selected = (ids || []).map(String);
-				const cfgId = $('#node-input-klicktipp').val();
-				if (!cfgId) {
-					// No config yet: just keep whatever is in the dropdown
-					ktPopulateSelect(
-						tagDropdown,
-						ktCurrentOptions(tagDropdown),
-						selected,
-						'Select an option',
-					);
-					// return a resolved promise so callers can .done/.fail safely
-					return $.Deferred().resolve().promise();
-				}
-				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackOpts);
-			}
-
-			/* ---------- Always reload on open (and shortly after) ---------- */
-			const openWant = (self.tagId || []).map(Number);
-			// refresh to beat races/caches
-			setTimeout(() => refreshTagsSorted(openWant, fallbackAllFromCache()), 800);
-
-			/* ---------- Also reload whenever the config changes ---------- */
-			klicktippInput.on('change', function () {
-				const want = tagDropdown.val() || self.tagId || [];
-				refreshTagsSorted(want, fallbackAllFromCache());
-			});
-
-			/* ---------- Create Tag Modal ---------- */
-			const $createModal = $('#create-tag-modal').dialog({
-				autoOpen: false,
-				modal: true,
-				title: 'Create Tag',
-				width: 420,
-				buttons: {
-					Create: function () {
-						const name = $createModal.find('#create-tag-name').val().trim();
-						const text = $createModal.find('#create-tag-text').val().trim();
-						if (!name) {
-							RED.notify('Please enter a tag name', 'error');
-							return;
-						}
-
-						const configId = $('#node-input-klicktipp').val();
-						if (!configId) {
-							RED.notify('Missing KlickTipp Config', 'error');
-							return;
-						}
-						if (toggle.prop('checked')) {
-							RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-							return;
-						}
-
-						ktCreateTag(configId, name, text)
-							.done(function (resp) {
-								const newId = ktExtractNewTagId(resp);
-								if (!newId) {
-									RED.notify('Tag created, but no ID returned by API', 'warning');
-									$createModal.dialog('close');
-									return;
-								}
-
-								// show immediately
-								if (!tagDropdown.find('option[value="' + newId + '"]').length) {
-									$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
-								}
-
-								// select & persist
-								const current = tagDropdown.val() || [];
-								const nextVal = Array.from(new Set([].concat(current || [], [newId])));
-								tagDropdown.val(nextVal).trigger('change');
-								self.tagId = nextVal.map((v) => Number(v));
-
-								// remember for future opens
-								rememberName(newId, name);
-
-								// refresh to include in sorted list
-								setTimeout(() => refreshTagsSorted(nextVal, fallbackAllFromCache()), 800);
-
-								RED.notify('Tag created', 'success');
-								$createModal.dialog('close');
-							})
-							.fail(function (jq) {
-								RED.notify(ktAjaxErrorMessage(jq, 'Failed to create tag'), 'error');
-							});
-					},
-					Cancel: function () {
-						$createModal.dialog('close');
-					},
-				},
-				open: function () {
-					$createModal.find('#create-tag-name').val('');
-					$createModal.find('#create-tag-text').val('');
-					setTimeout(() => $createModal.find('#create-tag-name').trigger('focus'), 50);
-				},
-			});
-
-			btnCreateTag.on('click', function () {
-				if (toggle.prop('checked')) {
-					RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-					return;
-				}
-				$createModal.dialog('open');
-			});
+			this.__tagEditor = tagEditor;
+		},
+		oneditcancel: function () {
+			this.__tagEditor && this.__tagEditor.cleanup();
 		},
 		oneditsave: function () {
-			const manualEnabled = $('#node-input-toggleFieldType').is(':checked');
-			this.manualFieldEnabled = manualEnabled;
-
-			if (manualEnabled) {
-				const manualVal = $('#node-input-tagIdManual').val();
-				this.manualTagId = manualVal;
-				this.tagId = ktNormalizeTagIds(manualVal);
-			} else {
-				this.tagId = ktNormalizeTagIds($('#node-input-tagId').val());
-				this.manualTagId = ktTagIdsToManualString(this.tagId);
-			}
+			this.__tagEditor && this.__tagEditor.save();
+			this.__tagEditor && this.__tagEditor.cleanup();
 		},
 	});
 </script>

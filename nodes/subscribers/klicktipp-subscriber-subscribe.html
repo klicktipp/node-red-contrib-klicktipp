@@ -169,44 +169,6 @@
 			const listIdManual = $('#node-input-listIdManual');
 			const listToggle = $('#node-input-toggleListId');
 
-			const tagDropdown = $('#node-input-tagId');
-			const tagManual = $('#node-input-tagIdManual');
-			const tagToggle = $('#node-input-toggleTagId');
-			const btnCreateTag = $('#btn-create-tag-subscribe');
-
-			const { syncDraftState: syncTagDraftState, writeSelectDraft: writeTagDraft } =
-				ktBindDualInputDraftState({
-					selectEl: tagDropdown,
-					manualEl: tagManual,
-					nodeRef: self,
-					valueKey: 'tagId',
-					manualKey: 'manualTagId',
-					readSelectValue: () => {
-						const currentValue = tagDropdown.val();
-						return Array.isArray(currentValue)
-							? currentValue
-							: currentValue
-								? [currentValue]
-								: undefined;
-					},
-					writeSelectValue: (value) => {
-						const nextValue = Array.isArray(value)
-							? value.map(String)
-							: value === undefined || value === null || value === ''
-								? []
-								: [String(value)];
-						tagDropdown.val(nextValue);
-					},
-				});
-
-			function getCurrentTagIdsFromSelect() {
-				return ktNormalizeTagIds(tagDropdown.val());
-			}
-
-			function getCurrentTagIdsFromManual() {
-				return ktNormalizeTagIds(tagManual.val());
-			}
-
 			function markDirty() {
 				try {
 					RED.nodes.dirty(true);
@@ -271,71 +233,23 @@
 			});
 			updateListDisplay();
 			setTimeout(updateListDisplay, 200);
-
-			/* tagId dual input (+button enable/disable) */
-			function setCreateBtnEnabled(enabled) {
-				btnCreateTag
-					.prop('disabled', !enabled)
-					.css('opacity', enabled ? 1 : 0.5)
-					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
-			}
-			function updateTagDisplay() {
-				syncTagDraftState();
-				const isManual = self.manualTagEnabled === true || self.manualTagEnabled === 'true';
-				tagToggle.prop('checked', isManual);
-				if (isManual) {
-					const nextManualValue = tagManual.is(':visible') ? tagManual.val() : self.manualTagId;
-					tagManual.show();
-					tagDropdown.hide();
-					tagManual.val(nextManualValue || '');
-					setCreateBtnEnabled(false);
-				} else {
-					tagManual.hide();
-					tagDropdown.show();
-					const nextSelectedValue = Array.isArray(tagDropdown.val())
-						? tagDropdown.val()
-						: Array.isArray(self.tagId)
-							? self.tagId.map(String)
-							: self.tagId
-								? [String(self.tagId)]
-								: [];
-					writeTagDraft(nextSelectedValue);
-					setCreateBtnEnabled(true);
-				}
-			}
-			tagToggle.on('change', function () {
-				syncTagDraftState();
-				self.manualTagEnabled = tagToggle.prop('checked');
-				if (self.manualTagEnabled) {
-					self.manualTagId = ktTagIdsToManualString(self.tagId);
-				} else {
-					self.tagId = getCurrentTagIdsFromManual();
-				}
-				updateTagDisplay();
-				markDirty();
+			const tagEditor = ktInitializeTagSelectorEditor({
+				nodeRef: self,
+				klicktippInput,
+				tagDropdown: $('#node-input-tagId'),
+				tagManual: $('#node-input-tagIdManual'),
+				toggleEl: $('#node-input-toggleTagId'),
+				createTagButton: $('#btn-create-tag-subscribe'),
+				createTagModalSelector: '#create-tag-modal-subscribe',
+				createTagNameSelector: '#create-tag-name-subscribe',
+				createTagTextSelector: '#create-tag-text-subscribe',
+				manualEnabledKey: 'manualTagEnabled',
 			});
-			tagManual.on('input', function () {
-				self.manualTagId = $(this).val();
-				self.tagId = getCurrentTagIdsFromManual();
-				markDirty();
-			});
-
-			// mark dirty when user selects a different tag (while NOT in manual mode)
-			tagDropdown.on('change', function () {
-				if (!$('#node-input-toggleTagId').is(':checked')) {
-					self.tagId = getCurrentTagIdsFromSelect();
-					self.manualTagId = ktTagIdsToManualString(self.tagId);
-					markDirty();
-				}
-			});
-
-			updateTagDisplay();
-			setTimeout(updateTagDisplay, 200);
 
 			/* keep display in sync */
 			function updateDisplay() {
 				updateListDisplay();
-				updateTagDisplay();
+				tagEditor.updateDisplay();
 			}
 			klicktippInput.on('input change', updateDisplay);
 			const container = $('#dialog-form')[0];
@@ -345,176 +259,17 @@
 					subtree: true,
 				});
 			}
-
-			/* ===== Tag list: name cache + sorted refresh ===== */
-			function cacheKey() {
-				const cfg = klicktippInput.val() || 'none';
-				return `kt_tag_names:${self.id}:${cfg}`;
-			}
-			function readNameCache() {
-				try {
-					return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
-				} catch {
-					return {};
-				}
-			}
-			function writeNameCache(map) {
-				try {
-					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch {}
-			}
-			function rememberName(id, name) {
-				const map = readNameCache();
-				map[String(id)] = String(name);
-				writeNameCache(map);
-			}
-			function fallbackAllFromCache() {
-				const map = readNameCache();
-				return Object.keys(map).map((id) => ({ id, name: map[id] }));
-			}
-
-			// wrapper that uses shared helper to refresh tags <select>
-			function refreshTags(selected) {
-				const cfgId = klicktippInput.val();
-				if (!cfgId) {
-					// No config yet: just show placeholder / keep current options
-					ktPopulateSelect(
-						tagDropdown,
-						ktCurrentOptions(tagDropdown),
-						selected,
-						'Select an option',
-					);
-					return $.Deferred().resolve().promise(); // no-op promise for call sites
-				}
-				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackAllFromCache());
-			}
-
-			// initial refresh on open
-			const openSelected = Array.isArray(self.tagId)
-				? self.tagId.map(String)
-				: self.tagId
-					? [String(self.tagId)]
-					: [];
-			setTimeout(() => refreshTags(openSelected, fallbackAllFromCache()), 800);
-
-			// also refresh whenever config changes
-			klicktippInput.on('change', function () {
-				const want = tagDropdown.val() || self.tagId || [];
-				refreshTags(want, fallbackAllFromCache());
-			});
-
-			/* ===== Create Tag Modal (clean, scoped, single instance) ===== */
-			const MODAL_SEL = '#create-tag-modal-subscribe';
-			// remove any stale modal left in <body> by a previous open
-			(function cleanupStale() {
-				const $stale = $('body').children(MODAL_SEL + '.ui-dialog-content');
-				if ($stale.length) {
-					try {
-						$stale.dialog('destroy');
-					} catch (e) {}
-					$stale.remove();
-				}
-			})();
-
-			const $createModal = $('#dialog-form')
-				.find(MODAL_SEL)
-				.dialog({
-					autoOpen: false,
-					modal: true,
-					title: 'Create Tag',
-					width: 420,
-					buttons: {
-						Create: function () {
-							const name = $createModal.find('#create-tag-name-subscribe').val().trim();
-							const text = $createModal.find('#create-tag-text-subscribe').val().trim();
-							if (!name) {
-								RED.notify('Please enter a tag name', 'error');
-								return;
-							}
-
-							const configId = $('#node-input-klicktipp').val();
-							if (!configId) {
-								RED.notify('Missing KlickTipp Config', 'error');
-								return;
-							}
-							if (tagToggle.prop('checked')) {
-								RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-								return;
-							}
-
-							// use shared create helper + id extractor
-							ktCreateTag(configId, name, text)
-								.done(function (resp) {
-									const newId = ktExtractNewTagId(resp);
-									if (!newId) {
-										RED.notify('Tag created, but no ID returned by API', 'warning');
-										$createModal.dialog('close');
-										return;
-									}
-
-									// insert immediately if missing, then select
-									if (!tagDropdown.find('option[value="' + newId + '"]').length) {
-										$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
-									}
-									const currentValue = tagDropdown.val();
-									const nextValue = Array.isArray(currentValue)
-										? [...new Set([...currentValue, String(newId)])]
-										: [String(newId)];
-									tagDropdown.val(nextValue).trigger('change');
-									self.tagId = nextValue.map(Number);
-									rememberName(newId, name);
-
-									// ensure Deploy button lights up
-									markDirty();
-
-									// refresh sorted list to include it properly (fallback ensures presence)
-									setTimeout(() => refreshTags(nextValue, fallbackAllFromCache()), 800);
-
-									RED.notify('Tag created', 'success');
-									$createModal.dialog('close');
-								})
-								.fail(function (err) {
-									RED.notify(ktAjaxErrorMessage(err, 'Failed to create tag'), 'error');
-								});
-						},
-						Cancel: function () {
-							$createModal.dialog('close');
-						},
-					},
-					open: function () {
-						$createModal.find('#create-tag-name-subscribe').val('');
-						$createModal.find('#create-tag-text-subscribe').val('');
-						setTimeout(() => $createModal.find('#create-tag-name-subscribe').trigger('focus'), 50);
-					},
-				});
-
-			btnCreateTag.on('click', function () {
-				if (tagToggle.prop('checked')) {
-					RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-					return;
-				}
-				$createModal.dialog('open');
-			});
-
-			// expose a closer for oneditsave/oneditcancel
-			this.__cleanupCreateModal = function () {
-				const $m = $('body').children(MODAL_SEL + '.ui-dialog-content');
-				if ($m.length) {
-					try {
-						$m.dialog('destroy');
-					} catch (e) {}
-					$m.remove();
-				}
-			};
+			this.__tagEditor = tagEditor;
 		},
 
 		oneditcancel: function () {
-			this.__cleanupCreateModal();
+			this.__tagEditor && this.__tagEditor.cleanup();
 			$(document).off('.kt-dd');
 		},
 
 		oneditsave: function () {
-			this.__cleanupCreateModal();
+			this.__tagEditor && this.__tagEditor.save();
+			this.__tagEditor && this.__tagEditor.cleanup();
 			$(document).off('.kt-dd');
 
 			ktSaveDualInput(
@@ -526,17 +281,6 @@
 				'manualListId',
 				'manualListEnabled',
 			);
-
-			const isManualTag = $('#node-input-toggleTagId').is(':checked');
-			this.manualTagEnabled = isManualTag;
-			if (isManualTag) {
-				this.manualTagId = $('#node-input-tagIdManual').val();
-				this.tagId = ktNormalizeTagIds(this.manualTagId);
-			} else {
-				this.tagId = ktNormalizeTagIds($('#node-input-tagId').val());
-				this.manualTagId = ktTagIdsToManualString(this.tagId);
-			}
-
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},
 	});

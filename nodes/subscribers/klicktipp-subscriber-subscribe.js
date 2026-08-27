@@ -7,7 +7,7 @@ const prepareSubscriptionData = require('../utils/transformers/prepareCreateSubs
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
-const normalizeTagIds = require('../utils/normalizeTagIds');
+const resolveTagIdsInput = require('../utils/resolveTagIdsInput');
 const { runWithSession } = require('../utils/klickTippSessionManager');
 
 const qs = require('qs');
@@ -22,11 +22,9 @@ module.exports = function (RED) {
 
 		listId = listId !== undefined ? Number(listId) : undefined;
 
-		let tagId = config.manualTagEnabled
-			? config.manualTagId || msg?.payload?.manualTagId
-			: (config.tagId ?? msg?.payload?.tagIds ?? msg?.payload?.tagId);
-
-		const tagIds = normalizeTagIds(tagId);
+		const tagIds = resolveTagIdsInput(config, msg, {
+			manualEnabledKey: 'manualTagEnabled',
+		});
 		const primaryTagId = tagIds[0];
 
 		const fields = await getContactFields(RED, config, node, msg);

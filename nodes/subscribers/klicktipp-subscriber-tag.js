@@ -5,7 +5,7 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const normalizeTagIds = require('../utils/normalizeTagIds');
+const resolveTagIdsInput = require('../utils/resolveTagIdsInput');
 const { runWithSession } = require('../utils/klickTippSessionManager');
 const qs = require('qs');
 
@@ -14,11 +14,7 @@ module.exports = function (RED) {
 		const node = this;
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
 
-		// Use config.tagId (which is already prepared as an array in oneditsave)
-		let tagIds = config.manualFieldEnabled
-			? config.manualTagId || msg?.payload?.manualTagId
-			: config.tagId || msg?.payload?.tagId;
-		tagIds = normalizeTagIds(tagIds);
+		const tagIds = resolveTagIdsInput(config, msg);
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');

@@ -1032,6 +1032,295 @@ function ktTagIdsToManualString(rawValue) {
 	return ktNormalizeTagIds(rawValue).join(',');
 }
 
+function ktInitializeTagSelectorEditor({
+	nodeRef,
+	klicktippInput,
+	tagDropdown,
+	tagManual,
+	toggleEl,
+	createTagButton,
+	createTagModalSelector,
+	createTagNameSelector,
+	createTagTextSelector,
+	manualEnabledKey = 'manualFieldEnabled',
+	valueKey = 'tagId',
+	manualKey = 'manualTagId',
+}) {
+	function getSavedTagIds() {
+		if (Array.isArray(nodeRef[valueKey])) {
+			return nodeRef[valueKey].map(Number).filter((value) => Number.isInteger(value) && value > 0);
+		}
+		if (nodeRef[valueKey] === undefined || nodeRef[valueKey] === null || nodeRef[valueKey] === '') {
+			return [];
+		}
+		return ktNormalizeTagIds(nodeRef[valueKey]);
+	}
+
+	function markDirty() {
+		try {
+			RED.nodes.dirty(true);
+		} catch (e) {}
+	}
+
+	function setCreateBtnEnabled(enabled) {
+		if (!createTagButton || !createTagButton.length) {
+			return;
+		}
+
+		createTagButton
+			.prop('disabled', !enabled)
+			.css('opacity', enabled ? 1 : 0.5)
+			.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
+	}
+
+	function getCurrentTagIdsFromSelect() {
+		return ktNormalizeTagIds(tagDropdown.val());
+	}
+
+	function getCurrentTagIdsFromManual() {
+		return ktNormalizeTagIds(tagManual.val());
+	}
+
+	function ensureTagOptionsExist(tagIds) {
+		(Array.isArray(tagIds) ? tagIds : []).forEach((tagId) => {
+			const value = String(tagId);
+			if (!value) {
+				return;
+			}
+
+			if (!tagDropdown.find(`option[value="${value}"]`).length) {
+				$('<option>', { value, text: value }).appendTo(tagDropdown);
+			}
+		});
+	}
+
+	function updateDisplay() {
+		const isManual = nodeRef[manualEnabledKey] === true || nodeRef[manualEnabledKey] === 'true';
+		toggleEl.prop('checked', isManual);
+
+		if (isManual) {
+			const nextManualValue =
+				typeof nodeRef[manualKey] === 'string'
+					? nodeRef[manualKey]
+					: ktTagIdsToManualString(getSavedTagIds());
+			tagManual.show();
+			tagDropdown.hide();
+			tagManual.val(nextManualValue || '');
+			setCreateBtnEnabled(false);
+		} else {
+			const nextSelectedValue = getSavedTagIds().map(String);
+			ensureTagOptionsExist(nextSelectedValue);
+			tagManual.hide();
+			tagDropdown.show();
+			tagDropdown.val(nextSelectedValue);
+			setCreateBtnEnabled(true);
+		}
+	}
+
+	toggleEl.on('change', function () {
+		const nextManualEnabled = toggleEl.prop('checked');
+		if (nextManualEnabled) {
+			nodeRef[valueKey] = getCurrentTagIdsFromSelect();
+			nodeRef[manualKey] = ktTagIdsToManualString(nodeRef[valueKey]);
+		} else {
+			nodeRef[manualKey] = tagManual.val();
+			nodeRef[valueKey] = getCurrentTagIdsFromManual();
+		}
+		nodeRef[manualEnabledKey] = nextManualEnabled;
+		updateDisplay();
+		markDirty();
+	});
+
+	tagDropdown.on('change', function () {
+		if (!toggleEl.is(':checked')) {
+			nodeRef[valueKey] = getCurrentTagIdsFromSelect();
+			nodeRef[manualKey] = ktTagIdsToManualString(nodeRef[valueKey]);
+			markDirty();
+		}
+	});
+
+	tagManual.on('input change', function () {
+		nodeRef[manualKey] = tagManual.val();
+		nodeRef[valueKey] = getCurrentTagIdsFromManual();
+		markDirty();
+	});
+
+	klicktippInput.on('input change', updateDisplay);
+
+	const container = $('#dialog-form')[0];
+	if (container) {
+		const observer = new MutationObserver(() => updateDisplay());
+		observer.observe(container, { childList: true, subtree: true });
+	}
+
+	function cacheKey() {
+		const cfg = klicktippInput.val() || 'none';
+		return `kt_tag_names:${nodeRef.id}:${cfg}`;
+	}
+	function readNameCache() {
+		try {
+			return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
+		} catch {
+			return {};
+		}
+	}
+	function writeNameCache(map) {
+		try {
+			localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
+		} catch {}
+	}
+	function rememberName(id, name) {
+		const map = readNameCache();
+		map[String(id)] = String(name);
+		writeNameCache(map);
+	}
+	function fallbackAllFromCache() {
+		const map = readNameCache();
+		return Object.keys(map).map((id) => ({ id, name: map[id] }));
+	}
+
+	function refreshTags(selected) {
+		const cfgId = klicktippInput.val();
+		if (!cfgId) {
+			ensureTagOptionsExist(selected);
+			ktPopulateSelect(tagDropdown, ktCurrentOptions(tagDropdown), selected, 'Select an option');
+			return $.Deferred().resolve().promise();
+		}
+		return ktRefreshTagsSelect(tagDropdown, nodeRef.id, cfgId, selected, fallbackAllFromCache());
+	}
+
+	const openSelected = getSavedTagIds().map(String);
+
+	updateDisplay();
+	setTimeout(updateDisplay, 200);
+	setTimeout(() => refreshTags(openSelected), 800);
+
+	klicktippInput.on('change', function () {
+		const want = getSavedTagIds().map(String);
+		refreshTags(want);
+	});
+
+	let cleanup = () => {};
+	if (
+		createTagButton &&
+		createTagButton.length &&
+		createTagModalSelector &&
+		createTagNameSelector &&
+		createTagTextSelector
+	) {
+		const modalSelector = createTagModalSelector;
+		(function cleanupStale() {
+			const $stale = $('body').children(modalSelector + '.ui-dialog-content');
+			if ($stale.length) {
+				try {
+					$stale.dialog('destroy');
+				} catch (e) {}
+				$stale.remove();
+			}
+		})();
+
+		const $createModal = $('#dialog-form')
+			.find(modalSelector)
+			.dialog({
+				autoOpen: false,
+				modal: true,
+				title: 'Create Tag',
+				width: 420,
+				buttons: {
+					Create: function () {
+						const name = $createModal.find(createTagNameSelector).val().trim();
+						const text = $createModal.find(createTagTextSelector).val().trim();
+						if (!name) {
+							RED.notify('Please enter a tag name', 'error');
+							return;
+						}
+
+						const configId = klicktippInput.val();
+						if (!configId) {
+							RED.notify('Missing KlickTipp Config', 'error');
+							return;
+						}
+						if (toggleEl.prop('checked')) {
+							RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
+							return;
+						}
+
+						ktCreateTag(configId, name, text)
+							.done(function (resp) {
+								const newId = ktExtractNewTagId(resp);
+								if (!newId) {
+									RED.notify('Tag created, but no ID returned by API', 'warning');
+									$createModal.dialog('close');
+									return;
+								}
+
+								if (!tagDropdown.find('option[value="' + newId + '"]').length) {
+									$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
+								}
+								const currentValue = tagDropdown.val() || [];
+								const nextValue = Array.from(new Set([].concat(currentValue || [], [newId])));
+								tagDropdown.val(nextValue).trigger('change');
+								nodeRef[valueKey] = nextValue.map((v) => Number(v));
+								rememberName(newId, name);
+								markDirty();
+								setTimeout(() => refreshTags(nextValue), 800);
+								RED.notify('Tag created', 'success');
+								$createModal.dialog('close');
+							})
+							.fail(function (jq) {
+								RED.notify(ktAjaxErrorMessage(jq, 'Failed to create tag'), 'error');
+							});
+					},
+					Cancel: function () {
+						$createModal.dialog('close');
+					},
+				},
+				open: function () {
+					$createModal.find(createTagNameSelector).val('');
+					$createModal.find(createTagTextSelector).val('');
+					setTimeout(() => $createModal.find(createTagNameSelector).trigger('focus'), 50);
+				},
+			});
+
+		createTagButton.on('click', function () {
+			if (toggleEl.prop('checked')) {
+				RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
+				return;
+			}
+			$createModal.dialog('open');
+		});
+
+		cleanup = function () {
+			const $m = $('body').children(modalSelector + '.ui-dialog-content');
+			if ($m.length) {
+				try {
+					$m.dialog('destroy');
+				} catch (e) {}
+				$m.remove();
+			}
+		};
+	}
+
+	function save() {
+		const manualEnabled = toggleEl.is(':checked');
+		nodeRef[manualEnabledKey] = manualEnabled;
+
+		if (manualEnabled) {
+			nodeRef[manualKey] = tagManual.val();
+			nodeRef[valueKey] = ktNormalizeTagIds(nodeRef[manualKey]);
+		} else {
+			nodeRef[valueKey] = ktNormalizeTagIds(tagDropdown.val());
+			nodeRef[manualKey] = ktTagIdsToManualString(nodeRef[valueKey]);
+		}
+	}
+
+	return {
+		updateDisplay,
+		save,
+		cleanup,
+	};
+}
+
 /* ================= AJAX helpers ================= */
 
 /**
