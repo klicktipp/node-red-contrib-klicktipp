@@ -5,39 +5,68 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
+const normalizeTagIds = require('../utils/normalizeTagIds');
+const getErrorMessage = require('../utils/getErrorMessage');
+const adjustErrorMessage = require('../utils/adjustErrorMessage');
 const qs = require('qs');
+
+function formatUntagFailure(error, tagId) {
+	const body = error?.response?.data ?? error?.response?.body ?? error?.body;
+	const statusCode =
+		error?.response?.status ??
+		(typeof body?.code === 'number' ? body.code : null) ??
+		(typeof body?.error === 'number' ? body.error : null);
+
+	let message = getErrorMessage(error);
+
+	if (typeof body?.error === 'number') {
+		message = adjustErrorMessage(body.error, body.code);
+	} else if (typeof body === 'number') {
+		message = adjustErrorMessage(body);
+	}
+
+	return `Failed to untag tag ID "${tagId}".${statusCode ? ` [${statusCode}]` : ''} ${message}`;
+}
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
 		const node = this;
 
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const tagId = config.manualFieldEnabled
+		let tagIds = config.manualFieldEnabled
 			? config.manualTagId || msg?.payload?.manualTagId
-			: config.tagId || msg?.payload?.tagId;
+			: config.tagId || msg?.payload?.tagIds || msg?.payload?.tagId;
+		tagIds = normalizeTagIds(tagIds);
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
-		if (!tagId) {
+		if (tagIds.length === 0) {
 			handleError(node, msg, 'Tag ID is missing', 'Invalid input');
 			return node.send(msg);
 		}
 
 		try {
-			const response = await makeRequest(
-				'/subscriber/untag',
-				'POST',
-				qs.stringify({ email, tagid: tagId }),
-				msg.sessionData,
-			);
+			for (const tagId of tagIds) {
+				try {
+					await makeRequest(
+						'/subscriber/untag',
+						'POST',
+						qs.stringify({ email, tagid: tagId }),
+						msg.sessionData,
+					);
+				} catch (error) {
+					error.untagFailureMessage = formatUntagFailure(error, tagId);
+					throw error;
+				}
+			}
 
 			handleResponse(
 				node,
 				msg,
-				response,
+				{ success: true },
 				'Tag removed from contact',
 				'Tag could not be removed from contact',
 				() => {
@@ -49,7 +78,7 @@ module.exports = function (RED) {
 				node,
 				msg,
 				'Tag could not be removed from contact',
-				error?.response?.data || error?.message,
+				error?.untagFailureMessage || error?.response?.data || error?.message,
 			);
 		}
 	};
