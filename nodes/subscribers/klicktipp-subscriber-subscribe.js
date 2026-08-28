@@ -9,8 +9,28 @@ const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
 const resolveTagIdsInput = require('../utils/resolveTagIdsInput');
 const { runWithSession } = require('../utils/klickTippSessionManager');
+const getErrorMessage = require('../utils/getErrorMessage');
+const adjustErrorMessage = require('../utils/adjustErrorMessage');
 
 const qs = require('qs');
+
+function isTagRelatedFailure(error) {
+	const body = error?.response?.data ?? error?.response?.body ?? error?.body;
+	const httpStatus = error?.response?.status;
+	const apiError = typeof body?.error === 'number' ? body.error : null;
+
+	return httpStatus === 406 && apiError === 403;
+}
+
+function formatTagFailure(error, tagId, action) {
+	const body = error?.response?.data ?? error?.response?.body ?? error?.body;
+	const httpStatus = error?.response?.status;
+	const code = typeof body?.code === 'number' ? body.code : null;
+	const message =
+		typeof body?.error === 'number' ? adjustErrorMessage(body.error, code) : getErrorMessage(error);
+
+	return `Failed to ${action} contact with tag ID "${tagId}".${httpStatus ? ` [${httpStatus}]` : ''} ${message}`;
+}
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -82,14 +102,31 @@ module.exports = function (RED) {
 		};
 
 		try {
-			let response = await createOrUpdateContact(data);
+			let response;
+
+			try {
+				response = await createOrUpdateContact(data);
+			} catch (error) {
+				if (primaryTagId && isTagRelatedFailure(error)) {
+					error.tagAwareMessage = formatTagFailure(error, primaryTagId, 'add or update');
+				}
+				throw error;
+			}
 
 			if (tagIds.length > 1) {
 				const remainingTagIds = tagIds.slice(1);
 				const resolvedEmail = String(email || '').trim();
 
 				if (resolvedEmail) {
-					await tagContact(resolvedEmail, remainingTagIds);
+					try {
+						await tagContact(resolvedEmail, remainingTagIds);
+					} catch (error) {
+						if (isTagRelatedFailure(error)) {
+							const failedTagId = remainingTagIds[0];
+							error.tagAwareMessage = formatTagFailure(error, failedTagId, 'tag');
+						}
+						throw error;
+					}
 					const refreshedContact = await getContact(resolvedEmail);
 					return handleResponse(
 						node,
@@ -105,7 +142,14 @@ module.exports = function (RED) {
 
 				for (const extraTagId of remainingTagIds) {
 					const fallbackData = prepareSubscriptionData('', smsNumber, undefined, extraTagId, {});
-					response = await createOrUpdateContact(fallbackData);
+					try {
+						response = await createOrUpdateContact(fallbackData);
+					} catch (error) {
+						if (isTagRelatedFailure(error)) {
+							error.tagAwareMessage = formatTagFailure(error, extraTagId, 'tag');
+						}
+						throw error;
+					}
 				}
 			}
 
@@ -120,7 +164,12 @@ module.exports = function (RED) {
 				},
 			);
 		} catch (error) {
-			handleError(node, msg, undefined, error?.response?.data || error?.message);
+			handleError(
+				node,
+				msg,
+				undefined,
+				error?.tagAwareMessage || error?.response?.data || error?.message,
+			);
 		}
 	};
 
