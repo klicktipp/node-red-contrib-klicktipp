@@ -7,13 +7,17 @@ function normalizeTagIds(rawValue) {
 
 	const values = Array.isArray(rawValue) ? rawValue : [rawValue];
 
-	return values
-		.flatMap((value) =>
-			typeof value === 'string' ? value.split(',').map((item) => item.trim()) : [value],
-		)
-		.filter((value) => value !== '')
-		.map((value) => Number(value))
-		.filter((value) => Number.isInteger(value) && value > 0);
+	return [
+		...new Set(
+			values
+				.flatMap((value) =>
+					typeof value === 'string' ? value.split(',').map((item) => item.trim()) : [value],
+				)
+				.filter((value) => value !== '')
+				.map((value) => Number(value))
+				.filter((value) => Number.isInteger(value) && value > 0),
+		),
+	];
 }
 
 module.exports = normalizeTagIds;
