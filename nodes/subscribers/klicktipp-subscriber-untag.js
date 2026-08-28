@@ -33,10 +33,24 @@ module.exports = function (RED) {
 		const node = this;
 
 		const email = await evaluatePropertyAsync(RED, config.email, config.emailType, node, msg);
-		const tagIds = resolveTagIdsInput(config, msg);
+		const tagIdsInput = resolveTagIdsInput(config, msg, {
+			includeMeta: true,
+			maxTagIds: 50,
+		});
+		const tagIds = tagIdsInput.tagIds;
 
 		if (!email) {
 			handleError(node, msg, 'Email is missing', 'Invalid input');
+			return node.send(msg);
+		}
+
+		if (tagIdsInput.exceedsMax) {
+			handleError(
+				node,
+				msg,
+				`The number of allowable tags has been exceeded. The maximum allowable is ${tagIdsInput.maxAllowed} at a time`,
+				'Invalid input',
+			);
 			return node.send(msg);
 		}
 
