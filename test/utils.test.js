@@ -15,19 +15,6 @@ test('normalizeTagIds deduplicates and validates numeric ids', () => {
 	assert.deepEqual(normalizeTagIds('1, 2,2,,3,abc,-1,0,4'), [1, 2, 3, 4]);
 });
 
-test('normalizeTagIds returns metadata when limit is configured', () => {
-	const normalizeTagIds = require(path.join(root, 'nodes/utils/normalizeTagIds.js'));
-
-	const result = normalizeTagIds('1,2,3,4', { includeMeta: true, maxTagIds: 3 });
-
-	assert.deepEqual(result, {
-		tagIds: [1, 2, 3],
-		exceedsMax: true,
-		maxAllowed: 3,
-		totalCount: 4,
-	});
-});
-
 test('resolveTagIdsInput prefers payload values when config tag ids are empty', () => {
 	const resolveTagIdsInput = require(path.join(root, 'nodes/utils/resolveTagIdsInput.js'));
 
@@ -39,21 +26,15 @@ test('resolveTagIdsInput prefers payload values when config tag ids are empty', 
 	assert.deepEqual(result, [11, 12]);
 });
 
-test('resolveTagIdsInput supports manual mode metadata and limit', () => {
+test('resolveTagIdsInput prefers mapped manual tags over configured tags', () => {
 	const resolveTagIdsInput = require(path.join(root, 'nodes/utils/resolveTagIdsInput.js'));
 
 	const result = resolveTagIdsInput(
-		{ manualFieldEnabled: true, manualTagId: '' },
-		{ payload: { manualTagId: '1,2,3' } },
-		{ includeMeta: true, maxTagIds: 2 },
+		{ manualFieldEnabled: true, manualTagId: '4,5' },
+		{ payload: { manualTagId: '1,2,2,3' } },
 	);
 
-	assert.deepEqual(result, {
-		tagIds: [1, 2],
-		exceedsMax: true,
-		maxAllowed: 2,
-		totalCount: 3,
-	});
+	assert.deepEqual(result, [1, 2, 3]);
 });
 
 test('createKlickTippSessionNode sends validation error when credentials are missing', async () => {

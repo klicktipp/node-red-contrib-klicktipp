@@ -105,6 +105,92 @@ test('subscriber subscribe returns last response for sms-only multi-tag flow', a
 	assert.equal(requests.filter((entry) => entry.url === '/subscriber').length, 3);
 });
 
+test('SMS-only subscriptions send normalized tags in order with the same number', async () => {
+	for (const tags of [[11], [11, 12, 12, 13], Array.from({ length: 51 }, (_, i) => i + 1)]) {
+		const requests = [];
+		const factory = loadSubscriberModule('nodes/subscribers/klicktipp-subscriber-subscribe.js', {
+			'../utils/makeRequest': async (url, method, data) => {
+				requests.push({ url, method, data: new URLSearchParams(data) });
+				return { data: { request: requests.length } };
+			},
+			'../utils/evaluatePropertyAsync': async (_RED, property) =>
+				property === 'payload.smsNumber' ? '0049123' : '',
+			'../utils/getContactFields': async () => ({ fieldFirstName: 'Alice' }),
+		});
+		const RED = createTestRed();
+		factory(RED);
+		const node = RED.__test.instantiate('klicktipp-subscriber-subscribe', {
+			email: 'payload.email', smsNumber: 'payload.smsNumber',
+			manualTagEnabled: true, listId: '77',
+		});
+		const msg = { payload: { manualTagId: tags.join(',') } };
+		await triggerInput(node, msg);
+		const expected = [...new Set(tags)];
+		assert.equal(requests.length, expected.length);
+		requests.forEach((request, index) => {
+			assert.equal(request.url, '/subscriber');
+			assert.equal(request.method, 'POST');
+			assert.equal(request.data.get('smsnumber'), '0049123');
+			assert.equal(request.data.get('tagid'), String(expected[index]));
+			assert.equal(request.data.get('listid'), index === 0 ? '77' : null);
+			assert.equal(request.data.get('fields[fieldFirstName]'), index === 0 ? 'Alice' : null);
+		});
+		assert.deepEqual(msg.payload, { request: expected.length });
+	}
+});
+
+test('SMS-only subscriptions stop on rejected or error responses', async () => {
+	for (const failure of ['reject', 'first-error', 'later-error']) {
+		const requests = [];
+		const factory = loadSubscriberModule('nodes/subscribers/klicktipp-subscriber-subscribe.js', {
+			'../utils/makeRequest': async (_url, _method, data) => {
+				requests.push(new URLSearchParams(data).get('tagid'));
+				if (failure === 'reject' && requests.length === 2) throw new Error('Subscribe failed');
+				if (failure === 'first-error' && requests.length === 1) return { error: 'First failed' };
+				if (failure === 'later-error' && requests.length === 2) return { error: 'Later failed' };
+				return { data: { ok: true } };
+			},
+			'../utils/evaluatePropertyAsync': async (_RED, property) =>
+				property === 'payload.smsNumber' ? '0049123' : '',
+			'../utils/getContactFields': async () => ({}),
+		});
+		const RED = createTestRed();
+		factory(RED);
+		const node = RED.__test.instantiate('klicktipp-subscriber-subscribe', {
+			email: 'payload.email', smsNumber: 'payload.smsNumber', tagId: [11, 12, 13],
+		});
+		const msg = { payload: {} };
+		await triggerInput(node, msg);
+		assert.deepEqual(requests, failure === 'first-error' ? ['11'] : ['11', '12']);
+		assert.deepEqual(msg.payload, { success: false });
+		assert.ok(msg.error);
+		assert.equal(node.statusHistory.at(-1).fill, 'red');
+	}
+});
+
+test('email and SMS together retain the email multi-tag flow', async () => {
+	const calls = [];
+	const factory = loadSubscriberModule('nodes/subscribers/klicktipp-subscriber-subscribe.js', {
+		'../utils/makeRequest': async (url) => {
+			calls.push(url);
+			if (url === '/subscriber/search') return { data: ['sub-1'] };
+			return { data: { id: 'sub-1' } };
+		},
+		'../utils/evaluatePropertyAsync': async (_RED, property) =>
+			property === 'payload.email' ? 'john@example.com' : '0049123',
+		'../utils/getContactFields': async () => ({}),
+	});
+	const RED = createTestRed();
+	factory(RED);
+	const node = RED.__test.instantiate('klicktipp-subscriber-subscribe', {
+		email: 'payload.email', smsNumber: 'payload.smsNumber', tagId: [11, 12],
+	});
+	const msg = { payload: {} };
+	await triggerInput(node, msg);
+	assert.deepEqual(calls, ['/subscriber', '/subscriber/tag', '/subscriber/search', '/subscriber/sub-1']);
+	assert.equal(node.statusHistory.at(-1).fill, 'green');
+});
+
 test('subscriber subscribe rewrites first add-or-update tag failure', async () => {
 	const error = { response: { status: 406, data: { error: 403 } } };
 	const moduleFactory = loadSubscriberModule('nodes/subscribers/klicktipp-subscriber-subscribe.js', {
@@ -228,10 +314,14 @@ test('subscriber tag validates required inputs and tags contact', async () => {
 	assert.equal(invalidNode.statusHistory.at(-1).text, 'Tag ID is missing: Invalid input');
 });
 
-test('subscriber untag enforces max 50 unique tags and reports failing tag id', async () => {
+test('subscriber untag processes more than 50 unique tags and reports failing tag id', async () => {
+	const calls = [];
+	let failOnTag22 = false;
 	const moduleFactory = loadSubscriberModule('nodes/subscribers/klicktipp-subscriber-untag.js', {
 		'../utils/makeRequest': async (_url, _method, data) => {
-			if (String(data).includes('tagid=22')) {
+			const tagId = new URLSearchParams(data).get('tagid');
+			calls.push(tagId);
+			if (failOnTag22 && tagId === '22') {
 				throw { response: { status: 406, data: { error: 403 } } };
 			}
 			return { data: { ok: true } };
@@ -253,11 +343,11 @@ test('subscriber untag enforces max 50 unique tags and reports failing tag id', 
 		},
 	};
 	await triggerInput(limitNode, limitMsg);
-	assert.equal(limitMsg.error, 'Invalid input');
-	assert.equal(
-		limitNode.statusHistory.at(-1).text,
-		'The number of allowable tags has been exceeded. The maximum allowable is 50 at a time: Invalid input',
-	);
+	assert.deepEqual(calls, Array.from({ length: 51 }, (_, index) => String(index + 1)));
+	assert.deepEqual(limitMsg.payload, { success: true });
+	assert.equal(limitNode.statusHistory.at(-1).fill, 'green');
+	failOnTag22 = true;
+	calls.length = 0;
 
 	const failNode = RED.__test.instantiate('klicktipp-subscriber-untag', {
 		email: 'payload.email',
@@ -267,6 +357,7 @@ test('subscriber untag enforces max 50 unique tags and reports failing tag id', 
 	const failMsg = { payload: { tagIds: '21,22,23' } };
 	await triggerInput(failNode, failMsg);
 	assert.equal(failMsg.error, 'Failed to untag tag ID "22". [406] Tag not found.');
+	assert.deepEqual(calls, ['21', '22']);
 });
 
 test('subscriber search validates email and maps id response', async () => {

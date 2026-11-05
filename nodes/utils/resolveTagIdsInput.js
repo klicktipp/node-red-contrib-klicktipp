@@ -29,8 +29,6 @@ function resolveTagIdsInput(config, msg, options = {}) {
 		configValueKey = 'tagId',
 		payloadManualValueKey = 'manualTagId',
 		payloadValueKeys = ['tagIds', 'tagId'],
-		includeMeta = false,
-		maxTagIds,
 	} = options;
 
 	const payload = msg?.payload || {};
@@ -47,7 +45,7 @@ function resolveTagIdsInput(config, msg, options = {}) {
 				config?.[configValueKey],
 			]);
 
-	return normalizeTagIds(rawValue, { includeMeta, maxTagIds });
+	return normalizeTagIds(rawValue);
 }
 
 module.exports = resolveTagIdsInput;

@@ -64,6 +64,7 @@ module.exports = function (RED) {
 
 		// Prepare data object and filter fields
 		const data = prepareSubscriptionData(email, smsNumber, listId, primaryTagId, fields);
+		const isSmsOnly = !String(email || '').trim() && Boolean(smsNumber);
 
 		const createOrUpdateContact = async (payload) =>
 			makeRequest('/subscriber', 'POST', qs.stringify(payload), msg.sessionData);
@@ -112,6 +113,16 @@ module.exports = function (RED) {
 				}
 				throw error;
 			}
+			if (isSmsOnly && (!response || response.error)) {
+				return handleResponse(
+					node,
+					msg,
+					response,
+					'Contact created',
+					'Contact could not be created',
+					undefined,
+				);
+			}
 
 			if (tagIds.length > 1) {
 				const remainingTagIds = tagIds.slice(1);
@@ -144,6 +155,17 @@ module.exports = function (RED) {
 					const fallbackData = prepareSubscriptionData('', smsNumber, undefined, extraTagId, {});
 					try {
 						response = await createOrUpdateContact(fallbackData);
+
+						if (!response || response.error) {
+							return handleResponse(
+								node,
+								msg,
+								response,
+								'Contact created',
+								'Contact could not be created',
+								undefined,
+							);
+						}
 					} catch (error) {
 						if (isTagRelatedFailure(error)) {
 							error.tagAwareMessage = formatTagFailure(error, extraTagId, 'tag');

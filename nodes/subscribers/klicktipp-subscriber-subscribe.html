@@ -56,6 +56,10 @@
 		</div>
 	</div>
 
+	<div class="form-row" style="margin: 12px 0;">
+		<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">For SMS-only contacts, each selected tag creates a separate subscribe call and increases API usage.</p>
+	</div>
+
 	<div class="form-row">
 		<label for="node-input-fields"><i class="fa fa-list"></i> <span>Data Fields</span></label>
 		<input type="text" id="node-input-fields" placeholder="Data fields">
@@ -82,6 +86,7 @@
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
 	<p>Adds a new contact. If a contact with the same email already exists, it will be updated.</p>
+	<p>For SMS-only contacts, each selected tag creates a separate subscribe call and increases API usage.</p>
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
