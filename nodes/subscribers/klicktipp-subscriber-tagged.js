@@ -5,7 +5,7 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const objectToIdValueArray = require('../utils/objectToIdValueArray');
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -35,7 +35,7 @@ module.exports = function (RED) {
 			const response = await makeRequest(
 				url,
 				'POST',
-				qs.stringify({ tagid: tagId }),
+				stringifyFormData({ tagid: tagId }),
 				msg.sessionData,
 			);
 

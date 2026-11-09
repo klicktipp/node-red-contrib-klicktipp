@@ -8,7 +8,7 @@ const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode'
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const getContactFields = require('../utils/getContactFields');
 const resolveSubscriberId = require('../utils/resolveSubscriberId');
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -41,7 +41,7 @@ module.exports = function (RED) {
 			const resp = await makeRequest(
 				`/subscriber/${encodeURIComponent(subscriberId)}`,
 				'PUT',
-				qs.stringify(data),
+				stringifyFormData(data),
 				msg.sessionData,
 			);
 

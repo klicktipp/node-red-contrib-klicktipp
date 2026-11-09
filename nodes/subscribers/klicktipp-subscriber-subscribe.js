@@ -12,7 +12,7 @@ const { runWithSession } = require('../utils/klickTippSessionManager');
 const getErrorMessage = require('../utils/getErrorMessage');
 const adjustErrorMessage = require('../utils/adjustErrorMessage');
 
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 function isTagRelatedFailure(error) {
 	const body = error?.response?.data ?? error?.response?.body ?? error?.body;
@@ -67,13 +67,13 @@ module.exports = function (RED) {
 		const isSmsOnly = !String(email || '').trim() && Boolean(smsNumber);
 
 		const createOrUpdateContact = async (payload) =>
-			makeRequest('/subscriber', 'POST', qs.stringify(payload), msg.sessionData);
+			makeRequest('/subscriber', 'POST', stringifyFormData(payload), msg.sessionData);
 
 		const tagContact = async (emailAddress, remainingTagIds) =>
 			makeRequest(
 				'/subscriber/tag',
 				'POST',
-				qs.stringify({
+				stringifyFormData({
 					email: emailAddress,
 					tagids: remainingTagIds,
 				}),
@@ -234,7 +234,7 @@ module.exports = function (RED) {
 					username,
 					password,
 					async (sessionData) => {
-						return makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
+						return makeRequest('/tag', 'POST', stringifyFormData(payload), sessionData);
 					},
 				);
 				// Pass through API payload

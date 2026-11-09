@@ -5,7 +5,7 @@ const handleError = require('../utils/handleError');
 const makeRequest = require('../utils/makeRequest');
 const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode');
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -22,7 +22,7 @@ module.exports = function (RED) {
 			const response = await makeRequest(
 				'/subscriber/unsubscribe',
 				'POST',
-				qs.stringify({ email }),
+				stringifyFormData({ email }),
 				msg.sessionData,
 			);
 

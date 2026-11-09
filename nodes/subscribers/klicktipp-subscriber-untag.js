@@ -8,7 +8,7 @@ const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const resolveTagIdsInput = require('../utils/resolveTagIdsInput');
 const getErrorMessage = require('../utils/getErrorMessage');
 const adjustErrorMessage = require('../utils/adjustErrorMessage');
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 function formatUntagFailure(error, tagId) {
 	const body = error?.response?.data ?? error?.response?.body ?? error?.body;
@@ -51,7 +51,7 @@ module.exports = function (RED) {
 					await makeRequest(
 						'/subscriber/untag',
 						'POST',
-						qs.stringify({ email, tagid: tagId }),
+						stringifyFormData({ email, tagid: tagId }),
 						msg.sessionData,
 					);
 				} catch (error) {

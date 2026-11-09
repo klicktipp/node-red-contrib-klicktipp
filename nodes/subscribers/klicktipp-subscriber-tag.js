@@ -7,7 +7,7 @@ const createKlickTippSessionNode = require('../utils/createKlickTippSessionNode'
 const evaluatePropertyAsync = require('../utils/evaluatePropertyAsync');
 const resolveTagIdsInput = require('../utils/resolveTagIdsInput');
 const { runWithSession } = require('../utils/klickTippSessionManager');
-const qs = require('qs');
+const stringifyFormData = require('../utils/stringifyFormData');
 
 module.exports = function (RED) {
 	const coreFunction = async function (msg, config) {
@@ -30,7 +30,7 @@ module.exports = function (RED) {
 			const response = await makeRequest(
 				'/subscriber/tag',
 				'POST',
-				qs.stringify({
+				stringifyFormData({
 					email,
 					tagids: tagIds,
 				}),
@@ -113,7 +113,7 @@ module.exports = function (RED) {
 					username,
 					password,
 					async (sessionData) => {
-						return makeRequest('/tag', 'POST', qs.stringify(payload), sessionData);
+						return makeRequest('/tag', 'POST', stringifyFormData(payload), sessionData);
 					},
 				);
 				// Pass through API payload
