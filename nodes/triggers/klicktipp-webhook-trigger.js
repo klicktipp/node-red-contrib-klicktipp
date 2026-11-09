@@ -79,7 +79,10 @@ module.exports = function (RED) {
 				return;
 			}
 
-			if (node.hasAuthentication && !safeCompare(providedAuthParameterValue, node.authParameterValue)) {
+			if (
+				node.hasAuthentication &&
+				!safeCompare(providedAuthParameterValue, node.authParameterValue)
+			) {
 				node.warn(`Rejected unauthorized webhook request for ${endpoint}`);
 				res.sendStatus(401);
 				return;

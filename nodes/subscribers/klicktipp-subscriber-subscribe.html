@@ -38,14 +38,14 @@
 		</div>
 	</div>
 
-	<!-- Tag (single select) + Create Tag (+) -->
+	<!-- Tag (multi select) + Create Tag (+) -->
 	<div class="form-row" style="display: flex; align-items: center;">
 		<label style="flex: 0 0 auto;" for="node-input-tagId">
-			<i class="fa fa-tag"></i> <span>Tag</span>
+			<i class="fa fa-tag"></i> <span>Tag IDs</span>
 		</label>
 		<div style="flex: 1; display: flex; margin-left: 4px; gap: 10px; align-items: center;">
-			<select id="node-input-tagId" style="flex: 1;"></select>
-			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag ID">
+			<select id="node-input-tagId" multiple style="flex: 1; height: auto; width: 100%;"></select>
+			<input type="text" id="node-input-tagIdManual" style="flex: 1; display: none;" placeholder="Enter tag IDs (comma separated)">
 			<button id="btn-create-tag-subscribe" type="button" title="Create new tag" style="flex: 0 0 auto; height: 28px; min-height: 28px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center;">
 				<i class="fa fa-plus"></i>
 			</button>
@@ -54,6 +54,10 @@
 			<div>Map</div>
 			<input type="checkbox" id="node-input-toggleTagId" style="margin-top:0 !important;">
 		</div>
+	</div>
+
+	<div class="form-row" style="margin: 12px 0;">
+		<p style="color: #555; background-color: #e6f7ff; padding: 5px 10px; border-left: 3px solid #2196F3; margin: 0;">For SMS-only contacts, each selected tag creates a separate subscribe call and increases API usage.</p>
 	</div>
 
 	<div class="form-row">
@@ -82,6 +86,7 @@
 
 <script type="text/x-red" data-help-name="klicktipp-subscriber-subscribe">
 	<p>Adds a new contact. If a contact with the same email already exists, it will be updated.</p>
+	<p>For SMS-only contacts, each selected tag creates a separate subscribe call and increases API usage.</p>
 	<h3>Inputs</h3>
 	<dl class="message-properties">
 	    <dt>msg.payload <span class="property-type">object</span></dt>
@@ -91,7 +96,8 @@
 	            <li><code>email</code> - (Optional) the contact's email address</li>
 	            <li><code>smsNumber</code> - (Optional) the contact's mobile number</li>
 	            <li><code>listId</code> - (Optional) the ID of a opt-in process</li>
-	            <li><code>tagId</code> - (Optional) the ID of a manual tag or SmartLink</li>
+	            <li><code>tagId</code> - (Optional) a single tag ID for backward compatibility</li>
+	            <li><code>tagIds</code> - (Optional) one or more tag IDs. You can pass an array for multiple tags.</li>
 	            <li><code>fields</code> - (Optional) an object with data fields (e.g., first name, last name, address, etc.), structured as returned by the <code>Field index</code> node</li>
 	        </ul>
 	    </dd>
@@ -130,9 +136,9 @@
 			listId: { value: '', validate: optionalNumberValidator },
 			manualListId: { value: '', validate: optionalNumberValidator },
 			manualListEnabled: { value: false },
-			// Tag (single)
-			tagId: { value: '', validate: optionalNumberValidator },
-			manualTagId: { value: '', validate: optionalNumberValidator },
+			// Tag (single or multiple)
+			tagId: { value: [] },
+			manualTagId: { value: '' },
 			manualTagEnabled: { value: false },
 			fields: {
 				value: 'payload.fields',
@@ -167,11 +173,6 @@
 			const listIdDropdown = $('#node-input-listId');
 			const listIdManual = $('#node-input-listIdManual');
 			const listToggle = $('#node-input-toggleListId');
-
-			const tagDropdown = $('#node-input-tagId');
-			const tagManual = $('#node-input-tagIdManual');
-			const tagToggle = $('#node-input-toggleTagId');
-			const btnCreateTag = $('#btn-create-tag-subscribe');
 
 			function markDirty() {
 				try {
@@ -237,54 +238,23 @@
 			});
 			updateListDisplay();
 			setTimeout(updateListDisplay, 200);
-
-			/* tagId dual input (+button enable/disable) */
-			function setCreateBtnEnabled(enabled) {
-				btnCreateTag
-					.prop('disabled', !enabled)
-					.css('opacity', enabled ? 1 : 0.5)
-					.attr('title', enabled ? 'Create new tag' : 'Switch off "Map" to create a new tag');
-			}
-			function updateTagDisplay() {
-				const isManual = self.manualTagEnabled === true || self.manualTagEnabled === 'true';
-				tagToggle.prop('checked', isManual);
-				if (isManual) {
-					tagManual.show();
-					tagDropdown.hide();
-					tagManual.val(self.manualTagId);
-					setCreateBtnEnabled(false);
-				} else {
-					tagManual.hide();
-					tagDropdown.show();
-					setCreateBtnEnabled(true);
-				}
-			}
-			tagToggle.on('change', function () {
-				self.manualTagEnabled = tagToggle.prop('checked');
-				updateTagDisplay();
-				markDirty();
+			const tagEditor = ktInitializeTagSelectorEditor({
+				nodeRef: self,
+				klicktippInput,
+				tagDropdown: $('#node-input-tagId'),
+				tagManual: $('#node-input-tagIdManual'),
+				toggleEl: $('#node-input-toggleTagId'),
+				createTagButton: $('#btn-create-tag-subscribe'),
+				createTagModalSelector: '#create-tag-modal-subscribe',
+				createTagNameSelector: '#create-tag-name-subscribe',
+				createTagTextSelector: '#create-tag-text-subscribe',
+				manualEnabledKey: 'manualTagEnabled',
 			});
-			tagManual.on('input', function () {
-				self.manualTagId = $(this).val();
-				markDirty();
-			});
-
-			// mark dirty when user selects a different tag (while NOT in manual mode)
-			tagDropdown.on('change', function () {
-				if (!$('#node-input-toggleTagId').is(':checked')) {
-					const v = $('#node-input-tagId').val();
-					self.tagId = v ? Number(v) : '';
-					markDirty();
-				}
-			});
-
-			updateTagDisplay();
-			setTimeout(updateTagDisplay, 200);
 
 			/* keep display in sync */
 			function updateDisplay() {
 				updateListDisplay();
-				updateTagDisplay();
+				tagEditor.updateDisplay();
 			}
 			klicktippInput.on('input change', updateDisplay);
 			const container = $('#dialog-form')[0];
@@ -294,168 +264,17 @@
 					subtree: true,
 				});
 			}
-
-			/* ===== Tag list: name cache + sorted refresh ===== */
-			function cacheKey() {
-				const cfg = klicktippInput.val() || 'none';
-				return `kt_tag_names:${self.id}:${cfg}`;
-			}
-			function readNameCache() {
-				try {
-					return JSON.parse(localStorage.getItem(cacheKey()) || '{}') || {};
-				} catch {
-					return {};
-				}
-			}
-			function writeNameCache(map) {
-				try {
-					localStorage.setItem(cacheKey(), JSON.stringify(map || {}));
-				} catch {}
-			}
-			function rememberName(id, name) {
-				const map = readNameCache();
-				map[String(id)] = String(name);
-				writeNameCache(map);
-			}
-			function fallbackAllFromCache() {
-				const map = readNameCache();
-				return Object.keys(map).map((id) => ({ id, name: map[id] }));
-			}
-
-			// wrapper that uses shared helper to refresh tags <select>
-			function refreshTags(selected) {
-				const cfgId = klicktippInput.val();
-				if (!cfgId) {
-					// No config yet: just show placeholder / keep current options
-					ktPopulateSelect(
-						tagDropdown,
-						ktCurrentOptions(tagDropdown),
-						selected,
-						'Select an option',
-					);
-					return $.Deferred().resolve().promise(); // no-op promise for call sites
-				}
-				return ktRefreshTagsSelect(tagDropdown, self.id, cfgId, selected, fallbackAllFromCache());
-			}
-
-			// initial refresh on open
-			const openSelected = self.tagId ? String(self.tagId) : '';
-			setTimeout(() => refreshTags(openSelected, fallbackAllFromCache()), 800);
-
-			// also refresh whenever config changes
-			klicktippInput.on('change', function () {
-				const want = tagDropdown.val() || self.tagId || '';
-				refreshTags(want, fallbackAllFromCache());
-			});
-
-			/* ===== Create Tag Modal (clean, scoped, single instance) ===== */
-			const MODAL_SEL = '#create-tag-modal-subscribe';
-			// remove any stale modal left in <body> by a previous open
-			(function cleanupStale() {
-				const $stale = $('body').children(MODAL_SEL + '.ui-dialog-content');
-				if ($stale.length) {
-					try {
-						$stale.dialog('destroy');
-					} catch (e) {}
-					$stale.remove();
-				}
-			})();
-
-			const $createModal = $('#dialog-form')
-				.find(MODAL_SEL)
-				.dialog({
-					autoOpen: false,
-					modal: true,
-					title: 'Create Tag',
-					width: 420,
-					buttons: {
-						Create: function () {
-							const name = $createModal.find('#create-tag-name-subscribe').val().trim();
-							const text = $createModal.find('#create-tag-text-subscribe').val().trim();
-							if (!name) {
-								RED.notify('Please enter a tag name', 'error');
-								return;
-							}
-
-							const configId = $('#node-input-klicktipp').val();
-							if (!configId) {
-								RED.notify('Missing KlickTipp Config', 'error');
-								return;
-							}
-							if (tagToggle.prop('checked')) {
-								RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-								return;
-							}
-
-							// use shared create helper + id extractor
-							ktCreateTag(configId, name, text)
-								.done(function (resp) {
-									const newId = ktExtractNewTagId(resp);
-									if (!newId) {
-										RED.notify('Tag created, but no ID returned by API', 'warning');
-										$createModal.dialog('close');
-										return;
-									}
-
-									// insert immediately if missing, then select
-									if (!tagDropdown.find('option[value="' + newId + '"]').length) {
-										$('<option>', { value: newId, text: name }).appendTo(tagDropdown);
-									}
-									tagDropdown.val(newId).trigger('change');
-									self.tagId = Number(newId);
-									rememberName(newId, name);
-
-									// ensure Deploy button lights up
-									markDirty();
-
-									// refresh sorted list to include it properly (fallback ensures presence)
-									setTimeout(() => refreshTags(newId, fallbackAllFromCache()), 800);
-
-									RED.notify('Tag created', 'success');
-									$createModal.dialog('close');
-								})
-								.fail(function (err) {
-									RED.notify(ktAjaxErrorMessage(err, 'Failed to create tag'), 'error');
-								});
-						},
-						Cancel: function () {
-							$createModal.dialog('close');
-						},
-					},
-					open: function () {
-						$createModal.find('#create-tag-name-subscribe').val('');
-						$createModal.find('#create-tag-text-subscribe').val('');
-						setTimeout(() => $createModal.find('#create-tag-name-subscribe').trigger('focus'), 50);
-					},
-				});
-
-			btnCreateTag.on('click', function () {
-				if (tagToggle.prop('checked')) {
-					RED.notify('Switch off "Map" (manual) mode to create a new tag', 'warning');
-					return;
-				}
-				$createModal.dialog('open');
-			});
-
-			// expose a closer for oneditsave/oneditcancel
-			this.__cleanupCreateModal = function () {
-				const $m = $('body').children(MODAL_SEL + '.ui-dialog-content');
-				if ($m.length) {
-					try {
-						$m.dialog('destroy');
-					} catch (e) {}
-					$m.remove();
-				}
-			};
+			this.__tagEditor = tagEditor;
 		},
 
 		oneditcancel: function () {
-			this.__cleanupCreateModal();
+			this.__tagEditor && this.__tagEditor.cleanup();
 			$(document).off('.kt-dd');
 		},
 
 		oneditsave: function () {
-			this.__cleanupCreateModal();
+			this.__tagEditor && this.__tagEditor.save();
+			this.__tagEditor && this.__tagEditor.cleanup();
 			$(document).off('.kt-dd');
 
 			ktSaveDualInput(
@@ -467,17 +286,6 @@
 				'manualListId',
 				'manualListEnabled',
 			);
-
-			ktSaveDualInput(
-				$('#node-input-tagId'),
-				$('#node-input-tagIdManual'),
-				$('#node-input-toggleTagId'),
-				this,
-				'tagId',
-				'manualTagId',
-				'manualTagEnabled',
-			);
-
 			this.fieldsData = ktSaveContactFieldValues(this.contactFieldsSection);
 		},
 	});

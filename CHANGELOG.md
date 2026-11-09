@@ -129,3 +129,7 @@
 - **Bugfix**
 	- Improved the error handling logic for error 7.
 	- Fixed a Node-RED editor UI issue where mapped values in Update Tag, Tag Contact, Untag Contact, and Search Redirect URL could be reset when changing other input types in the node configuration.
+
+## Version 1.0.27 (2026-11-05)
+- **New Features**
+    - Added multiple-tag subscriptions, including separate subscribe calls for SMS-only contacts.
