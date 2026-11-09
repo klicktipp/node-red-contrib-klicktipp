@@ -8,7 +8,7 @@ const buildValidationMessage = require('./buildValidationMessage');
  * @param {object} msg - The message object passed through Node-RED.
  * @param {string} [statusMessage='Error occurred'] - High-level status message to display in the UI.
  * @param {number|string|object|null} [errorDetails=null] - Error code, message, or object with:
- * @param {any} [tagHint=null] - Optional “tag operation hint”. Pass tagId (number) or tagIds (array) from Tag/Untag nodes so error=7 can be disambiguated.
+ * @param {any} [subscriberIdHint=null] - Optional “subscriber operation hint”. Pass subscriberId (number) from Update Contact node so error=7 can be disambiguated.
  *   - legacy: { error, code }
  *   - new: { field, name, reason, error?, code? }
  */
@@ -17,7 +17,7 @@ function handleError(
 	msg,
 	statusMessage = 'Error occurred',
 	errorDetails = null,
-	tagHint = null,
+	subscriberIdHint = null,
 ) {
 	let errorMsg = null;
 
@@ -32,7 +32,7 @@ function handleError(
 			const code = errorDetails.code;
 
 			if (typeof error === 'number') {
-				errorMsg = adjustErrorMessage(error, code, tagHint);
+				errorMsg = adjustErrorMessage(error, code, subscriberIdHint);
 			} else if (typeof error === 'string' && error.trim() !== '') {
 				errorMsg = error;
 			} else if (typeof errorDetails.message === 'string' && errorDetails.message.trim() !== '') {

@@ -1,6 +1,6 @@
 {
   "name": "@klicktipp/node-red-contrib-klicktipp",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "KlickTipp API integration node for Node-RED",
   "keywords": [
     "node-red",
@@ -20,7 +20,8 @@
     "url": "https://github.com/klicktipp/node-red-contrib-klicktipp"
   },
   "scripts": {
-    "format": "prettier --write \"{resources,nodes}/**/*.{js,html}\" .prettierrc.js"
+    "format": "prettier --write \"{resources,nodes}/**/*.{js,html}\" .prettierrc.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=14",
