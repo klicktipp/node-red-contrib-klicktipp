@@ -132,4 +132,4 @@
 
 ## Version 1.0.27 (2026-11-09)
 - **New Features**
-    - Added multiple-tag subscriptions, including separate subscribe calls for SMS-only contacts.
+    - Added multiple-tag subscriptions. For SMS-only contacts, each tag requires a separate subscribe call and increases API usage.
