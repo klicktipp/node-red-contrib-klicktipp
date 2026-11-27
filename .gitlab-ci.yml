@@ -1,7 +1,7 @@
 include:
   - project: 'renovate-bot/renovate-runner'
     file: '/templates/renovate.gitlab-ci.yml'
-    ref: v26.1.0
+    ref: v27.0.0
 
 variables:
   RENOVATE_EXTRA_FLAGS: '$CI_PROJECT_PATH'
